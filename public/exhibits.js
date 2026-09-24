@@ -1,6 +1,8 @@
 // Each exhibit is a route that went somewhere nobody planned.
 // `hops` reads like a traceroute: what happened, in order, until it failed.
 // Keep facts to what the public postmortems / investigation reports say.
+// `subject` is the plain search name of the event (used in page titles);
+// `added` is the date the exhibit went up on failrouter.com (sitemap lastmod, JSON-LD).
 
 export const ROOMS = {
   routing: "Hall of Lost Packets",
@@ -13,6 +15,8 @@ export const ROOMS = {
 export const EXHIBITS = [
   {
     id: "facebook-2021",
+    subject: "Facebook outage, October 2021",
+    added: "2026-09-24",
     title: "The Day Facebook Left the Internet",
     room: "routing",
     date: "2021-10-04",
@@ -29,6 +33,8 @@ export const EXHIBITS = [
   },
   {
     id: "youtube-pakistan-2008",
+    subject: "YouTube BGP hijack, February 2008",
+    added: "2026-09-24",
     title: "YouTube, Briefly Owned by Pakistan Telecom",
     room: "routing",
     date: "2008-02-24",
@@ -45,6 +51,8 @@ export const EXHIBITS = [
   },
   {
     id: "crowdstrike-2024",
+    subject: "CrowdStrike outage, July 2024",
+    added: "2026-09-24",
     title: "Channel File 291",
     room: "config",
     date: "2024-07-19",
@@ -61,6 +69,8 @@ export const EXHIBITS = [
   },
   {
     id: "cloudflare-regex-2019",
+    subject: "Cloudflare regex outage, July 2019",
+    added: "2026-09-24",
     title: "One Regular Expression",
     room: "config",
     date: "2019-07-02",
@@ -77,6 +87,8 @@ export const EXHIBITS = [
   },
   {
     id: "fastly-2021",
+    subject: "Fastly outage, June 2021",
+    added: "2026-09-24",
     title: "One Customer, One Setting",
     room: "config",
     date: "2021-06-08",
@@ -93,6 +105,8 @@ export const EXHIBITS = [
   },
   {
     id: "s3-2017",
+    subject: "AWS S3 outage, February 2017",
+    added: "2026-09-24",
     title: "The Typo That Took Down S3",
     room: "human",
     date: "2017-02-28",
@@ -109,6 +123,8 @@ export const EXHIBITS = [
   },
   {
     id: "gitlab-2017",
+    subject: "GitLab database incident, January 2017",
+    added: "2026-09-24",
     title: "rm -rf, Wrong Terminal",
     room: "human",
     date: "2017-01-31",
@@ -125,6 +141,8 @@ export const EXHIBITS = [
   },
   {
     id: "knight-2012",
+    subject: "Knight Capital trading loss, August 2012",
+    added: "2026-09-24",
     title: "45 Minutes, $440 Million",
     room: "human",
     date: "2012-08-01",
@@ -141,6 +159,8 @@ export const EXHIBITS = [
   },
   {
     id: "ariane-501",
+    subject: "Ariane 5 Flight 501 failure, 1996",
+    added: "2026-09-24",
     title: "37 Seconds of Ariane 5",
     room: "numbers",
     date: "1996-06-04",
@@ -157,6 +177,8 @@ export const EXHIBITS = [
   },
   {
     id: "mars-climate-orbiter",
+    subject: "Mars Climate Orbiter loss, 1999",
+    added: "2026-09-24",
     title: "Pounds, Meet Newtons",
     room: "numbers",
     date: "1999-09-23",
@@ -173,6 +195,8 @@ export const EXHIBITS = [
   },
   {
     id: "leap-second-2012",
+    subject: "Leap second bug, June 2012",
+    added: "2026-09-24",
     title: "The Extra Second",
     room: "time",
     date: "2012-06-30",
@@ -189,6 +213,8 @@ export const EXHIBITS = [
   },
   {
     id: "lets-encrypt-root-2021",
+    subject: "Let's Encrypt root expiry, September 2021",
+    added: "2026-09-24",
     title: "The Root That Expired",
     room: "time",
     date: "2021-09-30",

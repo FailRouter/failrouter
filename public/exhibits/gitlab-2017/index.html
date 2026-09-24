@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GitLab database incident, January 2017, hop by hop</title>
+  <meta name="description" content="GitLab database incident, January 2017. Late-night fight with database replication lag; 4 hops later, restore from a staging snapshot, livestreamed to…">
+  <link rel="canonical" href="https://failrouter.com/exhibits/gitlab-2017/">
+  <meta property="og:site_name" content="Failrouter">
+  <meta property="og:title" content="GitLab database incident, January 2017, hop by hop">
+  <meta property="og:description" content="GitLab database incident, January 2017. Late-night fight with database replication lag; 4 hops later, restore from a staging snapshot, livestreamed to…">
+  <meta property="og:url" content="https://failrouter.com/exhibits/gitlab-2017/">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://failrouter.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Museum of Failed Routes: famous outages, told hop by hop">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#111014">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"rm -rf, Wrong Terminal","alternativeHeadline":"GitLab database incident, January 2017","description":"GitLab database incident, January 2017. Late-night fight with database replication lag; 4 hops later, restore from a staging snapshot, livestreamed to…","url":"https://failrouter.com/exhibits/gitlab-2017/","mainEntityOfPage":"https://failrouter.com/exhibits/gitlab-2017/","image":"https://failrouter.com/og.png","datePublished":"2026-09-24","articleSection":"The Enter Key Gallery","about":{"@type":"Event","name":"GitLab database incident, January 2017","startDate":"2017-01-31"},"citation":"GitLab postmortem, February 2017","isPartOf":{"@type":"WebSite","name":"Museum of Failed Routes","url":"https://failrouter.com/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Museum of Failed Routes","item":"https://failrouter.com/"},{"@type":"ListItem","position":2,"name":"rm -rf, Wrong Terminal","item":"https://failrouter.com/exhibits/gitlab-2017/"}]}</script>
+</head>
+<body class="exhibit-page">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Museum of Failed Routes</a> <span aria-hidden="true">›</span> The Enter Key Gallery</nav>
+
+  <main class="gallery single">
+  <article class="exhibit lit" id="gitlab-2017" tabindex="-1" style="--i:0">
+    <p class="plaque-no">No. 007 · The Enter Key Gallery</p>
+    <h1>rm -rf, Wrong Terminal</h1>
+    <p class="meta"><time datetime="2017-01-31">2017-01-31</time> · about 18 hours; roughly 6 hours of data lost</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>Late-night fight with database replication lag</li><li class=""><span class="hop"> 2</span>Engineer deletes a data directory to reseed a replica</li><li class=""><span class="hop"> 3</span>The shell was on the primary, not the replica</li><li class=""><span class="hop"> 4</span>The backup methods turn out to be broken or empty</li><li class="fail"><span class="hop"> 5</span>Restore from a staging snapshot, livestreamed to the public <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">A backup you have never restored is a hope, not a backup.</p>
+    <p class="source">Source: GitLab postmortem, February 2017</p>
+  </article>
+    <p class="about-event">GitLab database incident, January 2017. Duration: about 18 hours; roughly 6 hours of data lost. 5 hops from the first change to the failure.</p>
+    <nav class="walk" aria-label="More exhibits">
+      <a class="walk-prev" rel="prev" href="/exhibits/s3-2017/">← The Typo That Took Down S3</a>
+      <a class="walk-hall" href="/#gitlab-2017">Back to the main hall</a>
+      <a class="walk-next" rel="next" href="/exhibits/knight-2012/">→ 45 Minutes, $440 Million</a>
+    </nav>
+  </main>
+
+  <footer>
+    <p>Admission free. Exits clearly marked, unlike most of these systems.</p>
+    <p class="small">Summaries are condensed from public postmortems and investigation reports.</p>
+    <p class="small"><a href="https://github.com/FailRouter/failrouter">Source on GitHub</a> · <a href="https://github.com/FailRouter/failrouter/issues/new?title=Exhibit%20suggestion%3A%20">Suggest an exhibit</a> · MIT licensed</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YouTube BGP hijack, February 2008, hop by hop</title>
+  <meta name="description" content="YouTube BGP hijack, February 2008. Pakistan Telecom is ordered to block YouTube domestically; 4 hops later, most of the world&#39;s YouTube traffic heads…">
+  <link rel="canonical" href="https://failrouter.com/exhibits/youtube-pakistan-2008/">
+  <meta property="og:site_name" content="Failrouter">
+  <meta property="og:title" content="YouTube BGP hijack, February 2008, hop by hop">
+  <meta property="og:description" content="YouTube BGP hijack, February 2008. Pakistan Telecom is ordered to block YouTube domestically; 4 hops later, most of the world&#39;s YouTube traffic heads…">
+  <meta property="og:url" content="https://failrouter.com/exhibits/youtube-pakistan-2008/">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://failrouter.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Museum of Failed Routes: famous outages, told hop by hop">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#111014">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"YouTube, Briefly Owned by Pakistan Telecom","alternativeHeadline":"YouTube BGP hijack, February 2008","description":"YouTube BGP hijack, February 2008. Pakistan Telecom is ordered to block YouTube domestically; 4 hops later, most of the world's YouTube traffic heads…","url":"https://failrouter.com/exhibits/youtube-pakistan-2008/","mainEntityOfPage":"https://failrouter.com/exhibits/youtube-pakistan-2008/","image":"https://failrouter.com/og.png","datePublished":"2026-09-24","articleSection":"Hall of Lost Packets","about":{"@type":"Event","name":"YouTube BGP hijack, February 2008","startDate":"2008-02-24"},"citation":"RIPE NCC case study, 2008","isPartOf":{"@type":"WebSite","name":"Museum of Failed Routes","url":"https://failrouter.com/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Museum of Failed Routes","item":"https://failrouter.com/"},{"@type":"ListItem","position":2,"name":"YouTube, Briefly Owned by Pakistan Telecom","item":"https://failrouter.com/exhibits/youtube-pakistan-2008/"}]}</script>
+</head>
+<body class="exhibit-page">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Museum of Failed Routes</a> <span aria-hidden="true">›</span> Hall of Lost Packets</nav>
+
+  <main class="gallery single">
+  <article class="exhibit lit" id="youtube-pakistan-2008" tabindex="-1" style="--i:0">
+    <p class="plaque-no">No. 002 · Hall of Lost Packets</p>
+    <h1>YouTube, Briefly Owned by Pakistan Telecom</h1>
+    <p class="meta"><time datetime="2008-02-24">2008-02-24</time> · about 2 hours</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>Pakistan Telecom is ordered to block YouTube domestically</li><li class=""><span class="hop"> 2</span>It announces a more specific route for YouTube&#39;s address block to do so</li><li class=""><span class="hop"> 3</span>Its upstream provider passes the announcement on to the rest of the internet</li><li class=""><span class="hop"> 4</span>Routers everywhere prefer the more specific route</li><li class="fail"><span class="hop"> 5</span>Most of the world&#39;s YouTube traffic heads into Pakistan and disappears <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">BGP believes what it is told. Filter what your customers announce.</p>
+    <p class="source">Source: RIPE NCC case study, 2008</p>
+  </article>
+    <p class="about-event">YouTube BGP hijack, February 2008. Duration: about 2 hours. 5 hops from the first change to the failure.</p>
+    <nav class="walk" aria-label="More exhibits">
+      <a class="walk-prev" rel="prev" href="/exhibits/facebook-2021/">← The Day Facebook Left the Internet</a>
+      <a class="walk-hall" href="/#youtube-pakistan-2008">Back to the main hall</a>
+      <a class="walk-next" rel="next" href="/exhibits/crowdstrike-2024/">→ Channel File 291</a>
+    </nav>
+  </main>
+
+  <footer>
+    <p>Admission free. Exits clearly marked, unlike most of these systems.</p>
+    <p class="small">Summaries are condensed from public postmortems and investigation reports.</p>
+    <p class="small"><a href="https://github.com/FailRouter/failrouter">Source on GitHub</a> · <a href="https://github.com/FailRouter/failrouter/issues/new?title=Exhibit%20suggestion%3A%20">Suggest an exhibit</a> · MIT licensed</p>
+  </footer>
+</body>
+</html>

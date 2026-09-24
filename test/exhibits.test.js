@@ -5,7 +5,7 @@ import { EXHIBITS, ROOMS } from "../public/exhibits.js";
 
 test("every exhibit has the required fields", () => {
   for (const e of EXHIBITS) {
-    for (const k of ["id", "title", "room", "date", "duration", "lesson", "source"]) {
+    for (const k of ["id", "subject", "added", "title", "room", "date", "duration", "lesson", "source"]) {
       assert.equal(typeof e[k], "string", `${e.id}: ${k}`);
       assert.ok(e[k].length > 0, `${e.id}: empty ${k}`);
     }
@@ -19,8 +19,11 @@ test("ids are unique, url-safe, and dates are valid ISO dates", () => {
     assert.match(e.id, /^[a-z0-9-]+$/);
     assert.ok(!ids.has(e.id), `duplicate id ${e.id}`);
     ids.add(e.id);
-    assert.match(e.date, /^\d{4}-\d{2}-\d{2}$/);
-    assert.ok(!Number.isNaN(Date.parse(e.date)), `${e.id}: bad date`);
+    for (const k of ["date", "added"]) {
+      assert.match(e[k], /^\d{4}-\d{2}-\d{2}$/, `${e.id}: ${k}`);
+      assert.ok(!Number.isNaN(Date.parse(e[k])), `${e.id}: bad ${k}`);
+    }
+    assert.ok(e.added >= e.date, `${e.id}: added before the event`);
   }
 });
 

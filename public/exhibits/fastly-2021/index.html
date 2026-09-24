@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fastly outage, June 2021: One Customer, One Setting</title>
+  <meta name="description" content="Fastly outage, June 2021. A software change deployed weeks earlier carries a latent bug; 4 hops later, engineers find the config, disable it, and traffic…">
+  <link rel="canonical" href="https://failrouter.com/exhibits/fastly-2021/">
+  <meta property="og:site_name" content="Failrouter">
+  <meta property="og:title" content="Fastly outage, June 2021: One Customer, One Setting">
+  <meta property="og:description" content="Fastly outage, June 2021. A software change deployed weeks earlier carries a latent bug; 4 hops later, engineers find the config, disable it, and traffic…">
+  <meta property="og:url" content="https://failrouter.com/exhibits/fastly-2021/">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://failrouter.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Museum of Failed Routes: famous outages, told hop by hop">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#111014">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"One Customer, One Setting","alternativeHeadline":"Fastly outage, June 2021","description":"Fastly outage, June 2021. A software change deployed weeks earlier carries a latent bug; 4 hops later, engineers find the config, disable it, and traffic…","url":"https://failrouter.com/exhibits/fastly-2021/","mainEntityOfPage":"https://failrouter.com/exhibits/fastly-2021/","image":"https://failrouter.com/og.png","datePublished":"2026-09-24","articleSection":"Wing of the Global Push","about":{"@type":"Event","name":"Fastly outage, June 2021","startDate":"2021-06-08"},"citation":"Fastly blog, June 2021","isPartOf":{"@type":"WebSite","name":"Museum of Failed Routes","url":"https://failrouter.com/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Museum of Failed Routes","item":"https://failrouter.com/"},{"@type":"ListItem","position":2,"name":"One Customer, One Setting","item":"https://failrouter.com/exhibits/fastly-2021/"}]}</script>
+</head>
+<body class="exhibit-page">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Museum of Failed Routes</a> <span aria-hidden="true">›</span> Wing of the Global Push</nav>
+
+  <main class="gallery single">
+  <article class="exhibit lit" id="fastly-2021" tabindex="-1" style="--i:0">
+    <p class="plaque-no">No. 005 · Wing of the Global Push</p>
+    <h1>One Customer, One Setting</h1>
+    <p class="meta"><time datetime="2021-06-08">2021-06-08</time> · under an hour</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>A software change deployed weeks earlier carries a latent bug</li><li class=""><span class="hop"> 2</span>One customer pushes a valid configuration change</li><li class=""><span class="hop"> 3</span>The change triggers the bug across the edge network</li><li class=""><span class="hop"> 4</span>Most of the network starts returning errors; major news sites go blank</li><li class="fail"><span class="hop"> 5</span>Engineers find the config, disable it, and traffic recovers <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">A bug can wait patiently for the one input that wakes it.</p>
+    <p class="source">Source: Fastly blog, June 2021</p>
+  </article>
+    <p class="about-event">Fastly outage, June 2021. Duration: under an hour. 5 hops from the first change to the failure.</p>
+    <nav class="walk" aria-label="More exhibits">
+      <a class="walk-prev" rel="prev" href="/exhibits/cloudflare-regex-2019/">← One Regular Expression</a>
+      <a class="walk-hall" href="/#fastly-2021">Back to the main hall</a>
+      <a class="walk-next" rel="next" href="/exhibits/s3-2017/">→ The Typo That Took Down S3</a>
+    </nav>
+  </main>
+
+  <footer>
+    <p>Admission free. Exits clearly marked, unlike most of these systems.</p>
+    <p class="small">Summaries are condensed from public postmortems and investigation reports.</p>
+    <p class="small"><a href="https://github.com/FailRouter/failrouter">Source on GitHub</a> · <a href="https://github.com/FailRouter/failrouter/issues/new?title=Exhibit%20suggestion%3A%20">Suggest an exhibit</a> · MIT licensed</p>
+  </footer>
+</body>
+</html>

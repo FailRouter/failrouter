@@ -39,8 +39,14 @@ export function roomsHtml(exhibits, rooms, current) {
     .join("");
 }
 
-/** One exhibit card. `no` is the 1-based catalogue number, `i` the position in the current view. */
-export function exhibitHtml(e, { no, i, rooms }) {
+/** Public URL path of an exhibit's own page. */
+export const exhibitPath = (id) => `/exhibits/${id}/`;
+
+/**
+ * One exhibit card. `no` is the 1-based catalogue number, `i` the position in the current view.
+ * `page: true` renders it as the main content of the exhibit's own page (h1, no self-link, always lit).
+ */
+export function exhibitHtml(e, { no, i, rooms, page = false }) {
   const hops = e.hops
     .map((h, n) => {
       const last = n === e.hops.length - 1;
@@ -48,10 +54,13 @@ export function exhibitHtml(e, { no, i, rooms }) {
       return `<li class="${last ? "fail" : ""}"><span class="hop">${String(n + 1).padStart(2, " ")}</span>${esc(h)}${mark}</li>`;
     })
     .join("");
+  const heading = page
+    ? `<h1>${esc(e.title)}</h1>`
+    : `<h2><a href="${exhibitPath(esc(e.id))}">${esc(e.title)}</a></h2>`;
   return `
-  <article class="exhibit" id="${esc(e.id)}" tabindex="-1" style="--i:${i}">
+  <article class="exhibit${page ? " lit" : ""}" id="${esc(e.id)}" tabindex="-1" style="--i:${i}">
     <p class="plaque-no">No. ${String(no).padStart(3, "0")} · ${esc(rooms[e.room])}</p>
-    <h2><a href="#${esc(e.id)}">${esc(e.title)}</a></h2>
+    ${heading}
     <p class="meta"><time datetime="${esc(e.date)}">${esc(e.date)}</time> · ${esc(e.duration)}</p>
     <ol class="route">${hops}</ol>
     <p class="lesson">${esc(e.lesson)}</p>
