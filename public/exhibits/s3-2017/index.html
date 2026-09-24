@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AWS S3 outage, February 2017: The Typo That Took Down S3</title>
+  <meta name="description" content="AWS S3 outage, February 2017. Engineer debugging a slow billing system runs an approved playbook command; 4 hops later, a large part of the web goes…">
+  <link rel="canonical" href="https://failrouter.com/exhibits/s3-2017/">
+  <meta property="og:site_name" content="Failrouter">
+  <meta property="og:title" content="AWS S3 outage, February 2017: The Typo That Took Down S3">
+  <meta property="og:description" content="AWS S3 outage, February 2017. Engineer debugging a slow billing system runs an approved playbook command; 4 hops later, a large part of the web goes…">
+  <meta property="og:url" content="https://failrouter.com/exhibits/s3-2017/">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://failrouter.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Museum of Failed Routes: famous outages, told hop by hop">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#111014">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"The Typo That Took Down S3","alternativeHeadline":"AWS S3 outage, February 2017","description":"AWS S3 outage, February 2017. Engineer debugging a slow billing system runs an approved playbook command; 4 hops later, a large part of the web goes…","url":"https://failrouter.com/exhibits/s3-2017/","mainEntityOfPage":"https://failrouter.com/exhibits/s3-2017/","image":"https://failrouter.com/og.png","datePublished":"2026-09-24","articleSection":"The Enter Key Gallery","about":{"@type":"Event","name":"AWS S3 outage, February 2017","startDate":"2017-02-28"},"citation":"AWS service disruption summary, March 2017","isPartOf":{"@type":"WebSite","name":"Museum of Failed Routes","url":"https://failrouter.com/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Museum of Failed Routes","item":"https://failrouter.com/"},{"@type":"ListItem","position":2,"name":"The Typo That Took Down S3","item":"https://failrouter.com/exhibits/s3-2017/"}]}</script>
+</head>
+<body class="exhibit-page">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Museum of Failed Routes</a> <span aria-hidden="true">›</span> The Enter Key Gallery</nav>
+
+  <main class="gallery single">
+  <article class="exhibit lit" id="s3-2017" tabindex="-1" style="--i:0">
+    <p class="plaque-no">No. 006 · The Enter Key Gallery</p>
+    <h1>The Typo That Took Down S3</h1>
+    <p class="meta"><time datetime="2017-02-28">2017-02-28</time> · about 4 hours</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>Engineer debugging a slow billing system runs an approved playbook command</li><li class=""><span class="hop"> 2</span>One input is mistyped; far more servers are removed than intended</li><li class=""><span class="hop"> 3</span>Two S3 subsystems in us-east-1 need a full restart</li><li class=""><span class="hop"> 4</span>They haven&#39;t been fully restarted in years; it takes hours</li><li class="fail"><span class="hop"> 5</span>A large part of the web goes down, including AWS&#39;s own status dashboard <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">Tools should refuse to remove too much capacity too fast, however it&#39;s typed.</p>
+    <p class="source">Source: AWS service disruption summary, March 2017</p>
+  </article>
+    <p class="about-event">AWS S3 outage, February 2017. Duration: about 4 hours. 5 hops from the first change to the failure.</p>
+    <nav class="walk" aria-label="More exhibits">
+      <a class="walk-prev" rel="prev" href="/exhibits/fastly-2021/">← One Customer, One Setting</a>
+      <a class="walk-hall" href="/#s3-2017">Back to the main hall</a>
+      <a class="walk-next" rel="next" href="/exhibits/gitlab-2017/">→ rm -rf, Wrong Terminal</a>
+    </nav>
+  </main>
+
+  <footer>
+    <p>Admission free. Exits clearly marked, unlike most of these systems.</p>
+    <p class="small">Summaries are condensed from public postmortems and investigation reports.</p>
+    <p class="small"><a href="https://github.com/FailRouter/failrouter">Source on GitHub</a> · <a href="https://github.com/FailRouter/failrouter/issues/new?title=Exhibit%20suggestion%3A%20">Suggest an exhibit</a> · MIT licensed</p>
+  </footer>
+</body>
+</html>

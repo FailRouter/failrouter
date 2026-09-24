@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cloudflare regex outage, July 2019: One Regular Expression</title>
+  <meta name="description" content="Cloudflare regex outage, July 2019. New managed WAF rule is deployed globally at once; 4 hops later, global kill switch for the WAF rules restores…">
+  <link rel="canonical" href="https://failrouter.com/exhibits/cloudflare-regex-2019/">
+  <meta property="og:site_name" content="Failrouter">
+  <meta property="og:title" content="Cloudflare regex outage, July 2019: One Regular Expression">
+  <meta property="og:description" content="Cloudflare regex outage, July 2019. New managed WAF rule is deployed globally at once; 4 hops later, global kill switch for the WAF rules restores…">
+  <meta property="og:url" content="https://failrouter.com/exhibits/cloudflare-regex-2019/">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://failrouter.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Museum of Failed Routes: famous outages, told hop by hop">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#111014">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"One Regular Expression","alternativeHeadline":"Cloudflare regex outage, July 2019","description":"Cloudflare regex outage, July 2019. New managed WAF rule is deployed globally at once; 4 hops later, global kill switch for the WAF rules restores…","url":"https://failrouter.com/exhibits/cloudflare-regex-2019/","mainEntityOfPage":"https://failrouter.com/exhibits/cloudflare-regex-2019/","image":"https://failrouter.com/og.png","datePublished":"2026-09-24","articleSection":"Wing of the Global Push","about":{"@type":"Event","name":"Cloudflare regex outage, July 2019","startDate":"2019-07-02"},"citation":"Cloudflare blog, July 2019","isPartOf":{"@type":"WebSite","name":"Museum of Failed Routes","url":"https://failrouter.com/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Museum of Failed Routes","item":"https://failrouter.com/"},{"@type":"ListItem","position":2,"name":"One Regular Expression","item":"https://failrouter.com/exhibits/cloudflare-regex-2019/"}]}</script>
+</head>
+<body class="exhibit-page">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Museum of Failed Routes</a> <span aria-hidden="true">›</span> Wing of the Global Push</nav>
+
+  <main class="gallery single">
+  <article class="exhibit lit" id="cloudflare-regex-2019" tabindex="-1" style="--i:0">
+    <p class="plaque-no">No. 004 · Wing of the Global Push</p>
+    <h1>One Regular Expression</h1>
+    <p class="meta"><time datetime="2019-07-02">2019-07-02</time> · 27 minutes</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>New managed WAF rule is deployed globally at once</li><li class=""><span class="hop"> 2</span>Its regular expression backtracks catastrophically on ordinary traffic</li><li class=""><span class="hop"> 3</span>CPU on every edge machine hits 100%</li><li class=""><span class="hop"> 4</span>Sites behind the network return 502s worldwide</li><li class="fail"><span class="hop"> 5</span>Global kill switch for the WAF rules restores traffic <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">The fastest deploy pipeline is also the fastest outage pipeline.</p>
+    <p class="source">Source: Cloudflare blog, July 2019</p>
+  </article>
+    <p class="about-event">Cloudflare regex outage, July 2019. Duration: 27 minutes. 5 hops from the first change to the failure.</p>
+    <nav class="walk" aria-label="More exhibits">
+      <a class="walk-prev" rel="prev" href="/exhibits/crowdstrike-2024/">← Channel File 291</a>
+      <a class="walk-hall" href="/#cloudflare-regex-2019">Back to the main hall</a>
+      <a class="walk-next" rel="next" href="/exhibits/fastly-2021/">→ One Customer, One Setting</a>
+    </nav>
+  </main>
+
+  <footer>
+    <p>Admission free. Exits clearly marked, unlike most of these systems.</p>
+    <p class="small">Summaries are condensed from public postmortems and investigation reports.</p>
+    <p class="small"><a href="https://github.com/FailRouter/failrouter">Source on GitHub</a> · <a href="https://github.com/FailRouter/failrouter/issues/new?title=Exhibit%20suggestion%3A%20">Suggest an exhibit</a> · MIT licensed</p>
+  </footer>
+</body>
+</html>

@@ -12,7 +12,8 @@
   "scripts": {
     "dev": "wrangler dev",
     "test": "node --test \"test/*.test.js\"",
-    "coverage": "node --test --experimental-test-coverage --test-coverage-include=\"public/**/*.js\" --test-coverage-exclude=\"public/app.js\" --test-coverage-lines=90 --test-coverage-branches=90 --test-coverage-functions=90 \"test/*.test.js\"",
+    "build": "node scripts/build.js",
+    "coverage": "node --test --experimental-test-coverage --test-coverage-include=\"public/**/*.js\" --test-coverage-include=\"scripts/**/*.js\" --test-coverage-exclude=\"public/app.js\" --test-coverage-exclude=\"scripts/build.js\" --test-coverage-lines=90 --test-coverage-branches=90 --test-coverage-functions=90 \"test/*.test.js\"",
     "check": "pnpm coverage && wrangler deploy --dry-run",
     "deploy": "wrangler deploy"
   },

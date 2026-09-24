@@ -119,11 +119,11 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--brass); outline
   padding: 26px 26px 20px;
   border-radius: 2px;
   box-shadow: 0 30px 60px -30px #000, 0 0 0 1px #d9ccb3 inset;
-  opacity: 0.25;
-  transform: translateY(12px);
   transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.4s ease;
   transition-delay: calc(var(--i, 0) % 3 * 60ms);
 }
+/* Dim-then-light only when JS runs; without JS (and for crawlers) every plaque is fully visible. */
+.js .exhibit:not(.lit) { opacity: 0.25; transform: translateY(12px); }
 /* spotlight cone above each plaque */
 .exhibit::before {
   content: "";
@@ -147,7 +147,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--brass); outline
   text-transform: uppercase;
   color: #8a7d64;
 }
-.exhibit h2 { margin: 0; font-size: 1.45rem; font-weight: 600; line-height: 1.2; }
+.exhibit h2, .exhibit h1 { margin: 0; font-size: 1.45rem; font-weight: 600; line-height: 1.2; letter-spacing: 0; }
+.exhibit h1 { font-size: 1.9rem; }
 .exhibit h2 a { color: inherit; text-decoration: none; }
 .exhibit h2 a:hover { text-decoration: underline; text-decoration-color: var(--brass); }
 .meta { margin: 4px 0 16px; color: #6f6656; font-size: 0.92rem; }
@@ -187,6 +188,28 @@ footer {
   border-top: 1px solid #25222a;
 }
 footer .small { font-size: 0.85rem; }
+footer a, .crumbs a, .walk a, .about-event a { color: #d8c08a; text-underline-offset: 3px; }
+footer a:hover, .crumbs a:hover, .walk a:hover { color: var(--brass); }
+
+/* ---------- single exhibit page ---------- */
+.crumbs {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 40px 20px 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.gallery.single { grid-template-columns: minmax(0, 640px); justify-content: center; padding-top: 48px; }
+.about-event { margin: 0; color: #b9b1a4; }
+.walk {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: start;
+  font-size: 0.95rem;
+}
+.walk-next { text-align: right; }
+.walk-hall { color: var(--muted); }
 kbd {
   font: 12px var(--mono);
   padding: 1px 5px;
@@ -200,4 +223,8 @@ kbd {
   .trace { font-size: 11px; }
   .gallery { grid-template-columns: 1fr; gap: 28px; padding-inline: 14px; }
   .exhibit { padding: 20px 18px 16px; }
+  .exhibit h1 { font-size: 1.5rem; }
+  .crumbs { padding: 24px 14px 0; }
+  .walk { grid-template-columns: 1fr; }
+  .walk-next { text-align: left; }
 }

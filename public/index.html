@@ -3,31 +3,139 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Failrouter — Museum of Failed Routes</title>
-  <meta name="description" content="A small museum of famous outages and engineering failures, each told as the route it took from one small change to a very bad day.">
+  <title>Museum of Failed Routes: famous outages, hop by hop</title>
+  <meta name="description" content="Famous outages and engineering failures, from the 2021 Facebook outage to CrowdStrike&#39;s Channel File 291, each told hop by hop from its public postmortem.">
   <link rel="canonical" href="https://failrouter.com/">
-  <meta property="og:title" content="Failrouter — Museum of Failed Routes">
-  <meta property="og:description" content="Famous outages, told as the route they took.">
+  <meta property="og:site_name" content="Failrouter">
+  <meta property="og:title" content="Museum of Failed Routes: famous outages, hop by hop">
+  <meta property="og:description" content="Famous outages and engineering failures, from the 2021 Facebook outage to CrowdStrike&#39;s Channel File 291, each told hop by hop from its public postmortem.">
   <meta property="og:url" content="https://failrouter.com/">
   <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://failrouter.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Museum of Failed Routes: famous outages, told hop by hop">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="#111014">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Museum of Failed Routes","alternateName":"Failrouter","url":"https://failrouter.com/","publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"Museum of Failed Routes: famous outages, hop by hop","description":"Famous outages and engineering failures, from the 2021 Facebook outage to CrowdStrike's Channel File 291, each told hop by hop from its public postmortem.","url":"https://failrouter.com/","isPartOf":{"@type":"WebSite","url":"https://failrouter.com/"},"mainEntity":{"@type":"ItemList","numberOfItems":12,"itemListElement":[{"@type":"ListItem","position":1,"url":"https://failrouter.com/exhibits/facebook-2021/","name":"The Day Facebook Left the Internet"},{"@type":"ListItem","position":2,"url":"https://failrouter.com/exhibits/youtube-pakistan-2008/","name":"YouTube, Briefly Owned by Pakistan Telecom"},{"@type":"ListItem","position":3,"url":"https://failrouter.com/exhibits/crowdstrike-2024/","name":"Channel File 291"},{"@type":"ListItem","position":4,"url":"https://failrouter.com/exhibits/cloudflare-regex-2019/","name":"One Regular Expression"},{"@type":"ListItem","position":5,"url":"https://failrouter.com/exhibits/fastly-2021/","name":"One Customer, One Setting"},{"@type":"ListItem","position":6,"url":"https://failrouter.com/exhibits/s3-2017/","name":"The Typo That Took Down S3"},{"@type":"ListItem","position":7,"url":"https://failrouter.com/exhibits/gitlab-2017/","name":"rm -rf, Wrong Terminal"},{"@type":"ListItem","position":8,"url":"https://failrouter.com/exhibits/knight-2012/","name":"45 Minutes, $440 Million"},{"@type":"ListItem","position":9,"url":"https://failrouter.com/exhibits/ariane-501/","name":"37 Seconds of Ariane 5"},{"@type":"ListItem","position":10,"url":"https://failrouter.com/exhibits/mars-climate-orbiter/","name":"Pounds, Meet Newtons"},{"@type":"ListItem","position":11,"url":"https://failrouter.com/exhibits/leap-second-2012/","name":"The Extra Second"},{"@type":"ListItem","position":12,"url":"https://failrouter.com/exhibits/lets-encrypt-root-2021/","name":"The Root That Expired"}]}}</script>
 </head>
 <body>
   <header class="entrance">
     <pre class="trace" id="trace" aria-label="A traceroute that ends at the museum">$ traceroute failrouter.com</pre>
     <h1>Museum of <span>Failed Routes</span></h1>
     <p class="tagline">Every outage starts as a small change that took an unexpected route. These are the famous ones, hop by hop.</p>
-    <nav class="rooms" id="rooms" aria-label="Rooms"></nav>
+    <nav class="rooms" id="rooms" aria-label="Rooms"><button type="button" data-room="all" aria-pressed="true">All rooms <span>12</span></button><button type="button" data-room="routing" aria-pressed="false">Hall of Lost Packets <span>2</span></button><button type="button" data-room="config" aria-pressed="false">Wing of the Global Push <span>3</span></button><button type="button" data-room="human" aria-pressed="false">The Enter Key Gallery <span>3</span></button><button type="button" data-room="numbers" aria-pressed="false">Cabinet of Wrong Numbers <span>2</span></button><button type="button" data-room="time" aria-pressed="false">Clock Room <span>2</span></button></nav>
     <button class="wrong-turn" id="wrong-turn" type="button">Take a wrong turn</button>
   </header>
 
-  <main id="gallery" class="gallery" aria-live="polite"></main>
+  <main id="gallery" class="gallery" aria-live="polite">
+  <article class="exhibit" id="facebook-2021" tabindex="-1" style="--i:0">
+    <p class="plaque-no">No. 001 · Hall of Lost Packets</p>
+    <h2><a href="/exhibits/facebook-2021/">The Day Facebook Left the Internet</a></h2>
+    <p class="meta"><time datetime="2021-10-04">2021-10-04</time> · about 6 hours</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>Routine maintenance command meant to assess backbone capacity</li><li class=""><span class="hop"> 2</span>Command takes down every backbone connection between data centers</li><li class=""><span class="hop"> 3</span>DNS servers see the backbone is gone and withdraw their BGP routes</li><li class=""><span class="hop"> 4</span>facebook.com, Instagram and WhatsApp stop resolving worldwide</li><li class="fail"><span class="hop"> 5</span>Engineers need physical access to reset routers; internal tools are down too <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">If your recovery tools live behind the thing that broke, you don&#39;t have recovery tools.</p>
+    <p class="source">Source: Facebook Engineering blog, October 2021</p>
+  </article>
+  <article class="exhibit" id="youtube-pakistan-2008" tabindex="-1" style="--i:1">
+    <p class="plaque-no">No. 002 · Hall of Lost Packets</p>
+    <h2><a href="/exhibits/youtube-pakistan-2008/">YouTube, Briefly Owned by Pakistan Telecom</a></h2>
+    <p class="meta"><time datetime="2008-02-24">2008-02-24</time> · about 2 hours</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>Pakistan Telecom is ordered to block YouTube domestically</li><li class=""><span class="hop"> 2</span>It announces a more specific route for YouTube&#39;s address block to do so</li><li class=""><span class="hop"> 3</span>Its upstream provider passes the announcement on to the rest of the internet</li><li class=""><span class="hop"> 4</span>Routers everywhere prefer the more specific route</li><li class="fail"><span class="hop"> 5</span>Most of the world&#39;s YouTube traffic heads into Pakistan and disappears <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">BGP believes what it is told. Filter what your customers announce.</p>
+    <p class="source">Source: RIPE NCC case study, 2008</p>
+  </article>
+  <article class="exhibit" id="crowdstrike-2024" tabindex="-1" style="--i:2">
+    <p class="plaque-no">No. 003 · Wing of the Global Push</p>
+    <h2><a href="/exhibits/crowdstrike-2024/">Channel File 291</a></h2>
+    <p class="meta"><time datetime="2024-07-19">2024-07-19</time> · hours to fix, days to weeks to clean up</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>Security vendor ships a routine content update to its Windows sensor</li><li class=""><span class="hop"> 2</span>Update defines more input fields than the sensor code expects</li><li class=""><span class="hop"> 3</span>Kernel driver reads out of bounds and crashes</li><li class=""><span class="hop"> 4</span>About 8.5 million Windows machines boot-loop on a blue screen</li><li class="fail"><span class="hop"> 5</span>Airlines, hospitals and banks fix machines one by one, by hand <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">Content updates are code updates. Stage them like code.</p>
+    <p class="source">Source: CrowdStrike root cause analysis, August 2024</p>
+  </article>
+  <article class="exhibit" id="cloudflare-regex-2019" tabindex="-1" style="--i:3">
+    <p class="plaque-no">No. 004 · Wing of the Global Push</p>
+    <h2><a href="/exhibits/cloudflare-regex-2019/">One Regular Expression</a></h2>
+    <p class="meta"><time datetime="2019-07-02">2019-07-02</time> · 27 minutes</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>New managed WAF rule is deployed globally at once</li><li class=""><span class="hop"> 2</span>Its regular expression backtracks catastrophically on ordinary traffic</li><li class=""><span class="hop"> 3</span>CPU on every edge machine hits 100%</li><li class=""><span class="hop"> 4</span>Sites behind the network return 502s worldwide</li><li class="fail"><span class="hop"> 5</span>Global kill switch for the WAF rules restores traffic <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">The fastest deploy pipeline is also the fastest outage pipeline.</p>
+    <p class="source">Source: Cloudflare blog, July 2019</p>
+  </article>
+  <article class="exhibit" id="fastly-2021" tabindex="-1" style="--i:4">
+    <p class="plaque-no">No. 005 · Wing of the Global Push</p>
+    <h2><a href="/exhibits/fastly-2021/">One Customer, One Setting</a></h2>
+    <p class="meta"><time datetime="2021-06-08">2021-06-08</time> · under an hour</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>A software change deployed weeks earlier carries a latent bug</li><li class=""><span class="hop"> 2</span>One customer pushes a valid configuration change</li><li class=""><span class="hop"> 3</span>The change triggers the bug across the edge network</li><li class=""><span class="hop"> 4</span>Most of the network starts returning errors; major news sites go blank</li><li class="fail"><span class="hop"> 5</span>Engineers find the config, disable it, and traffic recovers <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">A bug can wait patiently for the one input that wakes it.</p>
+    <p class="source">Source: Fastly blog, June 2021</p>
+  </article>
+  <article class="exhibit" id="s3-2017" tabindex="-1" style="--i:5">
+    <p class="plaque-no">No. 006 · The Enter Key Gallery</p>
+    <h2><a href="/exhibits/s3-2017/">The Typo That Took Down S3</a></h2>
+    <p class="meta"><time datetime="2017-02-28">2017-02-28</time> · about 4 hours</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>Engineer debugging a slow billing system runs an approved playbook command</li><li class=""><span class="hop"> 2</span>One input is mistyped; far more servers are removed than intended</li><li class=""><span class="hop"> 3</span>Two S3 subsystems in us-east-1 need a full restart</li><li class=""><span class="hop"> 4</span>They haven&#39;t been fully restarted in years; it takes hours</li><li class="fail"><span class="hop"> 5</span>A large part of the web goes down, including AWS&#39;s own status dashboard <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">Tools should refuse to remove too much capacity too fast, however it&#39;s typed.</p>
+    <p class="source">Source: AWS service disruption summary, March 2017</p>
+  </article>
+  <article class="exhibit" id="gitlab-2017" tabindex="-1" style="--i:6">
+    <p class="plaque-no">No. 007 · The Enter Key Gallery</p>
+    <h2><a href="/exhibits/gitlab-2017/">rm -rf, Wrong Terminal</a></h2>
+    <p class="meta"><time datetime="2017-01-31">2017-01-31</time> · about 18 hours; roughly 6 hours of data lost</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>Late-night fight with database replication lag</li><li class=""><span class="hop"> 2</span>Engineer deletes a data directory to reseed a replica</li><li class=""><span class="hop"> 3</span>The shell was on the primary, not the replica</li><li class=""><span class="hop"> 4</span>The backup methods turn out to be broken or empty</li><li class="fail"><span class="hop"> 5</span>Restore from a staging snapshot, livestreamed to the public <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">A backup you have never restored is a hope, not a backup.</p>
+    <p class="source">Source: GitLab postmortem, February 2017</p>
+  </article>
+  <article class="exhibit" id="knight-2012" tabindex="-1" style="--i:7">
+    <p class="plaque-no">No. 008 · The Enter Key Gallery</p>
+    <h2><a href="/exhibits/knight-2012/">45 Minutes, $440 Million</a></h2>
+    <p class="meta"><time datetime="2012-08-01">2012-08-01</time> · 45 minutes</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>New trading code reuses a flag that once enabled retired logic</li><li class=""><span class="hop"> 2</span>Deployment misses one of eight servers</li><li class=""><span class="hop"> 3</span>Market opens; that server runs the dead code</li><li class=""><span class="hop"> 4</span>It fires millions of unintended orders</li><li class="fail"><span class="hop"> 5</span>The firm loses about $440 million and needs a rescue <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">Delete dead code. Verify every deploy target. Never recycle a flag.</p>
+    <p class="source">Source: SEC order, October 2013</p>
+  </article>
+  <article class="exhibit" id="ariane-501" tabindex="-1" style="--i:8">
+    <p class="plaque-no">No. 009 · Cabinet of Wrong Numbers</p>
+    <h2><a href="/exhibits/ariane-501/">37 Seconds of Ariane 5</a></h2>
+    <p class="meta"><time datetime="1996-06-04">1996-06-04</time> · 37 seconds</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>Guidance software reused from Ariane 4</li><li class=""><span class="hop"> 2</span>Ariane 5 flies faster; a horizontal velocity value grows larger</li><li class=""><span class="hop"> 3</span>Converting a 64-bit float to a 16-bit integer overflows</li><li class=""><span class="hop"> 4</span>Both inertial reference units fail the same way</li><li class="fail"><span class="hop"> 5</span>The rocket veers off course and self-destructs <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">Reused code carries the assumptions of the system it was written for.</p>
+    <p class="source">Source: Ariane 501 Inquiry Board report, July 1996</p>
+  </article>
+  <article class="exhibit" id="mars-climate-orbiter" tabindex="-1" style="--i:9">
+    <p class="plaque-no">No. 010 · Cabinet of Wrong Numbers</p>
+    <h2><a href="/exhibits/mars-climate-orbiter/">Pounds, Meet Newtons</a></h2>
+    <p class="meta"><time datetime="1999-09-23">1999-09-23</time> · a 10-month trip, lost on arrival</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>Ground software reports thruster impulse in pound-force seconds</li><li class=""><span class="hop"> 2</span>Navigation software expects newton-seconds</li><li class=""><span class="hop"> 3</span>Every small trajectory correction is off by a factor of about 4.45</li><li class=""><span class="hop"> 4</span>Orbiter arrives far too low over Mars</li><li class="fail"><span class="hop"> 5</span>It is lost in the atmosphere <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">Units belong in the interface contract, not in someone&#39;s head.</p>
+    <p class="source">Source: NASA Mishap Investigation Board, November 1999</p>
+  </article>
+  <article class="exhibit" id="leap-second-2012" tabindex="-1" style="--i:10">
+    <p class="plaque-no">No. 011 · Clock Room</p>
+    <h2><a href="/exhibits/leap-second-2012/">The Extra Second</a></h2>
+    <p class="meta"><time datetime="2012-06-30">2012-06-30</time> · hours, depending on who you were</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>A leap second is inserted at 23:59:60 UTC</li><li class=""><span class="hop"> 2</span>A Linux kernel timer bug makes some processes spin</li><li class=""><span class="hop"> 3</span>Java and MySQL servers pin their CPUs</li><li class=""><span class="hop"> 4</span>Reddit, Mozilla and others slow down or fall over</li><li class="fail"><span class="hop"> 5</span>Fix: set the clock again, or reboot <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">Time is an input. Test the weird ones.</p>
+    <p class="source">Source: Public postmortems and kernel mailing list, July 2012</p>
+  </article>
+  <article class="exhibit" id="lets-encrypt-root-2021" tabindex="-1" style="--i:11">
+    <p class="plaque-no">No. 012 · Clock Room</p>
+    <h2><a href="/exhibits/lets-encrypt-root-2021/">The Root That Expired</a></h2>
+    <p class="meta"><time datetime="2021-09-30">2021-09-30</time> · a long tail on old devices</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>An old root certificate reaches its long-announced expiry date</li><li class=""><span class="hop"> 2</span>Modern systems use the newer root and don&#39;t notice</li><li class=""><span class="hop"> 3</span>Old phones, old OpenSSL and embedded devices still trust only the old one</li><li class=""><span class="hop"> 4</span>TLS handshakes start failing on those clients</li><li class="fail"><span class="hop"> 5</span>Fixes range from config changes to buying new hardware <b class="x" aria-label="failed">✕</b></li></ol>
+    <p class="lesson">An expiry date years away is still a date. Put it in a calendar.</p>
+    <p class="source">Source: Let&#39;s Encrypt announcements, 2020 to 2021</p>
+  </article>
+  </main>
 
   <footer>
     <p>Admission free. Exits clearly marked, unlike most of these systems.</p>
     <p class="small">Summaries are condensed from public postmortems and investigation reports. Keys: <kbd>j</kbd>/<kbd>k</kbd> to walk, <kbd>r</kbd> for a wrong turn.</p>
+    <p class="small"><a href="https://github.com/FailRouter/failrouter">Source on GitHub</a> · <a href="https://github.com/FailRouter/failrouter/issues/new?title=Exhibit%20suggestion%3A%20">Suggest an exhibit</a> · MIT licensed</p>
   </footer>
 
   <script type="module" src="/app.js"></script>

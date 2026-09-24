@@ -69,7 +69,18 @@ describe("exhibit cards", () => {
     assert.match(html, /three <b class="x" aria-label="failed">✕<\/b><\/li><\/ol>/);
     assert.match(html, /No\. 007 · Room A/);
     assert.match(html, /id="x1"/);
-    assert.match(html, /href="#x1"/);
+    assert.match(html, /<h2><a href="\/exhibits\/x1\/">T x1<\/a><\/h2>/);
+    assert.match(html, /class="exhibit"/);
+  });
+  test("page mode renders a lit card with an h1 and no self-link", () => {
+    const html = M.exhibitHtml(ex("x1", "a"), { no: 1, i: 0, rooms: ROOMS2, page: true });
+    assert.match(html, /class="exhibit lit"/);
+    assert.match(html, /<h1>T x1<\/h1>/);
+    assert.ok(!html.includes("<h2"));
+    assert.ok(!html.includes('href="/exhibits/x1/"'));
+  });
+  test("exhibitPath is the trailing-slash directory URL", () => {
+    assert.equal(M.exhibitPath("abc"), "/exhibits/abc/");
   });
   test("user-visible fields are escaped", () => {
     const html = M.exhibitHtml(ex("x9", "b", { title: "<script>", hops: ["a", "b", "<c>"] }), {
