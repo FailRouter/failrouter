@@ -1,0 +1,22 @@
+{
+  "name": "failrouter",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "description": "Museum of Failed Routes: famous outages, told hop by hop.",
+  "packageManager": "pnpm@11.5.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "test": "node --test \"test/*.test.js\"",
+    "coverage": "node --test --experimental-test-coverage --test-coverage-include=\"public/**/*.js\" --test-coverage-exclude=\"public/app.js\" --test-coverage-lines=90 --test-coverage-branches=90 --test-coverage-functions=90 \"test/*.test.js\"",
+    "check": "pnpm coverage && wrangler deploy --dry-run",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.30.0"
+  }
+}

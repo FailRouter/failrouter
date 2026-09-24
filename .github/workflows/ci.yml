@@ -1,0 +1,56 @@
+name: CI / Deploy
+
+# PRs: test + coverage gate + deploy dry-run.
+# Push to main (= merged PR): same checks, then deploy to production.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Unit tests + coverage gate (lines / branches / functions >= 90%)
+        run: pnpm coverage
+      - name: Wrangler config check
+        run: pnpm exec wrangler deploy --dry-run
+
+  deploy:
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Deploy
+        run: pnpm exec wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Smoke test
+        run: |
+          for h in failrouter.com www.failrouter.com; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -A 'Mozilla/5.0 (failrouter-ci)' "https://$h/")
+            echo "$h -> $code"; test "$code" = 200
+          done

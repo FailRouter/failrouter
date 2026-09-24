@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Failrouter — Museum of Failed Routes</title>
+  <meta name="description" content="A small museum of famous outages and engineering failures, each told as the route it took from one small change to a very bad day.">
+  <link rel="canonical" href="https://failrouter.com/">
+  <meta property="og:title" content="Failrouter — Museum of Failed Routes">
+  <meta property="og:description" content="Famous outages, told as the route they took.">
+  <meta property="og:url" content="https://failrouter.com/">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#111014">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="entrance">
+    <pre class="trace" id="trace" aria-label="A traceroute that ends at the museum">$ traceroute failrouter.com</pre>
+    <h1>Museum of <span>Failed Routes</span></h1>
+    <p class="tagline">Every outage starts as a small change that took an unexpected route. These are the famous ones, hop by hop.</p>
+    <nav class="rooms" id="rooms" aria-label="Rooms"></nav>
+    <button class="wrong-turn" id="wrong-turn" type="button">Take a wrong turn</button>
+  </header>
+
+  <main id="gallery" class="gallery" aria-live="polite"></main>
+
+  <footer>
+    <p>Admission free. Exits clearly marked, unlike most of these systems.</p>
+    <p class="small">Summaries are condensed from public postmortems and investigation reports. Keys: <kbd>j</kbd>/<kbd>k</kbd> to walk, <kbd>r</kbd> for a wrong turn.</p>
+  </footer>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
