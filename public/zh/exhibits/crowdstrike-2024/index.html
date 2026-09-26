@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CrowdStrike 蓝屏事件（2024 年 7 月）：Channel File 291</title>
+  <title>CrowdStrike 蓝屏事件（2024 年 7 月），逐跳复盘</title>
   <meta name="description" content="CrowdStrike 蓝屏事件（2024 年 7 月）。安全厂商给 Windows 传感器推送了一次例行内容更新；4 跳之后，航空公司、医院和银行只能一台一台手动修。内容更新也是代码…">
   <link rel="canonical" href="https://failrouter.com/zh/exhibits/crowdstrike-2024/">
   <link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/crowdstrike-2024/">
   <link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/crowdstrike-2024/">
   <link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/crowdstrike-2024/">
   <meta property="og:site_name" content="Failrouter">
-  <meta property="og:title" content="CrowdStrike 蓝屏事件（2024 年 7 月）：Channel File 291">
+  <meta property="og:title" content="CrowdStrike 蓝屏事件（2024 年 7 月），逐跳复盘">
   <meta property="og:description" content="CrowdStrike 蓝屏事件（2024 年 7 月）。安全厂商给 Windows 传感器推送了一次例行内容更新；4 跳之后，航空公司、医院和银行只能一台一台手动修。内容更新也是代码…">
   <meta property="og:url" content="https://failrouter.com/zh/exhibits/crowdstrike-2024/">
   <meta property="og:type" content="article">
@@ -25,8 +25,8 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/style.css">
   <script>document.documentElement.classList.add("js")</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Channel File 291","alternativeHeadline":"CrowdStrike 蓝屏事件（2024 年 7 月）","description":"CrowdStrike 蓝屏事件（2024 年 7 月）。安全厂商给 Windows 传感器推送了一次例行内容更新；4 跳之后，航空公司、医院和银行只能一台一台手动修。内容更新也是代码…","url":"https://failrouter.com/zh/exhibits/crowdstrike-2024/","mainEntityOfPage":"https://failrouter.com/zh/exhibits/crowdstrike-2024/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-24","articleSection":"全局推送翼","about":{"@type":"Event","name":"CrowdStrike 蓝屏事件（2024 年 7 月）","startDate":"2024-07-19"},"citation":"CrowdStrike root cause analysis, August 2024","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"Channel File 291","item":"https://failrouter.com/zh/exhibits/crowdstrike-2024/"}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"一次内容更新，850 万台 Windows 蓝屏","alternativeHeadline":"CrowdStrike 蓝屏事件（2024 年 7 月）","description":"CrowdStrike 蓝屏事件（2024 年 7 月）。安全厂商给 Windows 传感器推送了一次例行内容更新；4 跳之后，航空公司、医院和银行只能一台一台手动修。内容更新也是代码…","url":"https://failrouter.com/zh/exhibits/crowdstrike-2024/","mainEntityOfPage":"https://failrouter.com/zh/exhibits/crowdstrike-2024/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-24","articleSection":"全局推送翼","about":{"@type":"Event","name":"CrowdStrike 蓝屏事件（2024 年 7 月）","startDate":"2024-07-19"},"citation":"CrowdStrike root cause analysis, August 2024","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"一次内容更新，850 万台 Windows 蓝屏","item":"https://failrouter.com/zh/exhibits/crowdstrike-2024/"}]}</script>
 </head>
 <body class="exhibit-page">
   <p class="lang-bar"><a class="lang-switch" id="lang-switch" href="/exhibits/crowdstrike-2024/" hreflang="en" lang="en">English</a></p>
@@ -35,7 +35,7 @@
   <main class="gallery single">
   <article class="exhibit lit" id="crowdstrike-2024" tabindex="-1" style="--i:0">
     <p class="plaque-no">展品 003 · 全局推送翼</p>
-    <h1>Channel File 291</h1>
+    <h1>一次内容更新，850 万台 Windows 蓝屏</h1>
     <p class="meta"><time datetime="2024-07-19">2024-07-19</time> · 修复用了几小时，清理用了几天到几周</p>
     <ol class="route"><li class=""><span class="hop"> 1</span>安全厂商给 Windows 传感器推送了一次例行内容更新</li><li class=""><span class="hop"> 2</span>更新定义的输入字段比传感器代码预期的多</li><li class=""><span class="hop"> 3</span>内核驱动越界读取，随即崩溃</li><li class=""><span class="hop"> 4</span>约 850 万台 Windows 电脑蓝屏，反复重启</li><li class="fail"><span class="hop"> 5</span>航空公司、医院和银行只能一台一台手动修 <b class="x" aria-label="失败">✕</b></li></ol>
     <p class="lesson">内容更新也是代码更新，要像代码一样分阶段发布。</p>
@@ -43,9 +43,9 @@
   </article>
     <p class="about-event">CrowdStrike 蓝屏事件（2024 年 7 月）。持续时间：修复用了几小时，清理用了几天到几周。从第一个改动到故障，共 5 跳。</p>
     <nav class="walk" aria-label="更多展品">
-      <a class="walk-prev" rel="prev" href="/zh/exhibits/youtube-pakistan-2008/">← YouTube 短暂归了巴基斯坦电信</a>
+      <a class="walk-prev" rel="prev" href="/zh/exhibits/youtube-pakistan-2008/">← 一条 BGP 路由，把 YouTube 引向了巴基斯坦</a>
       <a class="walk-hall" href="/zh/#crowdstrike-2024">回到主展厅</a>
-      <a class="walk-next" rel="next" href="/zh/exhibits/cloudflare-regex-2019/">→ 一条正则表达式</a>
+      <a class="walk-next" rel="next" href="/zh/exhibits/cloudflare-regex-2019/">→ 一条正则拖垮全球边缘节点</a>
     </nav>
   </main>
 

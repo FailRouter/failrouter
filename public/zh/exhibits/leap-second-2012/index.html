@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>闰秒 bug（2012 年 6 月）：多出来的一秒</title>
+  <title>闰秒 bug（2012 年 6 月）：闰秒，服务器 CPU 占满</title>
   <meta name="description" content="闰秒 bug（2012 年 6 月）。UTC 23:59:60 插入了一个闰秒；4 跳之后，修复办法：重新设置一次时钟，或者重启。时间也是输入。怪的那些时刻要测。">
   <link rel="canonical" href="https://failrouter.com/zh/exhibits/leap-second-2012/">
   <link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/leap-second-2012/">
   <link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/leap-second-2012/">
   <link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/leap-second-2012/">
   <meta property="og:site_name" content="Failrouter">
-  <meta property="og:title" content="闰秒 bug（2012 年 6 月）：多出来的一秒">
+  <meta property="og:title" content="闰秒 bug（2012 年 6 月）：闰秒，服务器 CPU 占满">
   <meta property="og:description" content="闰秒 bug（2012 年 6 月）。UTC 23:59:60 插入了一个闰秒；4 跳之后，修复办法：重新设置一次时钟，或者重启。时间也是输入。怪的那些时刻要测。">
   <meta property="og:url" content="https://failrouter.com/zh/exhibits/leap-second-2012/">
   <meta property="og:type" content="article">
@@ -25,8 +25,8 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/style.css">
   <script>document.documentElement.classList.add("js")</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"多出来的一秒","alternativeHeadline":"闰秒 bug（2012 年 6 月）","description":"闰秒 bug（2012 年 6 月）。UTC 23:59:60 插入了一个闰秒；4 跳之后，修复办法：重新设置一次时钟，或者重启。时间也是输入。怪的那些时刻要测。","url":"https://failrouter.com/zh/exhibits/leap-second-2012/","mainEntityOfPage":"https://failrouter.com/zh/exhibits/leap-second-2012/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-24","articleSection":"钟表室","about":{"@type":"Event","name":"闰秒 bug（2012 年 6 月）","startDate":"2012-06-30"},"citation":"Public postmortems and kernel mailing list, July 2012","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"多出来的一秒","item":"https://failrouter.com/zh/exhibits/leap-second-2012/"}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"闰秒，服务器 CPU 占满","alternativeHeadline":"闰秒 bug（2012 年 6 月）","description":"闰秒 bug（2012 年 6 月）。UTC 23:59:60 插入了一个闰秒；4 跳之后，修复办法：重新设置一次时钟，或者重启。时间也是输入。怪的那些时刻要测。","url":"https://failrouter.com/zh/exhibits/leap-second-2012/","mainEntityOfPage":"https://failrouter.com/zh/exhibits/leap-second-2012/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-24","articleSection":"钟表室","about":{"@type":"Event","name":"闰秒 bug（2012 年 6 月）","startDate":"2012-06-30"},"citation":"Public postmortems and kernel mailing list, July 2012","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"闰秒，服务器 CPU 占满","item":"https://failrouter.com/zh/exhibits/leap-second-2012/"}]}</script>
 </head>
 <body class="exhibit-page">
   <p class="lang-bar"><a class="lang-switch" id="lang-switch" href="/exhibits/leap-second-2012/" hreflang="en" lang="en">English</a></p>
@@ -35,7 +35,7 @@
   <main class="gallery single">
   <article class="exhibit lit" id="leap-second-2012" tabindex="-1" style="--i:0">
     <p class="plaque-no">展品 011 · 钟表室</p>
-    <h1>多出来的一秒</h1>
+    <h1>闰秒，服务器 CPU 占满</h1>
     <p class="meta"><time datetime="2012-06-30">2012-06-30</time> · 几小时，看你当时在哪家</p>
     <ol class="route"><li class=""><span class="hop"> 1</span>UTC 23:59:60 插入了一个闰秒</li><li class=""><span class="hop"> 2</span>一个 Linux 内核计时器 bug 让部分进程空转</li><li class=""><span class="hop"> 3</span>Java 和 MySQL 服务器的 CPU 被占满</li><li class=""><span class="hop"> 4</span>Reddit、Mozilla 等网站变慢或宕机</li><li class="fail"><span class="hop"> 5</span>修复办法：重新设置一次时钟，或者重启 <b class="x" aria-label="失败">✕</b></li></ol>
     <p class="lesson">时间也是输入。怪的那些时刻要测。</p>
@@ -43,9 +43,9 @@
   </article>
     <p class="about-event">闰秒 bug（2012 年 6 月）。持续时间：几小时，看你当时在哪家。从第一个改动到故障，共 5 跳。</p>
     <nav class="walk" aria-label="更多展品">
-      <a class="walk-prev" rel="prev" href="/zh/exhibits/mars-climate-orbiter/">← 磅力遇上牛顿</a>
+      <a class="walk-prev" rel="prev" href="/zh/exhibits/mars-climate-orbiter/">← 英制对公制：丢失的火星探测器</a>
       <a class="walk-hall" href="/zh/#leap-second-2012">回到主展厅</a>
-      <a class="walk-next" rel="next" href="/zh/exhibits/lets-encrypt-root-2021/">→ 过期的根证书</a>
+      <a class="walk-next" rel="next" href="/zh/exhibits/lets-encrypt-root-2021/">→ 根证书一过期，旧设备连不上 HTTPS</a>
     </nav>
   </main>
 

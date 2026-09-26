@@ -45,7 +45,7 @@ export const EXHIBITS = [
     source: "Facebook Engineering blog, October 2021",
     zh: {
       subject: "Facebook 全球宕机（2021 年 10 月）",
-      title: "Facebook 从互联网上消失的那天",
+      title: "Facebook 从互联网上消失的 6 小时",
       duration: "约 6 小时",
       hops: [
         "一条例行维护命令，本意是评估骨干网容量",
@@ -76,7 +76,7 @@ export const EXHIBITS = [
     source: "RIPE NCC case study, 2008",
     zh: {
       subject: "YouTube BGP 劫持事件（2008 年 2 月）",
-      title: "YouTube 短暂归了巴基斯坦电信",
+      title: "一条 BGP 路由，把 YouTube 引向了巴基斯坦",
       duration: "约 2 小时",
       hops: [
         "巴基斯坦电信接到命令，要在国内屏蔽 YouTube",
@@ -107,7 +107,7 @@ export const EXHIBITS = [
     source: "CrowdStrike root cause analysis, August 2024",
     zh: {
       subject: "CrowdStrike 蓝屏事件（2024 年 7 月）",
-      title: "Channel File 291",
+      title: "一次内容更新，850 万台 Windows 蓝屏",
       duration: "修复用了几小时，清理用了几天到几周",
       hops: [
         "安全厂商给 Windows 传感器推送了一次例行内容更新",
@@ -138,7 +138,7 @@ export const EXHIBITS = [
     source: "Cloudflare blog, July 2019",
     zh: {
       subject: "Cloudflare 正则表达式宕机（2019 年 7 月）",
-      title: "一条正则表达式",
+      title: "一条正则拖垮全球边缘节点",
       duration: "27 分钟",
       hops: [
         "一条新的托管 WAF 规则一次性部署到全球",
@@ -169,7 +169,7 @@ export const EXHIBITS = [
     source: "Fastly blog, June 2021",
     zh: {
       subject: "Fastly 宕机事件（2021 年 6 月）",
-      title: "一个客户，一项设置",
+      title: "一次客户配置，唤醒了潜伏几周的 bug",
       duration: "不到 1 小时",
       hops: [
         "几周前部署的一次软件变更带着一个潜伏的 bug",
@@ -200,7 +200,7 @@ export const EXHIBITS = [
     source: "AWS service disruption summary, March 2017",
     zh: {
       subject: "AWS S3 宕机事件（2017 年 2 月）",
-      title: "一次输错让 S3 停摆",
+      title: "一条命令输错，S3 停摆约 4 小时",
       duration: "约 4 小时",
       hops: [
         "工程师排查一个变慢的计费系统，执行一条已审批的操作手册命令",
@@ -231,7 +231,7 @@ export const EXHIBITS = [
     source: "GitLab postmortem, February 2017",
     zh: {
       subject: "GitLab 数据库误删事故（2017 年 1 月）",
-      title: "rm -rf，开错了终端",
+      title: "rm -rf 敲在了主库上",
       duration: "约 18 小时，丢了大约 6 小时的数据",
       hops: [
         "深夜，和数据库复制延迟缠斗",
@@ -262,7 +262,7 @@ export const EXHIBITS = [
     source: "SEC order, October 2013",
     zh: {
       subject: "骑士资本交易事故（2012 年 8 月）",
-      title: "45 分钟，4.4 亿美元",
+      title: "45 分钟亏掉 4.4 亿美元",
       duration: "45 分钟",
       hops: [
         "新交易代码复用了一个标志位，它曾用来启用已退役的逻辑",
@@ -293,7 +293,7 @@ export const EXHIBITS = [
     source: "Ariane 501 Inquiry Board report, July 1996",
     zh: {
       subject: "阿丽亚娜 5 号火箭首飞失败（1996 年）",
-      title: "阿丽亚娜 5 号的 37 秒",
+      title: "整数溢出，火箭 37 秒后自毁",
       duration: "37 秒",
       hops: [
         "制导软件沿用自阿丽亚娜 4 号",
@@ -324,7 +324,7 @@ export const EXHIBITS = [
     source: "NASA Mishap Investigation Board, November 1999",
     zh: {
       subject: "火星气候探测者号失联（1999 年）",
-      title: "磅力遇上牛顿",
+      title: "英制对公制：丢失的火星探测器",
       duration: "飞了 10 个月，到达时失联",
       hops: [
         "地面软件以磅力·秒为单位报告推进器冲量",
@@ -355,7 +355,7 @@ export const EXHIBITS = [
     source: "Public postmortems and kernel mailing list, July 2012",
     zh: {
       subject: "闰秒 bug（2012 年 6 月）",
-      title: "多出来的一秒",
+      title: "闰秒，服务器 CPU 占满",
       duration: "几小时，看你当时在哪家",
       hops: [
         "UTC 23:59:60 插入了一个闰秒",
@@ -386,7 +386,7 @@ export const EXHIBITS = [
     source: "Let's Encrypt announcements, 2020 to 2021",
     zh: {
       subject: "Let's Encrypt 根证书过期（2021 年 9 月）",
-      title: "过期的根证书",
+      title: "根证书一过期，旧设备连不上 HTTPS",
       duration: "旧设备上拖了很久",
       hops: [
         "一张旧根证书到了早已公告的过期日",

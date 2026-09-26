@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>阿丽亚娜 5 号火箭首飞失败（1996 年）：阿丽亚娜 5 号的 37 秒</title>
+  <title>阿丽亚娜 5 号火箭首飞失败（1996 年），逐跳复盘</title>
   <meta name="description" content="阿丽亚娜 5 号火箭首飞失败（1996 年）。制导软件沿用自阿丽亚娜 4 号；4 跳之后，火箭偏离航线并自毁。复用的代码，带着它原本那套系统的假设。">
   <link rel="canonical" href="https://failrouter.com/zh/exhibits/ariane-501/">
   <link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/ariane-501/">
   <link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/ariane-501/">
   <link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/ariane-501/">
   <meta property="og:site_name" content="Failrouter">
-  <meta property="og:title" content="阿丽亚娜 5 号火箭首飞失败（1996 年）：阿丽亚娜 5 号的 37 秒">
+  <meta property="og:title" content="阿丽亚娜 5 号火箭首飞失败（1996 年），逐跳复盘">
   <meta property="og:description" content="阿丽亚娜 5 号火箭首飞失败（1996 年）。制导软件沿用自阿丽亚娜 4 号；4 跳之后，火箭偏离航线并自毁。复用的代码，带着它原本那套系统的假设。">
   <meta property="og:url" content="https://failrouter.com/zh/exhibits/ariane-501/">
   <meta property="og:type" content="article">
@@ -25,8 +25,8 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/style.css">
   <script>document.documentElement.classList.add("js")</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"阿丽亚娜 5 号的 37 秒","alternativeHeadline":"阿丽亚娜 5 号火箭首飞失败（1996 年）","description":"阿丽亚娜 5 号火箭首飞失败（1996 年）。制导软件沿用自阿丽亚娜 4 号；4 跳之后，火箭偏离航线并自毁。复用的代码，带着它原本那套系统的假设。","url":"https://failrouter.com/zh/exhibits/ariane-501/","mainEntityOfPage":"https://failrouter.com/zh/exhibits/ariane-501/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-24","articleSection":"错数陈列柜","about":{"@type":"Event","name":"阿丽亚娜 5 号火箭首飞失败（1996 年）","startDate":"1996-06-04"},"citation":"Ariane 501 Inquiry Board report, July 1996","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"阿丽亚娜 5 号的 37 秒","item":"https://failrouter.com/zh/exhibits/ariane-501/"}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"整数溢出，火箭 37 秒后自毁","alternativeHeadline":"阿丽亚娜 5 号火箭首飞失败（1996 年）","description":"阿丽亚娜 5 号火箭首飞失败（1996 年）。制导软件沿用自阿丽亚娜 4 号；4 跳之后，火箭偏离航线并自毁。复用的代码，带着它原本那套系统的假设。","url":"https://failrouter.com/zh/exhibits/ariane-501/","mainEntityOfPage":"https://failrouter.com/zh/exhibits/ariane-501/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-24","articleSection":"错数陈列柜","about":{"@type":"Event","name":"阿丽亚娜 5 号火箭首飞失败（1996 年）","startDate":"1996-06-04"},"citation":"Ariane 501 Inquiry Board report, July 1996","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"整数溢出，火箭 37 秒后自毁","item":"https://failrouter.com/zh/exhibits/ariane-501/"}]}</script>
 </head>
 <body class="exhibit-page">
   <p class="lang-bar"><a class="lang-switch" id="lang-switch" href="/exhibits/ariane-501/" hreflang="en" lang="en">English</a></p>
@@ -35,7 +35,7 @@
   <main class="gallery single">
   <article class="exhibit lit" id="ariane-501" tabindex="-1" style="--i:0">
     <p class="plaque-no">展品 009 · 错数陈列柜</p>
-    <h1>阿丽亚娜 5 号的 37 秒</h1>
+    <h1>整数溢出，火箭 37 秒后自毁</h1>
     <p class="meta"><time datetime="1996-06-04">1996-06-04</time> · 37 秒</p>
     <ol class="route"><li class=""><span class="hop"> 1</span>制导软件沿用自阿丽亚娜 4 号</li><li class=""><span class="hop"> 2</span>阿丽亚娜 5 号飞得更快，一个水平速度值变得更大</li><li class=""><span class="hop"> 3</span>把 64 位浮点数转换成 16 位整数时溢出</li><li class=""><span class="hop"> 4</span>两套惯性参考系统以同样的方式失效</li><li class="fail"><span class="hop"> 5</span>火箭偏离航线并自毁 <b class="x" aria-label="失败">✕</b></li></ol>
     <p class="lesson">复用的代码，带着它原本那套系统的假设。</p>
@@ -43,9 +43,9 @@
   </article>
     <p class="about-event">阿丽亚娜 5 号火箭首飞失败（1996 年）。持续时间：37 秒。从第一个改动到故障，共 5 跳。</p>
     <nav class="walk" aria-label="更多展品">
-      <a class="walk-prev" rel="prev" href="/zh/exhibits/knight-2012/">← 45 分钟，4.4 亿美元</a>
+      <a class="walk-prev" rel="prev" href="/zh/exhibits/knight-2012/">← 45 分钟亏掉 4.4 亿美元</a>
       <a class="walk-hall" href="/zh/#ariane-501">回到主展厅</a>
-      <a class="walk-next" rel="next" href="/zh/exhibits/mars-climate-orbiter/">→ 磅力遇上牛顿</a>
+      <a class="walk-next" rel="next" href="/zh/exhibits/mars-climate-orbiter/">→ 英制对公制：丢失的火星探测器</a>
     </nav>
   </main>
 

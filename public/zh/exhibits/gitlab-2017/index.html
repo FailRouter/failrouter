@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GitLab 数据库误删事故（2017 年 1 月）：rm -rf，开错了终端</title>
+  <title>GitLab 数据库误删事故（2017 年 1 月）：rm -rf 敲在了主库上</title>
   <meta name="description" content="GitLab 数据库误删事故（2017 年 1 月）。深夜，和数据库复制延迟缠斗；4 跳之后，从预发环境快照恢复，全程公开直播。从没恢复过的备份只是一个愿望，算不上备份。">
   <link rel="canonical" href="https://failrouter.com/zh/exhibits/gitlab-2017/">
   <link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/gitlab-2017/">
   <link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/gitlab-2017/">
   <link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/gitlab-2017/">
   <meta property="og:site_name" content="Failrouter">
-  <meta property="og:title" content="GitLab 数据库误删事故（2017 年 1 月）：rm -rf，开错了终端">
+  <meta property="og:title" content="GitLab 数据库误删事故（2017 年 1 月）：rm -rf 敲在了主库上">
   <meta property="og:description" content="GitLab 数据库误删事故（2017 年 1 月）。深夜，和数据库复制延迟缠斗；4 跳之后，从预发环境快照恢复，全程公开直播。从没恢复过的备份只是一个愿望，算不上备份。">
   <meta property="og:url" content="https://failrouter.com/zh/exhibits/gitlab-2017/">
   <meta property="og:type" content="article">
@@ -25,8 +25,8 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/style.css">
   <script>document.documentElement.classList.add("js")</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"rm -rf，开错了终端","alternativeHeadline":"GitLab 数据库误删事故（2017 年 1 月）","description":"GitLab 数据库误删事故（2017 年 1 月）。深夜，和数据库复制延迟缠斗；4 跳之后，从预发环境快照恢复，全程公开直播。从没恢复过的备份只是一个愿望，算不上备份。","url":"https://failrouter.com/zh/exhibits/gitlab-2017/","mainEntityOfPage":"https://failrouter.com/zh/exhibits/gitlab-2017/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-24","articleSection":"回车键画廊","about":{"@type":"Event","name":"GitLab 数据库误删事故（2017 年 1 月）","startDate":"2017-01-31"},"citation":"GitLab postmortem, February 2017","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"rm -rf，开错了终端","item":"https://failrouter.com/zh/exhibits/gitlab-2017/"}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"rm -rf 敲在了主库上","alternativeHeadline":"GitLab 数据库误删事故（2017 年 1 月）","description":"GitLab 数据库误删事故（2017 年 1 月）。深夜，和数据库复制延迟缠斗；4 跳之后，从预发环境快照恢复，全程公开直播。从没恢复过的备份只是一个愿望，算不上备份。","url":"https://failrouter.com/zh/exhibits/gitlab-2017/","mainEntityOfPage":"https://failrouter.com/zh/exhibits/gitlab-2017/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-24","articleSection":"回车键画廊","about":{"@type":"Event","name":"GitLab 数据库误删事故（2017 年 1 月）","startDate":"2017-01-31"},"citation":"GitLab postmortem, February 2017","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"rm -rf 敲在了主库上","item":"https://failrouter.com/zh/exhibits/gitlab-2017/"}]}</script>
 </head>
 <body class="exhibit-page">
   <p class="lang-bar"><a class="lang-switch" id="lang-switch" href="/exhibits/gitlab-2017/" hreflang="en" lang="en">English</a></p>
@@ -35,7 +35,7 @@
   <main class="gallery single">
   <article class="exhibit lit" id="gitlab-2017" tabindex="-1" style="--i:0">
     <p class="plaque-no">展品 007 · 回车键画廊</p>
-    <h1>rm -rf，开错了终端</h1>
+    <h1>rm -rf 敲在了主库上</h1>
     <p class="meta"><time datetime="2017-01-31">2017-01-31</time> · 约 18 小时，丢了大约 6 小时的数据</p>
     <ol class="route"><li class=""><span class="hop"> 1</span>深夜，和数据库复制延迟缠斗</li><li class=""><span class="hop"> 2</span>工程师删除一个数据目录，准备重新同步副本</li><li class=""><span class="hop"> 3</span>那个 shell 连的是主库，不是副本</li><li class=""><span class="hop"> 4</span>几种备份方式结果都是坏的或空的</li><li class="fail"><span class="hop"> 5</span>从预发环境快照恢复，全程公开直播 <b class="x" aria-label="失败">✕</b></li></ol>
     <p class="lesson">从没恢复过的备份只是一个愿望，算不上备份。</p>
@@ -43,9 +43,9 @@
   </article>
     <p class="about-event">GitLab 数据库误删事故（2017 年 1 月）。持续时间：约 18 小时，丢了大约 6 小时的数据。从第一个改动到故障，共 5 跳。</p>
     <nav class="walk" aria-label="更多展品">
-      <a class="walk-prev" rel="prev" href="/zh/exhibits/s3-2017/">← 一次输错让 S3 停摆</a>
+      <a class="walk-prev" rel="prev" href="/zh/exhibits/s3-2017/">← 一条命令输错，S3 停摆约 4 小时</a>
       <a class="walk-hall" href="/zh/#gitlab-2017">回到主展厅</a>
-      <a class="walk-next" rel="next" href="/zh/exhibits/knight-2012/">→ 45 分钟，4.4 亿美元</a>
+      <a class="walk-next" rel="next" href="/zh/exhibits/knight-2012/">→ 45 分钟亏掉 4.4 亿美元</a>
     </nav>
   </main>
 
