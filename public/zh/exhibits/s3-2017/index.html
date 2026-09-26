@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AWS S3 宕机事件（2017 年 2 月）：原因与经过</title>
+  <meta name="description" content="AWS S3 宕机事件（2017 年 2 月）。工程师排查一个变慢的计费系统，执行一条已审批的操作手册命令；4 跳之后，大片网站宕机，AWS 自己的状态面板也在其中。不管命令…">
+  <link rel="canonical" href="https://failrouter.com/zh/exhibits/s3-2017/">
+  <link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/s3-2017/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/s3-2017/">
+  <link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/s3-2017/">
+  <meta property="og:site_name" content="Failrouter">
+  <meta property="og:title" content="AWS S3 宕机事件（2017 年 2 月）：原因与经过">
+  <meta property="og:description" content="AWS S3 宕机事件（2017 年 2 月）。工程师排查一个变慢的计费系统，执行一条已审批的操作手册命令；4 跳之后，大片网站宕机，AWS 自己的状态面板也在其中。不管命令…">
+  <meta property="og:url" content="https://failrouter.com/zh/exhibits/s3-2017/">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:image" content="https://failrouter.com/og-zh.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="失败路由博物馆：知名宕机事故，逐跳复盘">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#111014">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"一条命令输错，S3 宕机约 4 小时","alternativeHeadline":"AWS S3 宕机事件（2017 年 2 月）","description":"AWS S3 宕机事件（2017 年 2 月）。工程师排查一个变慢的计费系统，执行一条已审批的操作手册命令；4 跳之后，大片网站宕机，AWS 自己的状态面板也在其中。不管命令…","url":"https://failrouter.com/zh/exhibits/s3-2017/","mainEntityOfPage":"https://failrouter.com/zh/exhibits/s3-2017/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-24","articleSection":"回车键画廊","about":{"@type":"Event","name":"AWS S3 宕机事件（2017 年 2 月）","startDate":"2017-02-28"},"citation":"AWS service disruption summary, March 2017","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"一条命令输错，S3 宕机约 4 小时","item":"https://failrouter.com/zh/exhibits/s3-2017/"}]}</script>
+</head>
+<body class="exhibit-page">
+  <p class="lang-bar"><a class="lang-switch" id="lang-switch" href="/exhibits/s3-2017/" hreflang="en" lang="en">English</a></p>
+  <nav class="crumbs" aria-label="面包屑导航"><a href="/zh/">失败路由博物馆</a> <span aria-hidden="true">›</span> 回车键画廊</nav>
+
+  <main class="gallery single">
+  <article class="exhibit lit" id="s3-2017" tabindex="-1" style="--i:0">
+    <p class="plaque-no">展品 006 · 回车键画廊</p>
+    <h1>一条命令输错，S3 宕机约 4 小时</h1>
+    <p class="meta"><time datetime="2017-02-28">2017-02-28</time> · 约 4 小时</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>工程师排查一个变慢的计费系统，执行一条已审批的操作手册命令</li><li class=""><span class="hop"> 2</span>一个参数输错，移除的服务器远多于预期</li><li class=""><span class="hop"> 3</span>us-east-1 的两个 S3 子系统需要完全重启</li><li class=""><span class="hop"> 4</span>它们多年没有完全重启过，花了好几个小时</li><li class="fail"><span class="hop"> 5</span>大片网站宕机，AWS 自己的状态面板也在其中 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">不管命令怎么输，工具都应该拒绝一次移除太多、太快的容量。</p>
+    <p class="source">来源：<span lang="en">AWS service disruption summary, March 2017</span></p>
+  </article>
+    <p class="about-event">AWS S3 宕机事件（2017 年 2 月）。持续时间：约 4 小时。从第一个改动到故障，共 5 跳。</p>
+    <nav class="walk" aria-label="更多展品">
+      <a class="walk-prev" rel="prev" href="/zh/exhibits/fastly-2021/">← 一次客户配置，唤醒了潜伏几周的 bug</a>
+      <a class="walk-hall" href="/zh/#s3-2017">回到主展厅</a>
+      <a class="walk-next" rel="next" href="/zh/exhibits/gitlab-2017/">→ rm -rf 敲在了主库上</a>
+    </nav>
+  </main>
+
+  <footer>
+    <p>免费参观。出口标得很清楚，这点比馆里大多数系统强。</p>
+    <p class="small">展品摘要均据公开的事后复盘报告与调查报告整理。</p>
+    <p class="small"><a href="https://github.com/FailRouter/failrouter">GitHub 源码</a> · <a href="https://github.com/FailRouter/failrouter/issues/new?title=Exhibit%20suggestion%3A%20">推荐展品</a> · MIT 许可</p>
+  </footer>
+</body>
+</html>

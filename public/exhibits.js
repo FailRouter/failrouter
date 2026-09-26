@@ -3,6 +3,8 @@
 // Keep facts to what the public postmortems / investigation reports say.
 // `subject` is the plain search name of the event (used in page titles);
 // `added` is the date the exhibit went up on failrouter.com (sitemap lastmod, JSON-LD).
+// `zh` holds the Simplified Chinese text: same facts, same number of hops, nothing added.
+// English is the source of truth; `source` stays in its original language on both sites.
 
 export const ROOMS = {
   routing: "Hall of Lost Packets",
@@ -11,6 +13,17 @@ export const ROOMS = {
   numbers: "Cabinet of Wrong Numbers",
   time: "Clock Room",
 };
+
+// Simplified Chinese room names; same keys as ROOMS (test/exhibits.test.js).
+export const ROOMS_ZH = {
+  routing: "丢包大厅",
+  config: "全局推送厅",
+  human: "回车键画廊",
+  numbers: "错数陈列柜",
+  time: "钟表室",
+};
+
+export const ROOM_NAMES = { en: ROOMS, zh: ROOMS_ZH };
 
 export const EXHIBITS = [
   {
@@ -30,6 +43,19 @@ export const EXHIBITS = [
     ],
     lesson: "If your recovery tools live behind the thing that broke, you don't have recovery tools.",
     source: "Facebook Engineering blog, October 2021",
+    zh: {
+      subject: "Facebook 全球宕机（2021 年 10 月）",
+      title: "Facebook 从互联网上消失的 6 小时",
+      duration: "约 6 小时",
+      hops: [
+        "一条例行维护命令，本意是评估骨干网容量",
+        "命令断开了各数据中心之间的全部骨干连接",
+        "DNS 服务器发现骨干网没了，撤回了自己的 BGP 路由",
+        "facebook.com、Instagram 和 WhatsApp 在全球范围内无法解析",
+        "工程师要到现场才能重置路由器，内部工具也一起挂了",
+      ],
+      lesson: "恢复工具如果也在出故障的那套系统后面，就等于没有恢复工具。",
+    },
   },
   {
     id: "youtube-pakistan-2008",
@@ -48,6 +74,19 @@ export const EXHIBITS = [
     ],
     lesson: "BGP believes what it is told. Filter what your customers announce.",
     source: "RIPE NCC case study, 2008",
+    zh: {
+      subject: "YouTube BGP 劫持事件（2008 年 2 月）",
+      title: "一条 BGP 路由，把 YouTube 引向了巴基斯坦",
+      duration: "约 2 小时",
+      hops: [
+        "巴基斯坦电信接到命令，要在国内屏蔽 YouTube",
+        "为此它宣告了一条比 YouTube 地址段更具体的路由",
+        "上游运营商把这条宣告转发给了整个互联网",
+        "各地路由器都优先选择更具体的那条路由",
+        "全球大部分 YouTube 流量涌向巴基斯坦，然后消失",
+      ],
+      lesson: "别人宣告什么，BGP 就信什么。客户宣告的路由要过滤。",
+    },
   },
   {
     id: "crowdstrike-2024",
@@ -66,6 +105,19 @@ export const EXHIBITS = [
     ],
     lesson: "Content updates are code updates. Stage them like code.",
     source: "CrowdStrike root cause analysis, August 2024",
+    zh: {
+      subject: "CrowdStrike 蓝屏事件（2024 年 7 月）",
+      title: "一次内容更新，850 万台 Windows 蓝屏",
+      duration: "修复用了几小时，清理用了几天到几周",
+      hops: [
+        "安全厂商给 Windows 传感器推送了一次例行内容更新",
+        "更新定义的输入字段比传感器代码预期的多",
+        "内核驱动越界读取，随即崩溃",
+        "约 850 万台 Windows 电脑蓝屏，反复重启",
+        "航空公司、医院和银行只能一台一台手动修",
+      ],
+      lesson: "内容更新也是代码更新，要像代码一样分阶段发布。",
+    },
   },
   {
     id: "cloudflare-regex-2019",
@@ -84,6 +136,19 @@ export const EXHIBITS = [
     ],
     lesson: "The fastest deploy pipeline is also the fastest outage pipeline.",
     source: "Cloudflare blog, July 2019",
+    zh: {
+      subject: "Cloudflare 正则表达式宕机（2019 年 7 月）",
+      title: "一条正则拖垮全球边缘节点",
+      duration: "27 分钟",
+      hops: [
+        "一条新的托管 WAF 规则一次性部署到全球",
+        "它的正则表达式在普通流量上发生灾难性回溯",
+        "每台边缘机器的 CPU 都打到 100%",
+        "接入这张网络的站点在全球返回 502",
+        "关掉 WAF 规则的全局开关后，流量恢复",
+      ],
+      lesson: "最快的部署流水线，也是最快的宕机流水线。",
+    },
   },
   {
     id: "fastly-2021",
@@ -102,6 +167,19 @@ export const EXHIBITS = [
     ],
     lesson: "A bug can wait patiently for the one input that wakes it.",
     source: "Fastly blog, June 2021",
+    zh: {
+      subject: "Fastly 宕机事件（2021 年 6 月）",
+      title: "一次客户配置，唤醒了潜伏几周的 bug",
+      duration: "不到 1 小时",
+      hops: [
+        "几周前部署的一次软件变更带着一个潜伏的 bug",
+        "一个客户推送了一次合法的配置变更",
+        "这次变更在整个边缘网络上触发了那个 bug",
+        "网络大部分节点开始报错，几家大新闻网站一片空白",
+        "工程师找到这项配置并停用，流量恢复",
+      ],
+      lesson: "bug 可以耐心地等，等那个能唤醒它的输入。",
+    },
   },
   {
     id: "s3-2017",
@@ -120,6 +198,19 @@ export const EXHIBITS = [
     ],
     lesson: "Tools should refuse to remove too much capacity too fast, however it's typed.",
     source: "AWS service disruption summary, March 2017",
+    zh: {
+      subject: "AWS S3 宕机事件（2017 年 2 月）",
+      title: "一条命令输错，S3 宕机约 4 小时",
+      duration: "约 4 小时",
+      hops: [
+        "工程师排查一个变慢的计费系统，执行一条已审批的操作手册命令",
+        "一个参数输错，移除的服务器远多于预期",
+        "us-east-1 的两个 S3 子系统需要完全重启",
+        "它们多年没有完全重启过，花了好几个小时",
+        "大片网站宕机，AWS 自己的状态面板也在其中",
+      ],
+      lesson: "不管命令怎么输，工具都应该拒绝一次移除太多、太快的容量。",
+    },
   },
   {
     id: "gitlab-2017",
@@ -138,6 +229,19 @@ export const EXHIBITS = [
     ],
     lesson: "A backup you have never restored is a hope, not a backup.",
     source: "GitLab postmortem, February 2017",
+    zh: {
+      subject: "GitLab 数据库误删事故（2017 年 1 月）",
+      title: "rm -rf 敲在了主库上",
+      duration: "约 18 小时，丢了大约 6 小时的数据",
+      hops: [
+        "深夜，和数据库复制延迟缠斗",
+        "工程师删除一个数据目录，准备重新同步副本",
+        "那个 shell 连的是主库，不是副本",
+        "几种备份方式结果都是坏的或空的",
+        "从预发环境快照恢复，全程公开直播",
+      ],
+      lesson: "从没恢复过的备份只是一个愿望，算不上备份。",
+    },
   },
   {
     id: "knight-2012",
@@ -156,6 +260,19 @@ export const EXHIBITS = [
     ],
     lesson: "Delete dead code. Verify every deploy target. Never recycle a flag.",
     source: "SEC order, October 2013",
+    zh: {
+      subject: "骑士资本交易事故（2012 年 8 月）",
+      title: "45 分钟亏掉 4.4 亿美元",
+      duration: "45 分钟",
+      hops: [
+        "新交易代码复用了一个标志位，它曾用来启用已退役的逻辑",
+        "部署漏掉了八台服务器中的一台",
+        "开盘后，那台服务器跑起了死代码",
+        "它发出了数百万笔非预期订单",
+        "公司亏损约 4.4 亿美元，需要外部救援",
+      ],
+      lesson: "删掉死代码，核对每个部署目标，永远别复用标志位。",
+    },
   },
   {
     id: "ariane-501",
@@ -174,6 +291,19 @@ export const EXHIBITS = [
     ],
     lesson: "Reused code carries the assumptions of the system it was written for.",
     source: "Ariane 501 Inquiry Board report, July 1996",
+    zh: {
+      subject: "阿丽亚娜 5 号火箭首飞失败（1996 年）",
+      title: "整数溢出，火箭 37 秒后自毁",
+      duration: "37 秒",
+      hops: [
+        "制导软件沿用自阿丽亚娜 4 号",
+        "阿丽亚娜 5 号飞得更快，一个水平速度值变得更大",
+        "把 64 位浮点数转换成 16 位整数时溢出",
+        "两套惯性参考系统以同样的方式失效",
+        "火箭偏离航线并自毁",
+      ],
+      lesson: "复用的代码，带着它原本那套系统的假设。",
+    },
   },
   {
     id: "mars-climate-orbiter",
@@ -192,6 +322,19 @@ export const EXHIBITS = [
     ],
     lesson: "Units belong in the interface contract, not in someone's head.",
     source: "NASA Mishap Investigation Board, November 1999",
+    zh: {
+      subject: "火星气候探测者号失联（1999 年）",
+      title: "英制对公制：丢失的火星探测器",
+      duration: "飞了 10 个月，到达时失联",
+      hops: [
+        "地面软件以磅力·秒为单位报告推进器冲量",
+        "导航软件期望的单位是牛顿·秒",
+        "每一次小的轨道修正都差了约 4.45 倍",
+        "探测器到达火星时的高度低得多",
+        "它消失在火星大气中",
+      ],
+      lesson: "单位应该写进接口约定，而不是留在某个人的脑子里。",
+    },
   },
   {
     id: "leap-second-2012",
@@ -210,6 +353,19 @@ export const EXHIBITS = [
     ],
     lesson: "Time is an input. Test the weird ones.",
     source: "Public postmortems and kernel mailing list, July 2012",
+    zh: {
+      subject: "闰秒 bug（2012 年 6 月）",
+      title: "闰秒那一秒，服务器 CPU 占满",
+      duration: "几小时，看你当时在哪家",
+      hops: [
+        "UTC 23:59:60 插入了一个闰秒",
+        "一个 Linux 内核计时器 bug 让部分进程空转",
+        "Java 和 MySQL 服务器的 CPU 被占满",
+        "Reddit、Mozilla 等网站变慢或宕机",
+        "修复办法：重新设置一次时钟，或者重启",
+      ],
+      lesson: "时间也是输入。怪的那些时刻要测。",
+    },
   },
   {
     id: "lets-encrypt-root-2021",
@@ -228,5 +384,18 @@ export const EXHIBITS = [
     ],
     lesson: "An expiry date years away is still a date. Put it in a calendar.",
     source: "Let's Encrypt announcements, 2020 to 2021",
+    zh: {
+      subject: "Let's Encrypt 根证书过期（2021 年 9 月）",
+      title: "根证书一过期，旧设备连不上 HTTPS",
+      duration: "旧设备上拖了很久",
+      hops: [
+        "一张旧根证书到了早已公告的过期日",
+        "现代系统用的是新根证书，没有察觉",
+        "旧手机、旧版 OpenSSL 和嵌入式设备仍然只信任旧的那张",
+        "这些客户端的 TLS 握手开始失败",
+        "修复办法从改配置到买新硬件不等",
+      ],
+      lesson: "几年后的过期日也是一个日期。记进日历。",
+    },
   },
 ];

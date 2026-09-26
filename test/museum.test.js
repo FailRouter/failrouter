@@ -54,6 +54,9 @@ describe("rooms", () => {
       ["c", "Empty", 0],
     ]);
   });
+  test("roomButtons labels the 'all' button in the page language", () => {
+    assert.deepEqual(M.roomButtons(LIST, ROOMS2, "zh")[0], ["all", "全部展厅", 3]);
+  });
   test("roomsHtml marks only the current room pressed and escapes labels", () => {
     const html = M.roomsHtml(LIST, ROOMS2, "b");
     assert.equal((html.match(/aria-pressed="true"/g) ?? []).length, 1);
@@ -79,8 +82,17 @@ describe("exhibit cards", () => {
     assert.ok(!html.includes("<h2"));
     assert.ok(!html.includes('href="/exhibits/x1/"'));
   });
-  test("exhibitPath is the trailing-slash directory URL", () => {
+  test("exhibitPath is the trailing-slash directory URL, prefixed for Chinese", () => {
     assert.equal(M.exhibitPath("abc"), "/exhibits/abc/");
+    assert.equal(M.exhibitPath("abc", "zh"), "/zh/exhibits/abc/");
+  });
+  test("Chinese cards use Chinese labels, Chinese links, and mark the English source", () => {
+    const html = M.exhibitHtml(ex("x1", "a"), { no: 7, i: 0, rooms: ROOMS2, lang: "zh" });
+    assert.match(html, /展品 007 · Room A/);
+    assert.match(html, /aria-label="失败"/);
+    assert.match(html, /href="\/zh\/exhibits\/x1\/"/);
+    assert.match(html, /<p class="source">来源：<span lang="en">S<\/span><\/p>/);
+    assert.match(M.galleryHtml(LIST, ROOMS2, M.ALL, "zh"), /展品 003/);
   });
   test("user-visible fields are escaped", () => {
     const html = M.exhibitHtml(ex("x9", "b", { title: "<script>", hops: ["a", "b", "<c>"] }), {

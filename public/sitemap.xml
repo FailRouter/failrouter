@@ -1,16 +1,185 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://failrouter.com/</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://failrouter.com/exhibits/facebook-2021/</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://failrouter.com/exhibits/youtube-pakistan-2008/</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://failrouter.com/exhibits/crowdstrike-2024/</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://failrouter.com/exhibits/cloudflare-regex-2019/</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://failrouter.com/exhibits/fastly-2021/</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://failrouter.com/exhibits/s3-2017/</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://failrouter.com/exhibits/gitlab-2017/</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://failrouter.com/exhibits/knight-2012/</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://failrouter.com/exhibits/ariane-501/</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://failrouter.com/exhibits/mars-climate-orbiter/</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://failrouter.com/exhibits/leap-second-2012/</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://failrouter.com/exhibits/lets-encrypt-root-2021/</loc><lastmod>2026-09-24</lastmod></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://failrouter.com/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/zh/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/exhibits/facebook-2021/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/facebook-2021/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/facebook-2021/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/facebook-2021/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/zh/exhibits/facebook-2021/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/facebook-2021/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/facebook-2021/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/facebook-2021/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/exhibits/youtube-pakistan-2008/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/youtube-pakistan-2008/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/youtube-pakistan-2008/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/youtube-pakistan-2008/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/zh/exhibits/youtube-pakistan-2008/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/youtube-pakistan-2008/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/youtube-pakistan-2008/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/youtube-pakistan-2008/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/exhibits/crowdstrike-2024/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/crowdstrike-2024/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/crowdstrike-2024/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/crowdstrike-2024/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/zh/exhibits/crowdstrike-2024/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/crowdstrike-2024/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/crowdstrike-2024/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/crowdstrike-2024/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/exhibits/cloudflare-regex-2019/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/cloudflare-regex-2019/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/cloudflare-regex-2019/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/cloudflare-regex-2019/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/zh/exhibits/cloudflare-regex-2019/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/cloudflare-regex-2019/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/cloudflare-regex-2019/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/cloudflare-regex-2019/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/exhibits/fastly-2021/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/fastly-2021/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/fastly-2021/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/fastly-2021/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/zh/exhibits/fastly-2021/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/fastly-2021/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/fastly-2021/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/fastly-2021/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/exhibits/s3-2017/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/s3-2017/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/s3-2017/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/s3-2017/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/zh/exhibits/s3-2017/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/s3-2017/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/s3-2017/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/s3-2017/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/exhibits/gitlab-2017/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/gitlab-2017/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/gitlab-2017/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/gitlab-2017/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/zh/exhibits/gitlab-2017/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/gitlab-2017/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/gitlab-2017/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/gitlab-2017/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/exhibits/knight-2012/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/knight-2012/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/knight-2012/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/knight-2012/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/zh/exhibits/knight-2012/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/knight-2012/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/knight-2012/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/knight-2012/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/exhibits/ariane-501/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/ariane-501/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/ariane-501/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/ariane-501/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/zh/exhibits/ariane-501/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/ariane-501/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/ariane-501/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/ariane-501/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/exhibits/mars-climate-orbiter/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/mars-climate-orbiter/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/mars-climate-orbiter/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/mars-climate-orbiter/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/zh/exhibits/mars-climate-orbiter/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/mars-climate-orbiter/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/mars-climate-orbiter/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/mars-climate-orbiter/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/exhibits/leap-second-2012/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/leap-second-2012/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/leap-second-2012/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/leap-second-2012/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/zh/exhibits/leap-second-2012/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/leap-second-2012/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/leap-second-2012/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/leap-second-2012/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/exhibits/lets-encrypt-root-2021/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/lets-encrypt-root-2021/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/lets-encrypt-root-2021/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/lets-encrypt-root-2021/"/>
+  </url>
+  <url>
+    <loc>https://failrouter.com/zh/exhibits/lets-encrypt-root-2021/</loc>
+    <lastmod>2026-09-24</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/lets-encrypt-root-2021/"/>
+    <xhtml:link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/lets-encrypt-root-2021/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/lets-encrypt-root-2021/"/>
+  </url>
 </urlset>

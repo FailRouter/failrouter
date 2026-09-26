@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YouTube BGP 劫持事件（2008 年 2 月）：原因与经过</title>
+  <meta name="description" content="YouTube BGP 劫持事件（2008 年 2 月）。巴基斯坦电信接到命令，要在国内屏蔽 YouTube；4 跳之后，全球大部分 YouTube 流量涌向巴基斯坦，然后消失。别人宣告什么…">
+  <link rel="canonical" href="https://failrouter.com/zh/exhibits/youtube-pakistan-2008/">
+  <link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/youtube-pakistan-2008/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/youtube-pakistan-2008/">
+  <link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/youtube-pakistan-2008/">
+  <meta property="og:site_name" content="Failrouter">
+  <meta property="og:title" content="YouTube BGP 劫持事件（2008 年 2 月）：原因与经过">
+  <meta property="og:description" content="YouTube BGP 劫持事件（2008 年 2 月）。巴基斯坦电信接到命令，要在国内屏蔽 YouTube；4 跳之后，全球大部分 YouTube 流量涌向巴基斯坦，然后消失。别人宣告什么…">
+  <meta property="og:url" content="https://failrouter.com/zh/exhibits/youtube-pakistan-2008/">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:image" content="https://failrouter.com/og-zh.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="失败路由博物馆：知名宕机事故，逐跳复盘">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#111014">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"一条 BGP 路由，把 YouTube 引向了巴基斯坦","alternativeHeadline":"YouTube BGP 劫持事件（2008 年 2 月）","description":"YouTube BGP 劫持事件（2008 年 2 月）。巴基斯坦电信接到命令，要在国内屏蔽 YouTube；4 跳之后，全球大部分 YouTube 流量涌向巴基斯坦，然后消失。别人宣告什么…","url":"https://failrouter.com/zh/exhibits/youtube-pakistan-2008/","mainEntityOfPage":"https://failrouter.com/zh/exhibits/youtube-pakistan-2008/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-24","articleSection":"丢包大厅","about":{"@type":"Event","name":"YouTube BGP 劫持事件（2008 年 2 月）","startDate":"2008-02-24"},"citation":"RIPE NCC case study, 2008","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"一条 BGP 路由，把 YouTube 引向了巴基斯坦","item":"https://failrouter.com/zh/exhibits/youtube-pakistan-2008/"}]}</script>
+</head>
+<body class="exhibit-page">
+  <p class="lang-bar"><a class="lang-switch" id="lang-switch" href="/exhibits/youtube-pakistan-2008/" hreflang="en" lang="en">English</a></p>
+  <nav class="crumbs" aria-label="面包屑导航"><a href="/zh/">失败路由博物馆</a> <span aria-hidden="true">›</span> 丢包大厅</nav>
+
+  <main class="gallery single">
+  <article class="exhibit lit" id="youtube-pakistan-2008" tabindex="-1" style="--i:0">
+    <p class="plaque-no">展品 002 · 丢包大厅</p>
+    <h1>一条 BGP 路由，把 YouTube 引向了巴基斯坦</h1>
+    <p class="meta"><time datetime="2008-02-24">2008-02-24</time> · 约 2 小时</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>巴基斯坦电信接到命令，要在国内屏蔽 YouTube</li><li class=""><span class="hop"> 2</span>为此它宣告了一条比 YouTube 地址段更具体的路由</li><li class=""><span class="hop"> 3</span>上游运营商把这条宣告转发给了整个互联网</li><li class=""><span class="hop"> 4</span>各地路由器都优先选择更具体的那条路由</li><li class="fail"><span class="hop"> 5</span>全球大部分 YouTube 流量涌向巴基斯坦，然后消失 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">别人宣告什么，BGP 就信什么。客户宣告的路由要过滤。</p>
+    <p class="source">来源：<span lang="en">RIPE NCC case study, 2008</span></p>
+  </article>
+    <p class="about-event">YouTube BGP 劫持事件（2008 年 2 月）。持续时间：约 2 小时。从第一个改动到故障，共 5 跳。</p>
+    <nav class="walk" aria-label="更多展品">
+      <a class="walk-prev" rel="prev" href="/zh/exhibits/facebook-2021/">← Facebook 从互联网上消失的 6 小时</a>
+      <a class="walk-hall" href="/zh/#youtube-pakistan-2008">回到主展厅</a>
+      <a class="walk-next" rel="next" href="/zh/exhibits/crowdstrike-2024/">→ 一次内容更新，850 万台 Windows 蓝屏</a>
+    </nav>
+  </main>
+
+  <footer>
+    <p>免费参观。出口标得很清楚，这点比馆里大多数系统强。</p>
+    <p class="small">展品摘要均据公开的事后复盘报告与调查报告整理。</p>
+    <p class="small"><a href="https://github.com/FailRouter/failrouter">GitHub 源码</a> · <a href="https://github.com/FailRouter/failrouter/issues/new?title=Exhibit%20suggestion%3A%20">推荐展品</a> · MIT 许可</p>
+  </footer>
+</body>
+</html>

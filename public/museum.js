@@ -1,5 +1,7 @@
 // Pure logic for the museum page: no DOM, no globals, so it runs under node:test.
-// app.js wires these functions to the document.
+// app.js wires these functions to the document. Every function that renders text takes `lang`
+// ("en" default) and reads its strings from i18n.js; pass exhibits already localized (localizeExhibits).
+import { LOCALES, STRINGS, fmt, localePath } from "./i18n.js";
 
 export const ALL = "all";
 
@@ -24,14 +26,17 @@ export function visibleIn(exhibits, room) {
 }
 
 /** Room filter buttons: [key, label, count], "all" first. */
-export function roomButtons(exhibits, rooms) {
+export function roomButtons(exhibits, rooms, lang = "en") {
   const counts = {};
   for (const e of exhibits) counts[e.room] = (counts[e.room] ?? 0) + 1;
-  return [[ALL, "All rooms", exhibits.length], ...Object.entries(rooms).map(([k, v]) => [k, v, counts[k] ?? 0])];
+  return [
+    [ALL, STRINGS[lang].allRooms, exhibits.length],
+    ...Object.entries(rooms).map(([k, v]) => [k, v, counts[k] ?? 0]),
+  ];
 }
 
-export function roomsHtml(exhibits, rooms, current) {
-  return roomButtons(exhibits, rooms)
+export function roomsHtml(exhibits, rooms, current, lang = "en") {
+  return roomButtons(exhibits, rooms, lang)
     .map(
       ([k, label, n]) =>
         `<button type="button" data-room="${esc(k)}" aria-pressed="${k === current}">${esc(label)} <span>${n}</span></button>`,
@@ -39,38 +44,41 @@ export function roomsHtml(exhibits, rooms, current) {
     .join("");
 }
 
-/** Public URL path of an exhibit's own page. */
-export const exhibitPath = (id) => `/exhibits/${id}/`;
+/** Public URL path of an exhibit's own page in `lang`. */
+export const exhibitPath = (id, lang = "en") => localePath(lang, `/exhibits/${id}/`);
 
 /**
  * One exhibit card. `no` is the 1-based catalogue number, `i` the position in the current view.
  * `page: true` renders it as the main content of the exhibit's own page (h1, no self-link, always lit).
  */
-export function exhibitHtml(e, { no, i, rooms, page = false }) {
+export function exhibitHtml(e, { no, i, rooms, page = false, lang = "en" }) {
+  const t = STRINGS[lang];
   const hops = e.hops
     .map((h, n) => {
       const last = n === e.hops.length - 1;
-      const mark = last ? ' <b class="x" aria-label="failed">✕</b>' : "";
+      const mark = last ? ` <b class="x" aria-label="${esc(t.failed)}">✕</b>` : "";
       return `<li class="${last ? "fail" : ""}"><span class="hop">${String(n + 1).padStart(2, " ")}</span>${esc(h)}${mark}</li>`;
     })
     .join("");
   const heading = page
     ? `<h1>${esc(e.title)}</h1>`
-    : `<h2><a href="${exhibitPath(esc(e.id))}">${esc(e.title)}</a></h2>`;
+    : `<h2><a href="${exhibitPath(esc(e.id), lang)}">${esc(e.title)}</a></h2>`;
+  // The source keeps its original (English) name; mark it so screen readers switch voice.
+  const src = lang === "en" ? esc(e.source) : `<span lang="${LOCALES.en.html}">${esc(e.source)}</span>`;
   return `
   <article class="exhibit${page ? " lit" : ""}" id="${esc(e.id)}" tabindex="-1" style="--i:${i}">
-    <p class="plaque-no">No. ${String(no).padStart(3, "0")} · ${esc(rooms[e.room])}</p>
+    <p class="plaque-no">${esc(fmt(t.plaqueNo, { no: String(no).padStart(3, "0") }))} · ${esc(rooms[e.room])}</p>
     ${heading}
     <p class="meta"><time datetime="${esc(e.date)}">${esc(e.date)}</time> · ${esc(e.duration)}</p>
     <ol class="route">${hops}</ol>
     <p class="lesson">${esc(e.lesson)}</p>
-    <p class="source">Source: ${esc(e.source)}</p>
+    <p class="source">${esc(t.source)}${src}</p>
   </article>`;
 }
 
-export function galleryHtml(exhibits, rooms, room) {
+export function galleryHtml(exhibits, rooms, room, lang = "en") {
   return visibleIn(exhibits, room)
-    .map((e, i) => exhibitHtml(e, { no: exhibits.indexOf(e) + 1, i, rooms }))
+    .map((e, i) => exhibitHtml(e, { no: exhibits.indexOf(e) + 1, i, rooms, lang }))
     .join("");
 }
 

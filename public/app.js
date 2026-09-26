@@ -1,5 +1,6 @@
-// DOM glue only. All decisions live in museum.js (unit-tested); keep this file branch-light.
-import { EXHIBITS, ROOMS } from "./exhibits.js";
+// DOM glue only. All decisions live in museum.js / i18n.js (unit-tested); keep this file branch-light.
+import { EXHIBITS, ROOM_NAMES } from "./exhibits.js";
+import { langOf, localizeExhibits, switchHref } from "./i18n.js";
 import {
   ALL,
   TRACE,
@@ -13,6 +14,10 @@ import {
 } from "./museum.js";
 
 const $ = (sel) => document.querySelector(sel);
+const lang = langOf(document.documentElement.lang);
+const exhibits = localizeExhibits(EXHIBITS, lang);
+const rooms = ROOM_NAMES[lang];
+const langSwitch = $("#lang-switch");
 const gallery = $("#gallery");
 const roomsNav = $("#rooms");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -29,8 +34,8 @@ async function playTrace() {
 }
 
 function render() {
-  roomsNav.innerHTML = roomsHtml(EXHIBITS, ROOMS, currentRoom);
-  gallery.innerHTML = galleryHtml(EXHIBITS, ROOMS, currentRoom);
+  roomsNav.innerHTML = roomsHtml(exhibits, rooms, currentRoom, lang);
+  gallery.innerHTML = galleryHtml(exhibits, rooms, currentRoom, lang);
   observe();
 }
 
@@ -65,9 +70,11 @@ function focusExhibit(id, push = true) {
   for (const x of gallery.querySelectorAll(".spot")) x.classList.remove("spot");
   el.classList.add("spot");
   if (push) history.replaceState(null, "", `#${id}`);
+  // Switching language keeps the visitor on the same exhibit.
+  langSwitch.href = switchHref(langSwitch.getAttribute("href"), id);
 }
 
-const wrongTurn = () => focusExhibit(wrongTurnId(visibleIn(EXHIBITS, currentRoom), hashId(), Math.random()));
+const wrongTurn = () => focusExhibit(wrongTurnId(visibleIn(exhibits, currentRoom), hashId(), Math.random()));
 
 roomsNav.addEventListener("click", (ev) => {
   const btn = ev.target.closest("button[data-room]");
@@ -81,7 +88,7 @@ $("#wrong-turn").addEventListener("click", wrongTurn);
 document.addEventListener("keydown", (ev) => {
   if (!isMuseumKey(ev)) return;
   if (ev.key === "r") wrongTurn();
-  else focusExhibit(stepId(visibleIn(EXHIBITS, currentRoom), hashId(), ev.key));
+  else focusExhibit(stepId(visibleIn(exhibits, currentRoom), hashId(), ev.key));
 });
 
 window.addEventListener("hashchange", () => focusExhibit(hashId(), false));

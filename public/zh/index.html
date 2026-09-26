@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>失败路由博物馆：知名宕机事故逐跳复盘</title>
+  <meta name="description" content="从 2021 年 Facebook 全球宕机到 CrowdStrike 蓝屏，每起知名宕机事故都按公开的事后复盘报告，一跳一跳讲清楚。">
+  <link rel="canonical" href="https://failrouter.com/zh/">
+  <link rel="alternate" hreflang="en" href="https://failrouter.com/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/">
+  <link rel="alternate" hreflang="x-default" href="https://failrouter.com/">
+  <meta property="og:site_name" content="Failrouter">
+  <meta property="og:title" content="失败路由博物馆：知名宕机事故逐跳复盘">
+  <meta property="og:description" content="从 2021 年 Facebook 全球宕机到 CrowdStrike 蓝屏，每起知名宕机事故都按公开的事后复盘报告，一跳一跳讲清楚。">
+  <meta property="og:url" content="https://failrouter.com/zh/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:image" content="https://failrouter.com/og-zh.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="失败路由博物馆：知名宕机事故，逐跳复盘">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#111014">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"失败路由博物馆","alternateName":"Failrouter","url":"https://failrouter.com/zh/","inLanguage":"zh-Hans","publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"失败路由博物馆：知名宕机事故逐跳复盘","description":"从 2021 年 Facebook 全球宕机到 CrowdStrike 蓝屏，每起知名宕机事故都按公开的事后复盘报告，一跳一跳讲清楚。","url":"https://failrouter.com/zh/","inLanguage":"zh-Hans","isPartOf":{"@type":"WebSite","url":"https://failrouter.com/zh/"},"mainEntity":{"@type":"ItemList","numberOfItems":12,"itemListElement":[{"@type":"ListItem","position":1,"url":"https://failrouter.com/zh/exhibits/facebook-2021/","name":"Facebook 从互联网上消失的 6 小时"},{"@type":"ListItem","position":2,"url":"https://failrouter.com/zh/exhibits/youtube-pakistan-2008/","name":"一条 BGP 路由，把 YouTube 引向了巴基斯坦"},{"@type":"ListItem","position":3,"url":"https://failrouter.com/zh/exhibits/crowdstrike-2024/","name":"一次内容更新，850 万台 Windows 蓝屏"},{"@type":"ListItem","position":4,"url":"https://failrouter.com/zh/exhibits/cloudflare-regex-2019/","name":"一条正则拖垮全球边缘节点"},{"@type":"ListItem","position":5,"url":"https://failrouter.com/zh/exhibits/fastly-2021/","name":"一次客户配置，唤醒了潜伏几周的 bug"},{"@type":"ListItem","position":6,"url":"https://failrouter.com/zh/exhibits/s3-2017/","name":"一条命令输错，S3 宕机约 4 小时"},{"@type":"ListItem","position":7,"url":"https://failrouter.com/zh/exhibits/gitlab-2017/","name":"rm -rf 敲在了主库上"},{"@type":"ListItem","position":8,"url":"https://failrouter.com/zh/exhibits/knight-2012/","name":"45 分钟亏掉 4.4 亿美元"},{"@type":"ListItem","position":9,"url":"https://failrouter.com/zh/exhibits/ariane-501/","name":"整数溢出，火箭 37 秒后自毁"},{"@type":"ListItem","position":10,"url":"https://failrouter.com/zh/exhibits/mars-climate-orbiter/","name":"英制对公制：丢失的火星探测器"},{"@type":"ListItem","position":11,"url":"https://failrouter.com/zh/exhibits/leap-second-2012/","name":"闰秒那一秒，服务器 CPU 占满"},{"@type":"ListItem","position":12,"url":"https://failrouter.com/zh/exhibits/lets-encrypt-root-2021/","name":"根证书一过期，旧设备连不上 HTTPS"}]}}</script>
+</head>
+<body>
+  <p class="lang-bar"><a class="lang-switch" id="lang-switch" href="/" hreflang="en" lang="en">English</a></p>
+  <header class="entrance">
+    <pre class="trace" id="trace" aria-label="一段以博物馆为终点的 traceroute">$ traceroute failrouter.com</pre>
+    <h1><span>失败路由</span>博物馆</h1>
+    <p class="tagline">每次宕机都始于一个小改动，然后走上了没人预料的路线。这里收的是有名的那些，一跳一跳地讲。</p>
+    <nav class="rooms" id="rooms" aria-label="展厅"><button type="button" data-room="all" aria-pressed="true">全部展厅 <span>12</span></button><button type="button" data-room="routing" aria-pressed="false">丢包大厅 <span>2</span></button><button type="button" data-room="config" aria-pressed="false">全局推送厅 <span>3</span></button><button type="button" data-room="human" aria-pressed="false">回车键画廊 <span>3</span></button><button type="button" data-room="numbers" aria-pressed="false">错数陈列柜 <span>2</span></button><button type="button" data-room="time" aria-pressed="false">钟表室 <span>2</span></button></nav>
+    <button class="wrong-turn" id="wrong-turn" type="button">走条岔路</button>
+  </header>
+
+  <main id="gallery" class="gallery" aria-live="polite">
+  <article class="exhibit" id="facebook-2021" tabindex="-1" style="--i:0">
+    <p class="plaque-no">展品 001 · 丢包大厅</p>
+    <h2><a href="/zh/exhibits/facebook-2021/">Facebook 从互联网上消失的 6 小时</a></h2>
+    <p class="meta"><time datetime="2021-10-04">2021-10-04</time> · 约 6 小时</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>一条例行维护命令，本意是评估骨干网容量</li><li class=""><span class="hop"> 2</span>命令断开了各数据中心之间的全部骨干连接</li><li class=""><span class="hop"> 3</span>DNS 服务器发现骨干网没了，撤回了自己的 BGP 路由</li><li class=""><span class="hop"> 4</span>facebook.com、Instagram 和 WhatsApp 在全球范围内无法解析</li><li class="fail"><span class="hop"> 5</span>工程师要到现场才能重置路由器，内部工具也一起挂了 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">恢复工具如果也在出故障的那套系统后面，就等于没有恢复工具。</p>
+    <p class="source">来源：<span lang="en">Facebook Engineering blog, October 2021</span></p>
+  </article>
+  <article class="exhibit" id="youtube-pakistan-2008" tabindex="-1" style="--i:1">
+    <p class="plaque-no">展品 002 · 丢包大厅</p>
+    <h2><a href="/zh/exhibits/youtube-pakistan-2008/">一条 BGP 路由，把 YouTube 引向了巴基斯坦</a></h2>
+    <p class="meta"><time datetime="2008-02-24">2008-02-24</time> · 约 2 小时</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>巴基斯坦电信接到命令，要在国内屏蔽 YouTube</li><li class=""><span class="hop"> 2</span>为此它宣告了一条比 YouTube 地址段更具体的路由</li><li class=""><span class="hop"> 3</span>上游运营商把这条宣告转发给了整个互联网</li><li class=""><span class="hop"> 4</span>各地路由器都优先选择更具体的那条路由</li><li class="fail"><span class="hop"> 5</span>全球大部分 YouTube 流量涌向巴基斯坦，然后消失 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">别人宣告什么，BGP 就信什么。客户宣告的路由要过滤。</p>
+    <p class="source">来源：<span lang="en">RIPE NCC case study, 2008</span></p>
+  </article>
+  <article class="exhibit" id="crowdstrike-2024" tabindex="-1" style="--i:2">
+    <p class="plaque-no">展品 003 · 全局推送厅</p>
+    <h2><a href="/zh/exhibits/crowdstrike-2024/">一次内容更新，850 万台 Windows 蓝屏</a></h2>
+    <p class="meta"><time datetime="2024-07-19">2024-07-19</time> · 修复用了几小时，清理用了几天到几周</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>安全厂商给 Windows 传感器推送了一次例行内容更新</li><li class=""><span class="hop"> 2</span>更新定义的输入字段比传感器代码预期的多</li><li class=""><span class="hop"> 3</span>内核驱动越界读取，随即崩溃</li><li class=""><span class="hop"> 4</span>约 850 万台 Windows 电脑蓝屏，反复重启</li><li class="fail"><span class="hop"> 5</span>航空公司、医院和银行只能一台一台手动修 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">内容更新也是代码更新，要像代码一样分阶段发布。</p>
+    <p class="source">来源：<span lang="en">CrowdStrike root cause analysis, August 2024</span></p>
+  </article>
+  <article class="exhibit" id="cloudflare-regex-2019" tabindex="-1" style="--i:3">
+    <p class="plaque-no">展品 004 · 全局推送厅</p>
+    <h2><a href="/zh/exhibits/cloudflare-regex-2019/">一条正则拖垮全球边缘节点</a></h2>
+    <p class="meta"><time datetime="2019-07-02">2019-07-02</time> · 27 分钟</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>一条新的托管 WAF 规则一次性部署到全球</li><li class=""><span class="hop"> 2</span>它的正则表达式在普通流量上发生灾难性回溯</li><li class=""><span class="hop"> 3</span>每台边缘机器的 CPU 都打到 100%</li><li class=""><span class="hop"> 4</span>接入这张网络的站点在全球返回 502</li><li class="fail"><span class="hop"> 5</span>关掉 WAF 规则的全局开关后，流量恢复 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">最快的部署流水线，也是最快的宕机流水线。</p>
+    <p class="source">来源：<span lang="en">Cloudflare blog, July 2019</span></p>
+  </article>
+  <article class="exhibit" id="fastly-2021" tabindex="-1" style="--i:4">
+    <p class="plaque-no">展品 005 · 全局推送厅</p>
+    <h2><a href="/zh/exhibits/fastly-2021/">一次客户配置，唤醒了潜伏几周的 bug</a></h2>
+    <p class="meta"><time datetime="2021-06-08">2021-06-08</time> · 不到 1 小时</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>几周前部署的一次软件变更带着一个潜伏的 bug</li><li class=""><span class="hop"> 2</span>一个客户推送了一次合法的配置变更</li><li class=""><span class="hop"> 3</span>这次变更在整个边缘网络上触发了那个 bug</li><li class=""><span class="hop"> 4</span>网络大部分节点开始报错，几家大新闻网站一片空白</li><li class="fail"><span class="hop"> 5</span>工程师找到这项配置并停用，流量恢复 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">bug 可以耐心地等，等那个能唤醒它的输入。</p>
+    <p class="source">来源：<span lang="en">Fastly blog, June 2021</span></p>
+  </article>
+  <article class="exhibit" id="s3-2017" tabindex="-1" style="--i:5">
+    <p class="plaque-no">展品 006 · 回车键画廊</p>
+    <h2><a href="/zh/exhibits/s3-2017/">一条命令输错，S3 宕机约 4 小时</a></h2>
+    <p class="meta"><time datetime="2017-02-28">2017-02-28</time> · 约 4 小时</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>工程师排查一个变慢的计费系统，执行一条已审批的操作手册命令</li><li class=""><span class="hop"> 2</span>一个参数输错，移除的服务器远多于预期</li><li class=""><span class="hop"> 3</span>us-east-1 的两个 S3 子系统需要完全重启</li><li class=""><span class="hop"> 4</span>它们多年没有完全重启过，花了好几个小时</li><li class="fail"><span class="hop"> 5</span>大片网站宕机，AWS 自己的状态面板也在其中 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">不管命令怎么输，工具都应该拒绝一次移除太多、太快的容量。</p>
+    <p class="source">来源：<span lang="en">AWS service disruption summary, March 2017</span></p>
+  </article>
+  <article class="exhibit" id="gitlab-2017" tabindex="-1" style="--i:6">
+    <p class="plaque-no">展品 007 · 回车键画廊</p>
+    <h2><a href="/zh/exhibits/gitlab-2017/">rm -rf 敲在了主库上</a></h2>
+    <p class="meta"><time datetime="2017-01-31">2017-01-31</time> · 约 18 小时，丢了大约 6 小时的数据</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>深夜，和数据库复制延迟缠斗</li><li class=""><span class="hop"> 2</span>工程师删除一个数据目录，准备重新同步副本</li><li class=""><span class="hop"> 3</span>那个 shell 连的是主库，不是副本</li><li class=""><span class="hop"> 4</span>几种备份方式结果都是坏的或空的</li><li class="fail"><span class="hop"> 5</span>从预发环境快照恢复，全程公开直播 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">从没恢复过的备份只是一个愿望，算不上备份。</p>
+    <p class="source">来源：<span lang="en">GitLab postmortem, February 2017</span></p>
+  </article>
+  <article class="exhibit" id="knight-2012" tabindex="-1" style="--i:7">
+    <p class="plaque-no">展品 008 · 回车键画廊</p>
+    <h2><a href="/zh/exhibits/knight-2012/">45 分钟亏掉 4.4 亿美元</a></h2>
+    <p class="meta"><time datetime="2012-08-01">2012-08-01</time> · 45 分钟</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>新交易代码复用了一个标志位，它曾用来启用已退役的逻辑</li><li class=""><span class="hop"> 2</span>部署漏掉了八台服务器中的一台</li><li class=""><span class="hop"> 3</span>开盘后，那台服务器跑起了死代码</li><li class=""><span class="hop"> 4</span>它发出了数百万笔非预期订单</li><li class="fail"><span class="hop"> 5</span>公司亏损约 4.4 亿美元，需要外部救援 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">删掉死代码，核对每个部署目标，永远别复用标志位。</p>
+    <p class="source">来源：<span lang="en">SEC order, October 2013</span></p>
+  </article>
+  <article class="exhibit" id="ariane-501" tabindex="-1" style="--i:8">
+    <p class="plaque-no">展品 009 · 错数陈列柜</p>
+    <h2><a href="/zh/exhibits/ariane-501/">整数溢出，火箭 37 秒后自毁</a></h2>
+    <p class="meta"><time datetime="1996-06-04">1996-06-04</time> · 37 秒</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>制导软件沿用自阿丽亚娜 4 号</li><li class=""><span class="hop"> 2</span>阿丽亚娜 5 号飞得更快，一个水平速度值变得更大</li><li class=""><span class="hop"> 3</span>把 64 位浮点数转换成 16 位整数时溢出</li><li class=""><span class="hop"> 4</span>两套惯性参考系统以同样的方式失效</li><li class="fail"><span class="hop"> 5</span>火箭偏离航线并自毁 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">复用的代码，带着它原本那套系统的假设。</p>
+    <p class="source">来源：<span lang="en">Ariane 501 Inquiry Board report, July 1996</span></p>
+  </article>
+  <article class="exhibit" id="mars-climate-orbiter" tabindex="-1" style="--i:9">
+    <p class="plaque-no">展品 010 · 错数陈列柜</p>
+    <h2><a href="/zh/exhibits/mars-climate-orbiter/">英制对公制：丢失的火星探测器</a></h2>
+    <p class="meta"><time datetime="1999-09-23">1999-09-23</time> · 飞了 10 个月，到达时失联</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>地面软件以磅力·秒为单位报告推进器冲量</li><li class=""><span class="hop"> 2</span>导航软件期望的单位是牛顿·秒</li><li class=""><span class="hop"> 3</span>每一次小的轨道修正都差了约 4.45 倍</li><li class=""><span class="hop"> 4</span>探测器到达火星时的高度低得多</li><li class="fail"><span class="hop"> 5</span>它消失在火星大气中 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">单位应该写进接口约定，而不是留在某个人的脑子里。</p>
+    <p class="source">来源：<span lang="en">NASA Mishap Investigation Board, November 1999</span></p>
+  </article>
+  <article class="exhibit" id="leap-second-2012" tabindex="-1" style="--i:10">
+    <p class="plaque-no">展品 011 · 钟表室</p>
+    <h2><a href="/zh/exhibits/leap-second-2012/">闰秒那一秒，服务器 CPU 占满</a></h2>
+    <p class="meta"><time datetime="2012-06-30">2012-06-30</time> · 几小时，看你当时在哪家</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>UTC 23:59:60 插入了一个闰秒</li><li class=""><span class="hop"> 2</span>一个 Linux 内核计时器 bug 让部分进程空转</li><li class=""><span class="hop"> 3</span>Java 和 MySQL 服务器的 CPU 被占满</li><li class=""><span class="hop"> 4</span>Reddit、Mozilla 等网站变慢或宕机</li><li class="fail"><span class="hop"> 5</span>修复办法：重新设置一次时钟，或者重启 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">时间也是输入。怪的那些时刻要测。</p>
+    <p class="source">来源：<span lang="en">Public postmortems and kernel mailing list, July 2012</span></p>
+  </article>
+  <article class="exhibit" id="lets-encrypt-root-2021" tabindex="-1" style="--i:11">
+    <p class="plaque-no">展品 012 · 钟表室</p>
+    <h2><a href="/zh/exhibits/lets-encrypt-root-2021/">根证书一过期，旧设备连不上 HTTPS</a></h2>
+    <p class="meta"><time datetime="2021-09-30">2021-09-30</time> · 旧设备上拖了很久</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>一张旧根证书到了早已公告的过期日</li><li class=""><span class="hop"> 2</span>现代系统用的是新根证书，没有察觉</li><li class=""><span class="hop"> 3</span>旧手机、旧版 OpenSSL 和嵌入式设备仍然只信任旧的那张</li><li class=""><span class="hop"> 4</span>这些客户端的 TLS 握手开始失败</li><li class="fail"><span class="hop"> 5</span>修复办法从改配置到买新硬件不等 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">几年后的过期日也是一个日期。记进日历。</p>
+    <p class="source">来源：<span lang="en">Let&#39;s Encrypt announcements, 2020 to 2021</span></p>
+  </article>
+  </main>
+
+  <footer>
+    <p>免费参观。出口标得很清楚，这点比馆里大多数系统强。</p>
+    <p class="small">展品摘要均据公开的事后复盘报告与调查报告整理。 <span class="keys-hint">键盘：<kbd>j</kbd>/<kbd>k</kbd> 前后走，<kbd>r</kbd> 随机走条岔路。</span></p>
+    <p class="small"><a href="https://github.com/FailRouter/failrouter">GitHub 源码</a> · <a href="https://github.com/FailRouter/failrouter/issues/new?title=Exhibit%20suggestion%3A%20">推荐展品</a> · MIT 许可</p>
+  </footer>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
