@@ -113,7 +113,7 @@ Four weeks after an SEO change, check the per-page numbers in Google Search Cons
 - Per page: title ≤ 60, description 70–155, both measured on visible text with `weightedLength` (CJK and full-width punctuation count 2); exactly one `h1`; absolute canonical with trailing slash; `<html lang>` matching the path (`en` / `zh-Hans`); hreflang `en`, `zh-Hans`, `x-default` (→ English), identical on both twins; `og:*` + `og:locale` + `og:locale:alternate` + `twitter:card`; `og:image` = `/og.png` (English) or `/og-zh.png` (Chinese); ≥ 2 JSON-LD blocks with `inLanguage` (home: `WebSite` + `CollectionPage`/`ItemList`; exhibit: `Article` + `BreadcrumbList`); a link to the GitHub repo; a link to the other language; no render-blocking `<script src>`.
 - `sitemap.xml` lists exactly the generated HTML pages in both languages, each with the same three `xhtml:link` alternates as the page; `robots.txt` declares it.
 - URLs are permanent: `/exhibits/<id>/`, `/zh/exhibits/<id>/` and the `#<id>` anchor on both home pages. Renaming an `id` breaks all of them; if unavoidable, add a redirect first.
-- Exhibit page titles come from `subject` plus the exhibit title, falling back to "`subject`, hop by hop" / "`subject`，逐跳复盘" when too long; write `subject` the way people search for it, in each language.
+- Exhibit page titles come from `subject` plus the exhibit title, falling back to "`subject`, hop by hop" / "`subject`：原因与经过" when too long; write `subject` the way people search for it, in each language.
 - `www` also serves the site; canonical is always the apex.
 
 ## Content rules for exhibits

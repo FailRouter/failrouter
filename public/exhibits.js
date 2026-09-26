@@ -355,7 +355,7 @@ export const EXHIBITS = [
     source: "Public postmortems and kernel mailing list, July 2012",
     zh: {
       subject: "闰秒 bug（2012 年 6 月）",
-      title: "闰秒，服务器 CPU 占满",
+      title: "闰秒那一秒，服务器 CPU 占满",
       duration: "几小时，看你当时在哪家",
       hops: [
         "UTC 23:59:60 插入了一个闰秒",

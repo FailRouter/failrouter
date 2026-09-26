@@ -237,7 +237,7 @@ describe("pure helpers", () => {
       description: "某事故（2020 年）。从这里开始；2 跳之后，全部倒下。记住。",
     });
     const [long] = localizeExhibits([ex("b", { zh: { ...ex("b").zh, title: "一个非常非常长的展品标题，放不进搜索结果里" } })], "zh");
-    assert.equal(S.exhibitMeta(long, "zh").title, "某事故（2020 年），逐跳复盘");
+    assert.equal(S.exhibitMeta(long, "zh").title, "某事故（2020 年）：原因与经过");
   });
   test("exhibitMeta description reads subject, first hop, last hop, lesson", () => {
     assert.equal(

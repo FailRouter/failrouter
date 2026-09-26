@@ -68,7 +68,7 @@ export const STRINGS = {
     backToHall: "回到主展厅",
     aboutEvent: "{subject}。持续时间：{duration}。从第一个改动到故障，共 {n} 跳。",
     metaTitle: "{subject}：{title}",
-    metaTitleShort: "{subject}，逐跳复盘",
+    metaTitleShort: "{subject}：原因与经过",
     metaDescription: "{subject}。{first}；{later} 跳之后，{last}。{lesson}",
     ogAlt: "失败路由博物馆：知名宕机事故，逐跳复盘",
   },
