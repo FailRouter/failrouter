@@ -64,8 +64,31 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Smoke test
+        # The deployed Worker is checked on its workers.dev URL, which sits behind Cloudflare Access:
+        # CI authenticates with a service token. failrouter.com is reported but can't fail the job,
+        # because zone security may challenge GitHub runner IPs (403) while real visitors get 200.
+        env:
+          SMOKE_URL: ${{ secrets.SMOKE_URL }}
+          CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+          CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
         run: |
+          ua='Mozilla/5.0 (failrouter-ci)'
+          auth=(-H "CF-Access-Client-Id: $CF_ACCESS_CLIENT_ID" -H "CF-Access-Client-Secret: $CF_ACCESS_CLIENT_SECRET")
+          ok=0
+          for i in 1 2 3; do
+            code=$(curl -s -o page.html -w '%{http_code}' -A "$ua" "${auth[@]}" "${SMOKE_URL%/}/zh/")
+            if [ "$code" = 200 ] && grep -q '失败路由博物馆' page.html; then ok=1; break; fi
+            echo "attempt $i: /zh/ -> $code"; sleep 5
+          done
+          [ "$ok" = 1 ] || { echo "::error::deployed Worker is not serving /zh/ (last status $code)"; exit 1; }
+          echo "workers.dev /zh/ with service token -> 200"
+
+          code=$(curl -s -o /dev/null -w '%{http_code}' -A "$ua" "${SMOKE_URL%/}/")
+          echo "workers.dev / without token -> $code"
+          [ "$code" != 200 ] || { echo "::error::workers.dev is publicly reachable; Cloudflare Access must stay in front of it"; exit 1; }
+
           for h in failrouter.com www.failrouter.com; do
-            code=$(curl -s -o /dev/null -w '%{http_code}' -A 'Mozilla/5.0 (failrouter-ci)' "https://$h/")
-            echo "$h -> $code"; test "$code" = 200
+            out=$(curl -s -o /dev/null -w '%{http_code} %header{cf-mitigated}' -A "$ua" "https://$h/")
+            echo "$h -> $out"
+            [ "${out%% *}" = 200 ] || echo "::warning::$h returned $out to the runner (zone security may challenge GitHub IPs)"
           done
