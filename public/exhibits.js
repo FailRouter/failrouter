@@ -200,7 +200,7 @@ export const EXHIBITS = [
     source: "AWS service disruption summary, March 2017",
     zh: {
       subject: "AWS S3 宕机事件（2017 年 2 月）",
-      title: "一条命令输错，S3 停摆约 4 小时",
+      title: "一条命令输错，S3 宕机约 4 小时",
       duration: "约 4 小时",
       hops: [
         "工程师排查一个变慢的计费系统，执行一条已审批的操作手册命令",
