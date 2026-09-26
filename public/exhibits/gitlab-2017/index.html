@@ -4,14 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>GitLab database incident, January 2017, hop by hop</title>
-  <meta name="description" content="GitLab database incident, January 2017. Late-night fight with database replication lag; 4 hops later, restore from a staging snapshot, livestreamed to…">
+  <meta name="description" content="GitLab database incident, January 2017. Late-night fight with database replication lag; 4 hops later, restore from a staging snapshot, livestreamed to the…">
   <link rel="canonical" href="https://failrouter.com/exhibits/gitlab-2017/">
+  <link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/gitlab-2017/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/gitlab-2017/">
+  <link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/gitlab-2017/">
   <meta property="og:site_name" content="Failrouter">
   <meta property="og:title" content="GitLab database incident, January 2017, hop by hop">
-  <meta property="og:description" content="GitLab database incident, January 2017. Late-night fight with database replication lag; 4 hops later, restore from a staging snapshot, livestreamed to…">
+  <meta property="og:description" content="GitLab database incident, January 2017. Late-night fight with database replication lag; 4 hops later, restore from a staging snapshot, livestreamed to the…">
   <meta property="og:url" content="https://failrouter.com/exhibits/gitlab-2017/">
   <meta property="og:type" content="article">
   <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="zh_CN">
   <meta property="og:image" content="https://failrouter.com/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -21,10 +25,11 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/style.css">
   <script>document.documentElement.classList.add("js")</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"rm -rf, Wrong Terminal","alternativeHeadline":"GitLab database incident, January 2017","description":"GitLab database incident, January 2017. Late-night fight with database replication lag; 4 hops later, restore from a staging snapshot, livestreamed to…","url":"https://failrouter.com/exhibits/gitlab-2017/","mainEntityOfPage":"https://failrouter.com/exhibits/gitlab-2017/","image":"https://failrouter.com/og.png","datePublished":"2026-09-24","articleSection":"The Enter Key Gallery","about":{"@type":"Event","name":"GitLab database incident, January 2017","startDate":"2017-01-31"},"citation":"GitLab postmortem, February 2017","isPartOf":{"@type":"WebSite","name":"Museum of Failed Routes","url":"https://failrouter.com/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"rm -rf, Wrong Terminal","alternativeHeadline":"GitLab database incident, January 2017","description":"GitLab database incident, January 2017. Late-night fight with database replication lag; 4 hops later, restore from a staging snapshot, livestreamed to the…","url":"https://failrouter.com/exhibits/gitlab-2017/","mainEntityOfPage":"https://failrouter.com/exhibits/gitlab-2017/","inLanguage":"en","image":"https://failrouter.com/og.png","datePublished":"2026-09-24","articleSection":"The Enter Key Gallery","about":{"@type":"Event","name":"GitLab database incident, January 2017","startDate":"2017-01-31"},"citation":"GitLab postmortem, February 2017","isPartOf":{"@type":"WebSite","name":"Museum of Failed Routes","url":"https://failrouter.com/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Museum of Failed Routes","item":"https://failrouter.com/"},{"@type":"ListItem","position":2,"name":"rm -rf, Wrong Terminal","item":"https://failrouter.com/exhibits/gitlab-2017/"}]}</script>
 </head>
 <body class="exhibit-page">
+  <p class="lang-bar"><a class="lang-switch" id="lang-switch" href="/zh/exhibits/gitlab-2017/" hreflang="zh-Hans" lang="zh-Hans">中文</a></p>
   <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Museum of Failed Routes</a> <span aria-hidden="true">›</span> The Enter Key Gallery</nav>
 
   <main class="gallery single">

@@ -9,7 +9,15 @@
   --term: #7fdc8c;
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  /* System CJK fonts only: no web fonts (a CJK font is megabytes). */
+  --serif-zh: "Iowan Old Style", Palatino, Georgia, "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", STSong, SimSun, serif;
 }
+
+/*
+ * Breakpoints (the only two; don't add others):
+ *   (max-width: 480px)          narrow layout
+ *   (max-width: 480px), (hover: none)   touch sizing: targets >= 44px, no keyboard hints
+ */
 
 * { box-sizing: border-box; }
 
@@ -49,6 +57,7 @@ body {
   color: var(--term);
   font: 13px/1.5 var(--mono);
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
   overflow-x: auto;
 }
 
@@ -102,6 +111,22 @@ h1 span { color: var(--brass); font-style: italic; }
 
 button:focus-visible, a:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
 
+/* ---------- language switch ---------- */
+.lang-bar {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 10px 20px 0;
+  text-align: right;
+}
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  font: 14px var(--serif-zh);
+  color: #d8c08a;
+  text-underline-offset: 3px;
+}
+.lang-switch:hover { color: var(--brass); }
+
 /* ---------- gallery ---------- */
 .gallery {
   max-width: 1080px;
@@ -114,6 +139,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--brass); outline
 
 .exhibit {
   position: relative;
+  min-width: 0;
+  overflow-wrap: anywhere;
   background: var(--plaque);
   color: var(--ink);
   padding: 26px 26px 20px;
@@ -178,6 +205,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--brass); outline
   font-style: italic;
 }
 .source { margin: 0; font-size: 0.8rem; color: #8a7d64; }
+.source a { color: inherit; text-underline-offset: 3px; }
 
 footer {
   max-width: 720px;
@@ -200,6 +228,7 @@ footer a:hover, .crumbs a:hover, .walk a:hover { color: var(--brass); }
   font-size: 0.95rem;
 }
 .gallery.single { grid-template-columns: minmax(0, 640px); justify-content: center; padding-top: 48px; }
+.gallery.lost { grid-template-columns: minmax(0, 560px); justify-content: center; padding-top: 48px; }
 .about-event { margin: 0; color: #b9b1a4; }
 .walk {
   display: grid;
@@ -218,13 +247,32 @@ kbd {
   color: #cfc8bb;
 }
 
+/* ---------- Simplified Chinese ---------- */
+/* Swap the variable, then re-apply it only where the font is inherited from; elements with
+   their own font (mono trace, plaque numbers, buttons via var(--serif)) keep working. */
+:lang(zh) { --serif: var(--serif-zh); }
+body:lang(zh), article:lang(zh) { font-family: var(--serif); }
+body:lang(zh) { line-height: 1.75; }
+/* CJK has no true italics; synthesized oblique reads as broken. */
+:lang(zh) .lesson, :lang(zh) h1 span { font-style: normal; }
+:lang(zh) h1 { letter-spacing: 0.06em; }
+
+@media (max-width: 480px), (hover: none) {
+  .rooms button, .wrong-turn, .lang-switch, .walk a { min-height: 44px; }
+  .rooms button { display: inline-flex; align-items: center; }
+  .lang-switch { padding: 0 8px; }
+  .walk a { display: flex; align-items: center; }
+  .keys-hint { display: none; }
+}
+
 @media (max-width: 480px) {
-  .entrance { padding-top: 32px; }
+  .entrance { padding-top: 20px; }
+  .lang-bar { padding-inline: 14px; }
   .trace { font-size: 11px; }
   .gallery { grid-template-columns: 1fr; gap: 28px; padding-inline: 14px; }
   .exhibit { padding: 20px 18px 16px; }
   .exhibit h1 { font-size: 1.5rem; }
-  .crumbs { padding: 24px 14px 0; }
+  .crumbs { padding: 12px 14px 0; }
   .walk { grid-template-columns: 1fr; }
   .walk-next { text-align: left; }
 }

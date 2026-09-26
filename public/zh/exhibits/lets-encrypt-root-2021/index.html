@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Let&#39;s Encrypt 根证书过期（2021 年 9 月）：过期的根证书</title>
+  <meta name="description" content="Let&#39;s Encrypt 根证书过期（2021 年 9 月）。一张旧根证书到了早已公告的过期日；4 跳之后，修复办法从改配置到买新硬件不等。几年后的过期日也是一个日期。记进日历…">
+  <link rel="canonical" href="https://failrouter.com/zh/exhibits/lets-encrypt-root-2021/">
+  <link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/lets-encrypt-root-2021/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/lets-encrypt-root-2021/">
+  <link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/lets-encrypt-root-2021/">
+  <meta property="og:site_name" content="Failrouter">
+  <meta property="og:title" content="Let&#39;s Encrypt 根证书过期（2021 年 9 月）：过期的根证书">
+  <meta property="og:description" content="Let&#39;s Encrypt 根证书过期（2021 年 9 月）。一张旧根证书到了早已公告的过期日；4 跳之后，修复办法从改配置到买新硬件不等。几年后的过期日也是一个日期。记进日历…">
+  <meta property="og:url" content="https://failrouter.com/zh/exhibits/lets-encrypt-root-2021/">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:image" content="https://failrouter.com/og-zh.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="失败路由博物馆：知名宕机事故，逐跳复盘">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#111014">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"过期的根证书","alternativeHeadline":"Let's Encrypt 根证书过期（2021 年 9 月）","description":"Let's Encrypt 根证书过期（2021 年 9 月）。一张旧根证书到了早已公告的过期日；4 跳之后，修复办法从改配置到买新硬件不等。几年后的过期日也是一个日期。记进日历…","url":"https://failrouter.com/zh/exhibits/lets-encrypt-root-2021/","mainEntityOfPage":"https://failrouter.com/zh/exhibits/lets-encrypt-root-2021/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-24","articleSection":"钟表室","about":{"@type":"Event","name":"Let's Encrypt 根证书过期（2021 年 9 月）","startDate":"2021-09-30"},"citation":"Let's Encrypt announcements, 2020 to 2021","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"过期的根证书","item":"https://failrouter.com/zh/exhibits/lets-encrypt-root-2021/"}]}</script>
+</head>
+<body class="exhibit-page">
+  <p class="lang-bar"><a class="lang-switch" id="lang-switch" href="/exhibits/lets-encrypt-root-2021/" hreflang="en" lang="en">English</a></p>
+  <nav class="crumbs" aria-label="面包屑导航"><a href="/zh/">失败路由博物馆</a> <span aria-hidden="true">›</span> 钟表室</nav>
+
+  <main class="gallery single">
+  <article class="exhibit lit" id="lets-encrypt-root-2021" tabindex="-1" style="--i:0">
+    <p class="plaque-no">展品 012 · 钟表室</p>
+    <h1>过期的根证书</h1>
+    <p class="meta"><time datetime="2021-09-30">2021-09-30</time> · 旧设备上拖了很久</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>一张旧根证书到了早已公告的过期日</li><li class=""><span class="hop"> 2</span>现代系统用的是新根证书，没有察觉</li><li class=""><span class="hop"> 3</span>旧手机、旧版 OpenSSL 和嵌入式设备仍然只信任旧的那张</li><li class=""><span class="hop"> 4</span>这些客户端的 TLS 握手开始失败</li><li class="fail"><span class="hop"> 5</span>修复办法从改配置到买新硬件不等 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">几年后的过期日也是一个日期。记进日历。</p>
+    <p class="source">来源：<span lang="en">Let&#39;s Encrypt announcements, 2020 to 2021</span></p>
+  </article>
+    <p class="about-event">Let&#39;s Encrypt 根证书过期（2021 年 9 月）。持续时间：旧设备上拖了很久。从第一个改动到故障，共 5 跳。</p>
+    <nav class="walk" aria-label="更多展品">
+      <a class="walk-prev" rel="prev" href="/zh/exhibits/leap-second-2012/">← 多出来的一秒</a>
+      <a class="walk-hall" href="/zh/#lets-encrypt-root-2021">回到主展厅</a>
+      <span class="walk-next"></span>
+    </nav>
+  </main>
+
+  <footer>
+    <p>免费参观。出口标得很清楚，这点比馆里大多数系统强。</p>
+    <p class="small">展品摘要均据公开的事后复盘报告与调查报告整理。</p>
+    <p class="small"><a href="https://github.com/FailRouter/failrouter">GitHub 源码</a> · <a href="https://github.com/FailRouter/failrouter/issues/new?title=Exhibit%20suggestion%3A%20">推荐展品</a> · MIT 许可</p>
+  </footer>
+</body>
+</html>

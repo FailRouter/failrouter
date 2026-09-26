@@ -1,6 +1,6 @@
 name: CI / Deploy
 
-# PRs: test + coverage gate + deploy dry-run.
+# PRs: test + coverage gate + deploy dry-run, and the narrow-screen check in headless Chrome.
 # Push to main (= merged PR): same checks, then deploy to production.
 on:
   pull_request:
@@ -27,8 +27,23 @@ jobs:
       - name: Wrangler config check
         run: pnpm exec wrangler deploy --dry-run
 
+  viewport:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Narrow screens (320 / 375 / 430 px) - no sideways scroll, touch targets >= 44px
+        run: pnpm viewport
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+
   deploy:
-    needs: test
+    needs: [test, viewport]
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: production

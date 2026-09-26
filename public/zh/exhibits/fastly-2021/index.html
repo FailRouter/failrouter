@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fastly 宕机事件（2021 年 6 月）：一个客户，一项设置</title>
+  <meta name="description" content="Fastly 宕机事件（2021 年 6 月）。几周前部署的一次软件变更带着一个潜伏的 bug；4 跳之后，工程师找到这项配置并停用，流量恢复。bug 可以耐心地等，等那个能唤醒…">
+  <link rel="canonical" href="https://failrouter.com/zh/exhibits/fastly-2021/">
+  <link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/fastly-2021/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/fastly-2021/">
+  <link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/fastly-2021/">
+  <meta property="og:site_name" content="Failrouter">
+  <meta property="og:title" content="Fastly 宕机事件（2021 年 6 月）：一个客户，一项设置">
+  <meta property="og:description" content="Fastly 宕机事件（2021 年 6 月）。几周前部署的一次软件变更带着一个潜伏的 bug；4 跳之后，工程师找到这项配置并停用，流量恢复。bug 可以耐心地等，等那个能唤醒…">
+  <meta property="og:url" content="https://failrouter.com/zh/exhibits/fastly-2021/">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:image" content="https://failrouter.com/og-zh.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="失败路由博物馆：知名宕机事故，逐跳复盘">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#111014">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"一个客户，一项设置","alternativeHeadline":"Fastly 宕机事件（2021 年 6 月）","description":"Fastly 宕机事件（2021 年 6 月）。几周前部署的一次软件变更带着一个潜伏的 bug；4 跳之后，工程师找到这项配置并停用，流量恢复。bug 可以耐心地等，等那个能唤醒…","url":"https://failrouter.com/zh/exhibits/fastly-2021/","mainEntityOfPage":"https://failrouter.com/zh/exhibits/fastly-2021/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-24","articleSection":"全局推送翼","about":{"@type":"Event","name":"Fastly 宕机事件（2021 年 6 月）","startDate":"2021-06-08"},"citation":"Fastly blog, June 2021","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"一个客户，一项设置","item":"https://failrouter.com/zh/exhibits/fastly-2021/"}]}</script>
+</head>
+<body class="exhibit-page">
+  <p class="lang-bar"><a class="lang-switch" id="lang-switch" href="/exhibits/fastly-2021/" hreflang="en" lang="en">English</a></p>
+  <nav class="crumbs" aria-label="面包屑导航"><a href="/zh/">失败路由博物馆</a> <span aria-hidden="true">›</span> 全局推送翼</nav>
+
+  <main class="gallery single">
+  <article class="exhibit lit" id="fastly-2021" tabindex="-1" style="--i:0">
+    <p class="plaque-no">展品 005 · 全局推送翼</p>
+    <h1>一个客户，一项设置</h1>
+    <p class="meta"><time datetime="2021-06-08">2021-06-08</time> · 不到 1 小时</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>几周前部署的一次软件变更带着一个潜伏的 bug</li><li class=""><span class="hop"> 2</span>一个客户推送了一次合法的配置变更</li><li class=""><span class="hop"> 3</span>这次变更在整个边缘网络上触发了那个 bug</li><li class=""><span class="hop"> 4</span>网络大部分节点开始报错，几家大新闻网站一片空白</li><li class="fail"><span class="hop"> 5</span>工程师找到这项配置并停用，流量恢复 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">bug 可以耐心地等，等那个能唤醒它的输入。</p>
+    <p class="source">来源：<span lang="en">Fastly blog, June 2021</span></p>
+  </article>
+    <p class="about-event">Fastly 宕机事件（2021 年 6 月）。持续时间：不到 1 小时。从第一个改动到故障，共 5 跳。</p>
+    <nav class="walk" aria-label="更多展品">
+      <a class="walk-prev" rel="prev" href="/zh/exhibits/cloudflare-regex-2019/">← 一条正则表达式</a>
+      <a class="walk-hall" href="/zh/#fastly-2021">回到主展厅</a>
+      <a class="walk-next" rel="next" href="/zh/exhibits/s3-2017/">→ 一次输错让 S3 停摆</a>
+    </nav>
+  </main>
+
+  <footer>
+    <p>免费参观。出口标得很清楚，这点比馆里大多数系统强。</p>
+    <p class="small">展品摘要均据公开的事后复盘报告与调查报告整理。</p>
+    <p class="small"><a href="https://github.com/FailRouter/failrouter">GitHub 源码</a> · <a href="https://github.com/FailRouter/failrouter/issues/new?title=Exhibit%20suggestion%3A%20">推荐展品</a> · MIT 许可</p>
+  </footer>
+</body>
+</html>

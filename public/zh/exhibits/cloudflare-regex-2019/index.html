@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cloudflare 正则表达式宕机（2019 年 7 月）：一条正则表达式</title>
+  <meta name="description" content="Cloudflare 正则表达式宕机（2019 年 7 月）。一条新的托管 WAF 规则一次性部署到全球；4 跳之后，关掉 WAF 规则的全局开关后，流量恢复。最快的部署流水线，也是最…">
+  <link rel="canonical" href="https://failrouter.com/zh/exhibits/cloudflare-regex-2019/">
+  <link rel="alternate" hreflang="en" href="https://failrouter.com/exhibits/cloudflare-regex-2019/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/exhibits/cloudflare-regex-2019/">
+  <link rel="alternate" hreflang="x-default" href="https://failrouter.com/exhibits/cloudflare-regex-2019/">
+  <meta property="og:site_name" content="Failrouter">
+  <meta property="og:title" content="Cloudflare 正则表达式宕机（2019 年 7 月）：一条正则表达式">
+  <meta property="og:description" content="Cloudflare 正则表达式宕机（2019 年 7 月）。一条新的托管 WAF 规则一次性部署到全球；4 跳之后，关掉 WAF 规则的全局开关后，流量恢复。最快的部署流水线，也是最…">
+  <meta property="og:url" content="https://failrouter.com/zh/exhibits/cloudflare-regex-2019/">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:image" content="https://failrouter.com/og-zh.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="失败路由博物馆：知名宕机事故，逐跳复盘">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#111014">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"一条正则表达式","alternativeHeadline":"Cloudflare 正则表达式宕机（2019 年 7 月）","description":"Cloudflare 正则表达式宕机（2019 年 7 月）。一条新的托管 WAF 规则一次性部署到全球；4 跳之后，关掉 WAF 规则的全局开关后，流量恢复。最快的部署流水线，也是最…","url":"https://failrouter.com/zh/exhibits/cloudflare-regex-2019/","mainEntityOfPage":"https://failrouter.com/zh/exhibits/cloudflare-regex-2019/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-24","articleSection":"全局推送翼","about":{"@type":"Event","name":"Cloudflare 正则表达式宕机（2019 年 7 月）","startDate":"2019-07-02"},"citation":"Cloudflare blog, July 2019","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"一条正则表达式","item":"https://failrouter.com/zh/exhibits/cloudflare-regex-2019/"}]}</script>
+</head>
+<body class="exhibit-page">
+  <p class="lang-bar"><a class="lang-switch" id="lang-switch" href="/exhibits/cloudflare-regex-2019/" hreflang="en" lang="en">English</a></p>
+  <nav class="crumbs" aria-label="面包屑导航"><a href="/zh/">失败路由博物馆</a> <span aria-hidden="true">›</span> 全局推送翼</nav>
+
+  <main class="gallery single">
+  <article class="exhibit lit" id="cloudflare-regex-2019" tabindex="-1" style="--i:0">
+    <p class="plaque-no">展品 004 · 全局推送翼</p>
+    <h1>一条正则表达式</h1>
+    <p class="meta"><time datetime="2019-07-02">2019-07-02</time> · 27 分钟</p>
+    <ol class="route"><li class=""><span class="hop"> 1</span>一条新的托管 WAF 规则一次性部署到全球</li><li class=""><span class="hop"> 2</span>它的正则表达式在普通流量上发生灾难性回溯</li><li class=""><span class="hop"> 3</span>每台边缘机器的 CPU 都打到 100%</li><li class=""><span class="hop"> 4</span>接入这张网络的站点在全球返回 502</li><li class="fail"><span class="hop"> 5</span>关掉 WAF 规则的全局开关后，流量恢复 <b class="x" aria-label="失败">✕</b></li></ol>
+    <p class="lesson">最快的部署流水线，也是最快的宕机流水线。</p>
+    <p class="source">来源：<span lang="en">Cloudflare blog, July 2019</span></p>
+  </article>
+    <p class="about-event">Cloudflare 正则表达式宕机（2019 年 7 月）。持续时间：27 分钟。从第一个改动到故障，共 5 跳。</p>
+    <nav class="walk" aria-label="更多展品">
+      <a class="walk-prev" rel="prev" href="/zh/exhibits/crowdstrike-2024/">← Channel File 291</a>
+      <a class="walk-hall" href="/zh/#cloudflare-regex-2019">回到主展厅</a>
+      <a class="walk-next" rel="next" href="/zh/exhibits/fastly-2021/">→ 一个客户，一项设置</a>
+    </nav>
+  </main>
+
+  <footer>
+    <p>免费参观。出口标得很清楚，这点比馆里大多数系统强。</p>
+    <p class="small">展品摘要均据公开的事后复盘报告与调查报告整理。</p>
+    <p class="small"><a href="https://github.com/FailRouter/failrouter">GitHub 源码</a> · <a href="https://github.com/FailRouter/failrouter/issues/new?title=Exhibit%20suggestion%3A%20">推荐展品</a> · MIT 许可</p>
+  </footer>
+</body>
+</html>
