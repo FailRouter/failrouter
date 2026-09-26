@@ -34,7 +34,7 @@
     <pre class="trace" id="trace" aria-label="一段以博物馆为终点的 traceroute">$ traceroute failrouter.com</pre>
     <h1><span>失败路由</span>博物馆</h1>
     <p class="tagline">每次宕机都始于一个小改动，然后走上了没人预料的路线。这里收的是有名的那些，一跳一跳地讲。</p>
-    <nav class="rooms" id="rooms" aria-label="展厅"><button type="button" data-room="all" aria-pressed="true">全部展厅 <span>12</span></button><button type="button" data-room="routing" aria-pressed="false">丢包大厅 <span>2</span></button><button type="button" data-room="config" aria-pressed="false">全局推送翼 <span>3</span></button><button type="button" data-room="human" aria-pressed="false">回车键画廊 <span>3</span></button><button type="button" data-room="numbers" aria-pressed="false">错数陈列柜 <span>2</span></button><button type="button" data-room="time" aria-pressed="false">钟表室 <span>2</span></button></nav>
+    <nav class="rooms" id="rooms" aria-label="展厅"><button type="button" data-room="all" aria-pressed="true">全部展厅 <span>12</span></button><button type="button" data-room="routing" aria-pressed="false">丢包大厅 <span>2</span></button><button type="button" data-room="config" aria-pressed="false">全局推送厅 <span>3</span></button><button type="button" data-room="human" aria-pressed="false">回车键画廊 <span>3</span></button><button type="button" data-room="numbers" aria-pressed="false">错数陈列柜 <span>2</span></button><button type="button" data-room="time" aria-pressed="false">钟表室 <span>2</span></button></nav>
     <button class="wrong-turn" id="wrong-turn" type="button">走条岔路</button>
   </header>
 
@@ -56,7 +56,7 @@
     <p class="source">来源：<span lang="en">RIPE NCC case study, 2008</span></p>
   </article>
   <article class="exhibit" id="crowdstrike-2024" tabindex="-1" style="--i:2">
-    <p class="plaque-no">展品 003 · 全局推送翼</p>
+    <p class="plaque-no">展品 003 · 全局推送厅</p>
     <h2><a href="/zh/exhibits/crowdstrike-2024/">一次内容更新，850 万台 Windows 蓝屏</a></h2>
     <p class="meta"><time datetime="2024-07-19">2024-07-19</time> · 修复用了几小时，清理用了几天到几周</p>
     <ol class="route"><li class=""><span class="hop"> 1</span>安全厂商给 Windows 传感器推送了一次例行内容更新</li><li class=""><span class="hop"> 2</span>更新定义的输入字段比传感器代码预期的多</li><li class=""><span class="hop"> 3</span>内核驱动越界读取，随即崩溃</li><li class=""><span class="hop"> 4</span>约 850 万台 Windows 电脑蓝屏，反复重启</li><li class="fail"><span class="hop"> 5</span>航空公司、医院和银行只能一台一台手动修 <b class="x" aria-label="失败">✕</b></li></ol>
@@ -64,7 +64,7 @@
     <p class="source">来源：<span lang="en">CrowdStrike root cause analysis, August 2024</span></p>
   </article>
   <article class="exhibit" id="cloudflare-regex-2019" tabindex="-1" style="--i:3">
-    <p class="plaque-no">展品 004 · 全局推送翼</p>
+    <p class="plaque-no">展品 004 · 全局推送厅</p>
     <h2><a href="/zh/exhibits/cloudflare-regex-2019/">一条正则拖垮全球边缘节点</a></h2>
     <p class="meta"><time datetime="2019-07-02">2019-07-02</time> · 27 分钟</p>
     <ol class="route"><li class=""><span class="hop"> 1</span>一条新的托管 WAF 规则一次性部署到全球</li><li class=""><span class="hop"> 2</span>它的正则表达式在普通流量上发生灾难性回溯</li><li class=""><span class="hop"> 3</span>每台边缘机器的 CPU 都打到 100%</li><li class=""><span class="hop"> 4</span>接入这张网络的站点在全球返回 502</li><li class="fail"><span class="hop"> 5</span>关掉 WAF 规则的全局开关后，流量恢复 <b class="x" aria-label="失败">✕</b></li></ol>
@@ -72,7 +72,7 @@
     <p class="source">来源：<span lang="en">Cloudflare blog, July 2019</span></p>
   </article>
   <article class="exhibit" id="fastly-2021" tabindex="-1" style="--i:4">
-    <p class="plaque-no">展品 005 · 全局推送翼</p>
+    <p class="plaque-no">展品 005 · 全局推送厅</p>
     <h2><a href="/zh/exhibits/fastly-2021/">一次客户配置，唤醒了潜伏几周的 bug</a></h2>
     <p class="meta"><time datetime="2021-06-08">2021-06-08</time> · 不到 1 小时</p>
     <ol class="route"><li class=""><span class="hop"> 1</span>几周前部署的一次软件变更带着一个潜伏的 bug</li><li class=""><span class="hop"> 2</span>一个客户推送了一次合法的配置变更</li><li class=""><span class="hop"> 3</span>这次变更在整个边缘网络上触发了那个 bug</li><li class=""><span class="hop"> 4</span>网络大部分节点开始报错，几家大新闻网站一片空白</li><li class="fail"><span class="hop"> 5</span>工程师找到这项配置并停用，流量恢复 <b class="x" aria-label="失败">✕</b></li></ol>

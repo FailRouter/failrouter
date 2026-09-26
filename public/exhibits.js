@@ -17,7 +17,7 @@ export const ROOMS = {
 // Simplified Chinese room names; same keys as ROOMS (test/exhibits.test.js).
 export const ROOMS_ZH = {
   routing: "丢包大厅",
-  config: "全局推送翼",
+  config: "全局推送厅",
   human: "回车键画廊",
   numbers: "错数陈列柜",
   time: "钟表室",
