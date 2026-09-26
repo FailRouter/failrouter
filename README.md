@@ -43,7 +43,7 @@ Keep to what the public report says. Describe systems and decisions, not individ
 
 ## Deploy
 
-Merging to `main` runs the workflow in `.github/workflows/ci.yml`: tests and the coverage gate plus the phone-width check, then `wrangler deploy`. Pull requests run the same checks with a deploy dry run. Cloudflare credentials live in repository secrets only.
+Merging to `main` runs the workflow in `.github/workflows/ci.yml`: tests and the coverage gate plus the phone-width check, then `wrangler deploy` and a smoke test against the deployed Worker. Pull requests run the same checks with a deploy dry run. Cloudflare credentials live in repository secrets only.
 
 ## License
 

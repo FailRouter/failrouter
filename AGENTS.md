@@ -19,7 +19,7 @@ This repo is public under the MIT license. Never commit:
 
 This file, commit messages and PR descriptions are public too: no hosting plans, account names, business strategy or anything else that belongs in a private note.
 
-Credentials live only in GitHub Actions secrets (`CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, environment `production`). If you find anything above in a diff or in history, stop and tell the maintainer before doing anything else.
+Credentials live only in GitHub Actions secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` (environment `production`), and `SMOKE_URL`, `CF_ACCESS_CLIENT_ID`, `CF_ACCESS_CLIENT_SECRET` (repository) for the post-deploy smoke test. If you find anything above in a diff or in history, stop and tell the maintainer before doing anything else.
 
 Commits use the GitHub noreply identity configured in the local git config. Never commit with a work or personal email.
 
@@ -125,6 +125,7 @@ Four weeks after an SEO change, check the per-page numbers in Google Search Cons
 
 ## Performance and cost constraints
 
+- The Worker's `workers.dev` URL stays behind Cloudflare Access (all traffic; account members + a service token for CI). The smoke test fails if it answers 200 without the token. Never write that URL into the repo; it lives in `SMOKE_URL`.
 - Stay assets-only: no Worker `main` script, no fetch handler, no bindings (KV / D1 / R2 / Cron) without the maintainer's approval. Assets-only requests don't count against Workers request quotas.
 - No third-party scripts, trackers, analytics beacons, web fonts (a CJK web font is megabytes) or CDNs. No deploy-time build step: generated pages are committed (see above).
 - Page weight budget, gzipped, enforced by `test/site.test.js`: home page HTML + CSS + all JS ≤ 50 KB; exhibit page HTML + CSS ≤ 15 KB. Raise `BUDGET` in `scripts/site.js` only with a reason in the PR.
