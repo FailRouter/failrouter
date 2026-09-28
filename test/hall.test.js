@@ -351,7 +351,7 @@ describe("impact sculpture", () => {
     assert.deepEqual(H.hemispheres(0), { bottom: false, top: false });
     for (const score of [0, 1, 3, 4.8, 5, 7.6, 9, 10]) {
       const fill = H.nodeFill(score);
-      // Bottom to top: rod, bottom half, top half, rod, ... must be red then unlit, never red again.
+      // Bottom to top: rod, bottom half, top half, rod, ... must be red then green, never red again.
       const seq = fill.flatMap((f, k) => [...(k ? [H.rodLit(fill[k - 1], f)] : []), H.hemispheres(f).bottom, H.hemispheres(f).top]);
       const firstUnlit = seq.indexOf(false);
       assert.ok(firstUnlit < 0 || !seq.slice(firstUnlit).includes(true), `${score}: ${seq}`);

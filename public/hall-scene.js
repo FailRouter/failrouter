@@ -341,8 +341,6 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
   const plinthMat = lambert({ color: 0x26222b });
   const green = lambert({ color: 0x7fdc8c, emissive: 0x2e6b37 });
   const red = lambert({ color: 0xc2412d, emissive: 0x7a1a10 });
-  // Unlit sculpture nodes: the grey of the unfilled impact dots on the home page (--muted), no glow.
-  const unlit = lambert({ color: 0x8c8579 });
   const dark = lambert({ color: 0x1d1a21 });
   const coneMat = glow(cone, 0.06);
   const poolMat = glow(pool, 0.35);
@@ -494,12 +492,12 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
     pts.forEach((p, k) => {
       const half = H.hemispheres(fill[k]);
       for (const [geo, lit] of [[top, half.top], [bottom, half.bottom]]) {
-        const mesh = new THREE.Mesh(geo, lit ? red : unlit);
+        const mesh = new THREE.Mesh(geo, lit ? red : green);
         mesh.position.copy(p);
         gr.add(mesh);
       }
       if (k === 0) return;
-      add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([pts[k - 1], p]), 4, 0.016, 6), H.rodLit(fill[k - 1], fill[k]) ? red : unlit, [0, 0, 0], undefined, gr);
+      add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([pts[k - 1], p]), 4, 0.016, 6), H.rodLit(fill[k - 1], fill[k]) ? red : green, [0, 0, 0], undefined, gr);
     });
     const peak = pts.at(-1);
     // Brass ring at the top of the scale (10 points): a marker, not a failure.

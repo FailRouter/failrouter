@@ -506,7 +506,7 @@ export function nodeFill(score) {
 
 /**
  * Which half of a node is red for its fill (from nodeFill): red rises from the bottom like a level,
- * so a half node is red below and unlit above, and the colour changes only once up the sculpture.
+ * so a half node is red below and green above, and the colour changes only once up the sculpture.
  */
 export const hemispheres = (fill) => ({ bottom: fill > 0, top: fill === 1 });
 
