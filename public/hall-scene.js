@@ -344,9 +344,12 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
   const dark = lambert({ color: 0x1d1a21 });
   const coneMat = glow(cone, 0.06);
   const poolMat = glow(pool, 0.35);
+  for (const sign of H.spineSigns(layout)) {
+    const name = rooms[layout.rooms[sign.room].key];
+    pick(add(new THREE.PlaneGeometry(2.3, 0.36), basic({ map: signTexture(H.signText(name, sign.arrow), 1024, 160) }), [sign.x, 3.35, sign.z], [0, sign.rotY, 0]), { room: sign.room });
+  }
   for (const room of layout.rooms) {
     const s = room.side;
-    pick(add(new THREE.PlaneGeometry(2.3, 0.36), basic({ map: signTexture(H.signText(rooms[room.key], s), 1024, 160) }), [s * 1.2, 3.35, room.z + 2.2]), { room: room.index });
     add(new THREE.PlaneGeometry(3.6, 0.56), basic({ map: signTexture(rooms[room.key]) }), [s * (room.u1 - 0.03), 3.3, room.z], [0, -s * (Math.PI / 2), 0]);
     for (let u = room.u0 + 2; u < room.u1; u += 5) add(new THREE.BoxGeometry(0.24, 0.04, 1.4), lamp, [s * u, P.wallHeight - 0.02, room.z]);
 
@@ -490,17 +493,18 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
     keep(top);
     keep(bottom);
     pts.forEach((p, k) => {
-      for (const [geo, lit] of [[top, fill[k] > 0], [bottom, fill[k] === 1]]) {
+      const half = H.hemispheres(fill[k]);
+      for (const [geo, lit] of [[top, half.top], [bottom, half.bottom]]) {
         const mesh = new THREE.Mesh(geo, lit ? red : green);
         mesh.position.copy(p);
         gr.add(mesh);
       }
       if (k === 0) return;
-      const lit = fill[k - 1] === 1 && fill[k] > 0;
-      add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([pts[k - 1], p]), 4, 0.016, 6), lit ? red : green, [0, 0, 0], undefined, gr);
+      add(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([pts[k - 1], p]), 4, 0.016, 6), H.rodLit(fill[k - 1], fill[k]) ? red : green, [0, 0, 0], undefined, gr);
     });
     const peak = pts.at(-1);
-    add(new THREE.TorusGeometry(0.16, 0.012, 8, 32), red, [peak.x, peak.y, peak.z], [Math.PI / 2, 0, 0], gr);
+    // Brass ring at the top of the scale (10 points): a marker, not a failure.
+    add(new THREE.TorusGeometry(0.16, 0.012, 8, 32), brass, [peak.x, peak.y, peak.z], [Math.PI / 2, 0, 0], gr);
 
     const [sx, sz] = H.spotPosition(slot);
     add(new THREE.CylinderGeometry(0.05, 1.3, 3.9, 24, 1, true), coneMat, [sx, P.wallHeight - 1.95, sz]);
