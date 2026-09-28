@@ -11,11 +11,16 @@ import {
   exhibitHtml,
   exhibitPath,
   galleryHtml,
+  RADAR,
+  iconSvg,
   impactScore,
+  radarLabel,
+  radarPoint,
   roomsHtml,
   sortExhibits,
   sortOptionsHtml,
 } from "../public/museum.js";
+import { DOWNLOAD_KB, POSTER_HEIGHT, POSTER_WIDTHS, hallLayout, mapSvg, posterPath, spotsHtml, walkOrder } from "../public/hall.js";
 
 export const SITE = {
   origin: "https://failrouter.com",
@@ -25,8 +30,14 @@ export const SITE = {
   themeColor: "#111014",
 };
 export const REPO_ISSUE = `${SITE.repo}/issues/new?title=${encodeURIComponent("Exhibit suggestion: ")}`;
-/** Gzipped bytes per page, enforced in test/site.test.js. Home = HTML + CSS + all JS; exhibit = HTML + CSS. */
-export const BUDGET = { home: 50_000, exhibit: 15_000 };
+/**
+ * Gzipped bytes, enforced in test/site.test.js. Home = HTML + CSS + all JS; exhibit = HTML + CSS;
+ * hall = what /hall/ loads before the visitor asks for 3D (HTML + CSS + hall-app.js and its imports);
+ * hall3d = what the "Enter" button downloads (vendored three.js, exhibits.js, hall-scene.js, hall.js, museum.js).
+ */
+export const BUDGET = { home: 50_000, exhibit: 15_000, hall: 35_000, hall3d: 190_000 };
+/** Language-neutral path of the 3D hall. It is noindex and stays out of the sitemap (it repeats the home page). */
+export const HALL_PATH = "/hall/";
 /** Language-neutral path of the page that explains the impact score, and when its text last changed. */
 export const IMPACT_PATH = "/impact/";
 export const IMPACT_UPDATED = "2026-09-28";
@@ -80,8 +91,17 @@ export const ldJson = (obj) => JSON.stringify(obj).replace(/</g, "\\u003c");
 const abs = (path) => `${SITE.origin}${path}`;
 const url = (lang, path) => abs(localePath(lang, path));
 
+/** Square logo for the Organization in JSON-LD (rendered from the icon by `pnpm build --og`). */
+export const LOGO = { path: "/logo.png", size: 512 };
+
 export function publisherLd() {
-  return { "@type": "Organization", name: SITE.name, url: abs("/"), sameAs: [SITE.repo] };
+  return {
+    "@type": "Organization",
+    name: SITE.name,
+    url: abs("/"),
+    logo: { "@type": "ImageObject", url: abs(LOGO.path), width: LOGO.size, height: LOGO.size },
+    sameAs: [SITE.repo],
+  };
 }
 
 export function websiteLd(lang = "en") {
@@ -161,16 +181,18 @@ export function alternates(path) {
 }
 
 /** <head> contents shared by every indexable page. */
-export function headHtml({ title, description, path, type, jsonLd, lang = "en" }) {
+export function headHtml({ title, description, path, type, jsonLd, lang = "en", noindex = false, edgeToEdge = false }) {
   const self = url(lang, path);
   const loc = LOCALES[lang];
   const ld = jsonLd.map((o) => `  <script type="application/ld+json">${ldJson(o)}</script>`).join("\n");
   const alt = alternates(path)
     .map(([hl, href]) => `  <link rel="alternate" hreflang="${hl}" href="${href}">`)
     .join("\n");
+  const fit = edgeToEdge ? ", viewport-fit=cover" : "";
+  const robots = noindex ? `\n  <meta name="robots" content="noindex">` : "";
   return `  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${esc(title)}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1${fit}">
+  <title>${esc(title)}</title>${robots}
   <meta name="description" content="${esc(description)}">
   <link rel="canonical" href="${self}">
 ${alt}
@@ -187,17 +209,28 @@ ${alt}
   <meta property="og:image:alt" content="${esc(STRINGS[lang].ogAlt)}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="theme-color" content="${SITE.themeColor}">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="stylesheet" href="/style.css">
   <script>document.documentElement.classList.add("js")</script>
 ${ld}`;
 }
 
-/** Link to the same page in the other language. app.js keeps its #anchor in sync on the home page. */
-export function langSwitchHtml(lang, path) {
+/**
+ * Site bar on every page: the icon and museum name (a link home, except on the home page), then the
+ * 3D hall and the same page in the other language. app.js / hall-app.js keep the language link's
+ * #anchor in sync.
+ */
+export function siteBarHtml(lang, path) {
+  const t = STRINGS[lang];
   const to = otherLang(lang);
   const loc = LOCALES[to];
-  return `<p class="lang-bar"><a class="lang-switch" id="lang-switch" href="${localePath(to, path)}" hreflang="${loc.hreflang}" lang="${loc.html}">${esc(STRINGS[to].langName)}</a></p>`;
+  const home = localePath(lang, "/");
+  const mark = `${iconSvg('class="brand-icon" width="28" height="28" aria-hidden="true" focusable="false"')}<span class="brand-name">${esc(t.museum)}</span>`;
+  const brand = path === "/" ? `<span class="brand">${mark}</span>` : `<a class="brand" href="${home}">${mark}</a>`;
+  const here = path === HALL_PATH ? ` aria-current="page"` : "";
+  return `<nav class="site-bar" aria-label="${esc(t.siteNav)}">${brand}<span class="site-links"><a class="hall-nav" href="${localePath(lang, HALL_PATH)}"${here}>${esc(t.hallLink)}</a><a class="lang-switch" id="lang-switch" href="${localePath(to, path)}" hreflang="${loc.hreflang}" lang="${loc.html}">${esc(STRINGS[to].langName)}</a></span></nav>`;
 }
 
 export function footerHtml({ keys = false, lang = "en" } = {}) {
@@ -210,10 +243,14 @@ export function footerHtml({ keys = false, lang = "en" } = {}) {
   </footer>`;
 }
 
-/** Sort control (shown only when JS runs; see .sort-control in style.css) and the link to the scoring rules. */
+/**
+ * Home toolbar: the sort control and the wrong-turn button side by side (both need JS, so both are
+ * hidden without it; see .toolbar in style.css), then the link to the scoring rules on its own line.
+ */
 export function sortBarHtml(lang = "en") {
   const t = STRINGS[lang];
-  return `<p class="sort-bar"><span class="sort-control"><label for="sort">${esc(t.sortLabel)}</label> <select id="sort">${sortOptionsHtml(DEFAULT_SORT, lang)}</select></span> <a class="impact-how" href="${localePath(lang, IMPACT_PATH)}">${esc(t.impactHow)}</a></p>`;
+  return `<div class="toolbar"><span class="sort-control"><label for="sort">${esc(t.sortLabel)}</label> <select id="sort">${sortOptionsHtml(DEFAULT_SORT, lang)}</select></span><button class="wrong-turn" id="wrong-turn" type="button">${esc(t.wrongTurn)}</button></div>
+    <p class="impact-link"><a class="impact-how" href="${localePath(lang, IMPACT_PATH)}">${esc(t.impactHow)}</a></p>`;
 }
 
 export function homePage(exhibits, rooms, lang = "en") {
@@ -233,14 +270,14 @@ export function homePage(exhibits, rooms, lang = "en") {
 ${head}
 </head>
 <body>
-  ${langSwitchHtml(lang, "/")}
+  ${siteBarHtml(lang, "/")}
   <header class="entrance">
     <pre class="trace" id="trace" aria-label="${esc(t.traceLabel)}">$ traceroute failrouter.com</pre>
     <h1>${t.h1Html}</h1>
+    <p class="slogan">${esc(t.slogan)}</p>
     <p class="tagline">${esc(t.tagline)}</p>
     <nav class="rooms" id="rooms" aria-label="${esc(t.roomsLabel)}">${roomsHtml(list, rooms, ALL, lang)}</nav>
     ${sortBarHtml(lang)}
-    <button class="wrong-turn" id="wrong-turn" type="button">${esc(t.wrongTurn)}</button>
   </header>
 
   <main id="gallery" class="gallery" aria-live="polite">${galleryHtml(list, rooms, ALL, lang, DEFAULT_SORT)}
@@ -254,27 +291,9 @@ ${footerHtml({ keys: true, lang })}
 `;
 }
 
-// Radar chart geometry, in viewBox units. Sized so labels stay >= 12 px on a 320 px screen.
-const RADAR = { w: 320, h: 250, cx: 160, cy: 130, r: 78, label: 14 };
-const round1 = (n) => Math.round(n * 10) / 10 || 0;
 const points = (list) => list.map((p) => p.join(",")).join(" ");
-
-/** Point at `value` (0-10) on axis `i`, axes clockwise from the top. `r` = radius of a 10. */
-export function radarPoint(i, value, r = RADAR.r) {
-  const a = -Math.PI / 2 + (i * 2 * Math.PI) / DIMENSIONS.length;
-  const d = (r * value) / 10;
-  return [round1(RADAR.cx + d * Math.cos(a)), round1(RADAR.cy + d * Math.sin(a))];
-}
-
-/** Axis label placement: x, text-anchor, and baselines of the name line and the score line. */
-export function radarLabel(i) {
-  const [x, y] = radarPoint(i, 10, RADAR.r + RADAR.label);
-  const dx = x - RADAR.cx;
-  const dy = y - RADAR.cy;
-  const anchor = Math.abs(dx) < 1 ? "middle" : dx > 0 ? "start" : "end";
-  const lines = dy < -RADAR.r ? [y - 18, y - 2] : dy > RADAR.r / 2 ? [y + 12, y + 28] : [y - 2, y + 14];
-  return { x, anchor, lines: lines.map(round1) };
-}
+// Radar geometry lives in museum.js (shared with the 3D plaques); re-exported for callers of this module.
+export { radarLabel, radarPoint };
 
 /** Pentagon radar of the five impact scores, as inline SVG (static, no JS, no image request). */
 export function radarSvg(e, lang = "en") {
@@ -341,12 +360,13 @@ export function exhibitPage(e, exhibits, rooms, lang = "en") {
 ${head}
 </head>
 <body class="exhibit-page">
-  ${langSwitchHtml(lang, path)}
+  ${siteBarHtml(lang, path)}
   <nav class="crumbs" aria-label="${esc(t.crumbsLabel)}"><a href="${hall}">${esc(t.museum)}</a> <span aria-hidden="true">›</span> ${esc(rooms[e.room])}</nav>
 
   <main class="gallery single">${exhibitHtml(x, { no: idx + 1, i: 0, rooms, page: true, lang })}
     ${impactPanelHtml(x, lang)}
     <p class="about-event">${esc(fmt(t.aboutEvent, { subject: x.subject, duration: x.duration, n: x.hops.length }))}</p>
+    <p class="hall-3d"><a class="hall-link" href="${localePath(lang, HALL_PATH)}#${esc(e.id)}">${esc(t.hallLinkExhibit)}</a></p>
     <nav class="walk" aria-label="${esc(t.walkLabel)}">
       ${neighbourLink(order[pos - 1], "prev", "←", lang)}
       <a class="walk-hall" href="${hall}#${esc(e.id)}">${esc(t.backToHall)}</a>
@@ -409,7 +429,7 @@ export function impactPage(lang = "en") {
 ${head}
 </head>
 <body class="exhibit-page">
-  ${langSwitchHtml(lang, IMPACT_PATH)}
+  ${siteBarHtml(lang, IMPACT_PATH)}
   <nav class="crumbs" aria-label="${esc(t.crumbsLabel)}"><a href="${hall}">${esc(t.museum)}</a> <span aria-hidden="true">›</span> ${esc(t.impactHow)}</nav>
 
   <main class="gallery single">
@@ -431,6 +451,175 @@ ${footerHtml({ lang })}
 </html>
 `;
 }
+
+/** A poster image of the 3D hall, both widths. The first one on the page loads eagerly. */
+export function posterHtml(key, alt, eager = false) {
+  const [small, large] = POSTER_WIDTHS;
+  const load = eager ? ` fetchpriority="high"` : ` loading="lazy"`;
+  return `<img class="hall-poster" src="${posterPath(key, large)}" srcset="${posterPath(key, small)} ${small}w, ${posterPath(key, large)} ${large}w" sizes="(max-width: 480px) 100vw, 640px" width="${large}" height="${POSTER_HEIGHT(large)}" alt="${esc(alt)}" decoding="async"${load}>`;
+}
+
+export function hallLd(lang = "en") {
+  const t = STRINGS[lang];
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: t.hallTitle,
+    description: t.hallDescription,
+    url: url(lang, HALL_PATH),
+    inLanguage: LOCALES[lang].html,
+    isPartOf: { "@type": "WebSite", name: t.museum, url: url(lang, "/") },
+  };
+}
+
+/** The controls of the 3D view, prerendered and hidden until hall-app.js enters 3D. */
+export function hallStageHtml(order, layout, rooms, lang = "en") {
+  const t = STRINGS[lang];
+  return `<div class="hall-stage" id="hall-stage" hidden>
+    <div class="hall-canvas" id="hall-canvas" role="img" aria-label="${esc(t.hallStage)}"></div>
+    <div class="hall-fade" id="hall-fade"></div>
+    <div class="hall-top">
+      <p class="hall-caption" id="hall-caption" aria-live="polite"></p>
+      <button class="hall-exit" id="hall-exit" type="button">${esc(t.hallExit)}</button>
+    </div>
+    <div class="hall-minimap" aria-hidden="true">${mapSvg(layout, rooms, lang, "hall-map mini")}</div>
+    <p class="hall-help" id="hall-help">${esc(t.hallHelp)} <span class="keys-hint">${t.hallKeysHtml}</span></p>
+    <div class="hall-bar">
+      <button id="hall-prev" type="button" aria-label="${esc(t.hallPrev)}">←</button>
+      <button id="hall-map-open" type="button">${esc(t.hallMap)}</button>
+      <button id="hall-read" type="button">${esc(t.hallRead)}</button>
+      <button id="hall-next" type="button" aria-label="${esc(t.hallNext)}">→</button>
+    </div>
+    <dialog class="hall-dialog" id="hall-read-dialog">
+      <div id="hall-read-body"></div>
+      <p class="hall-dialog-bar"><a class="hall-full" id="hall-full" href="${localePath(lang, "/")}">${esc(t.hallFull)}</a> <button type="button" data-close>${esc(t.hallClose)}</button></p>
+    </dialog>
+    <dialog class="hall-dialog panel" id="hall-map-dialog" aria-labelledby="hall-map-h">
+      <h2 id="hall-map-h">${esc(t.hallMapHeading)}</h2>
+      ${mapSvg(layout, rooms, lang)}
+      ${spotsHtml(order, rooms, lang)}
+      <p class="hall-dialog-bar"><button type="button" data-close>${esc(t.hallClose)}</button></p>
+    </dialog>
+    <dialog class="hall-dialog panel" id="hall-suggest-dialog" aria-labelledby="hall-suggest-h">
+      <h2 id="hall-suggest-h">${esc(t.hallSuggestTitle)}</h2>
+      <p>${esc(t.hallSuggestText)}</p>
+      <p class="hall-dialog-bar"><a class="hall-full" href="${esc(REPO_ISSUE)}">${esc(t.suggest)}</a> <a class="hall-full" href="${SITE.repo}">${esc(t.repoLink)}</a> <button type="button" data-close>${esc(t.hallClose)}</button></p>
+    </dialog>
+  </div>`;
+}
+
+/**
+ * The 3D hall. Without JS (and for crawlers) it is one poster, a map of the rooms and the list of
+ * every exhibit per room. The Enter button, shown only when JS runs, downloads three.js and walks
+ * the same floor plan in 3D; the map's rooms then walk there too.
+ */
+export function hallPage(exhibits, rooms, lang = "en") {
+  const t = STRINGS[lang];
+  const list = localizeExhibits(exhibits, lang);
+  const order = walkOrder(list, Object.keys(rooms));
+  const layout = hallLayout(order, Object.keys(rooms));
+  const home = localePath(lang, "/");
+  const crumbs = [
+    [t.museum, home],
+    [t.hallHeading, localePath(lang, HALL_PATH)],
+  ];
+  const head = headHtml({
+    title: t.hallTitle,
+    description: t.hallDescription,
+    path: HALL_PATH,
+    type: "website",
+    lang,
+    noindex: true,
+    edgeToEdge: true,
+    jsonLd: [hallLd(lang), breadcrumbLd(crumbs)],
+  });
+  const roomList = layout.rooms
+    .map(({ key }) => {
+      const items = order
+        .filter((e) => e.room === key)
+        .map(
+          (e) =>
+            `<li id="${esc(e.id)}"><a href="${exhibitPath(e.id, lang)}">${esc(e.title)}</a> <span class="hall-meta"><time datetime="${esc(e.date)}">${esc(e.date)}</time> · ${esc(fmt(t.impact, { score: impactScore(e).toFixed(1) }))}</span></li>`,
+        )
+        .join("");
+      return `
+        <section class="hall-room" id="room-${key}" aria-labelledby="room-${key}-h">
+          <h3 id="room-${key}-h">${esc(rooms[key])}</h3>
+          <ol class="hall-list">${items}</ol>
+        </section>`;
+    })
+    .join("");
+  return `<!doctype html>
+<html lang="${LOCALES[lang].html}">
+<head>
+${head}
+</head>
+<body class="hall-page">
+  ${siteBarHtml(lang, HALL_PATH)}
+  <nav class="crumbs" aria-label="${esc(t.crumbsLabel)}"><a href="${home}">${esc(t.museum)}</a> <span aria-hidden="true">›</span> ${esc(t.hallHeading)}</nav>
+
+  <main class="hall">
+    <header class="hall-head">
+      <h1>${esc(t.hallHeading)}</h1>
+      <p>${esc(t.hallIntro)}</p>
+      ${posterHtml("hall", t.hallPosterAlt, true)}
+      <p class="hall-actions"><button class="hall-enter" id="hall-enter" type="button">${esc(fmt(t.hallEnter, { kb: DOWNLOAD_KB }))}</button></p>
+      <p class="hall-status" id="hall-status" role="status"></p>
+    </header>
+    <section class="hall-plan" aria-labelledby="hall-plan-h">
+      <h2 id="hall-plan-h">${esc(t.hallMapHeading)}</h2>
+      <div class="hall-plan-grid">
+        <div class="hall-plan-map">
+          ${mapSvg(layout, rooms, lang)}
+          <p class="hall-map-hint">${esc(t.hallMapHint)}</p>
+        </div>
+        <div class="hall-rooms">${roomList}
+        </div>
+      </div>
+    </section>
+    <nav class="walk" aria-label="${esc(t.walkLabel)}">
+      <span class="walk-prev"></span>
+      <a class="walk-hall" href="${home}">${esc(t.backToHall)}</a>
+      <span class="walk-next"></span>
+    </nav>
+  </main>
+
+  ${hallStageHtml(order, layout, rooms, lang)}
+
+${footerHtml({ lang })}
+
+  <script type="module" src="/hall-app.js"></script>
+</body>
+</html>
+`;
+}
+
+/** Icon files rendered by `pnpm build --og` from favicon.svg: [file, px]. The ICO packs ICO_SIZES. */
+export const ICON_FILES = [["apple-touch-icon.png", 180], ["logo.png", LOGO.size]];
+export const ICO_SIZES = [32, 48];
+
+/** An .ico holding PNG images ([{ size, png: Buffer }]), as every current browser reads it. */
+export function icoFile(images) {
+  const head = Buffer.alloc(6 + 16 * images.length);
+  head.writeUInt16LE(0, 0);
+  head.writeUInt16LE(1, 2); // type: icon
+  head.writeUInt16LE(images.length, 4);
+  let offset = head.length;
+  images.forEach(({ size, png }, i) => {
+    const at = 6 + 16 * i;
+    head.writeUInt8(size >= 256 ? 0 : size, at);
+    head.writeUInt8(size >= 256 ? 0 : size, at + 1);
+    head.writeUInt16LE(1, at + 4); // colour planes
+    head.writeUInt16LE(32, at + 6); // bits per pixel
+    head.writeUInt32LE(png.length, at + 8);
+    head.writeUInt32LE(offset, at + 12);
+    offset += png.length;
+  });
+  return Buffer.concat([head, ...images.map((im) => im.png)]);
+}
+
+/** public/favicon.svg: the icon, generated from ICON in museum.js. */
+export const faviconSvg = () => `${iconSvg()}\n`;
 
 export function sitemapXml(exhibits) {
   const latest = exhibits.map((e) => e.added).sort().at(-1);
@@ -459,11 +648,12 @@ Sitemap: ${abs("/sitemap.xml")}
 
 /** Every generated file, keyed by path relative to public/. */
 export function buildSite(exhibits, rooms) {
-  const files = { "sitemap.xml": sitemapXml(exhibits), "robots.txt": robotsTxt() };
+  const files = { "sitemap.xml": sitemapXml(exhibits), "robots.txt": robotsTxt(), "favicon.svg": faviconSvg() };
   for (const lang of LANGS) {
     const dir = localePath(lang, "/").slice(1);
     files[`${dir}index.html`] = homePage(exhibits, rooms[lang], lang);
     files[`${dir}impact/index.html`] = impactPage(lang);
+    files[`${dir}hall/index.html`] = hallPage(exhibits, rooms[lang], lang);
     for (const e of exhibits) files[`${dir}exhibits/${e.id}/index.html`] = exhibitPage(e, exhibits, rooms[lang], lang);
   }
   return files;

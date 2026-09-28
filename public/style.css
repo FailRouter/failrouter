@@ -77,6 +77,14 @@ h1 span { color: var(--brass); font-style: italic; }
   font-size: 1.1rem;
 }
 
+.slogan {
+  margin: 14px 0 0;
+  color: var(--brass);
+  font-size: 1.2rem;
+  letter-spacing: 0.02em;
+}
+.slogan + .tagline { margin-top: 10px; }
+
 .rooms {
   display: flex;
   flex-wrap: wrap;
@@ -99,6 +107,7 @@ h1 span { color: var(--brass); font-style: italic; }
 .rooms button[aria-pressed="true"] span { color: #5a4a2a; }
 
 .wrong-turn {
+  display: none;
   font: 15px var(--mono);
   color: var(--wall);
   background: var(--term);
@@ -109,19 +118,20 @@ h1 span { color: var(--brass); font-style: italic; }
 }
 .wrong-turn:hover { filter: brightness(1.1); }
 
-/* Sort control: useless without JS, so it only appears once app.js can drive it. */
-.sort-bar {
+/* Toolbar: the sort control and the wrong turn need JS, so they only appear once app.js can drive them. */
+.toolbar {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
-  gap: 8px 16px;
-  margin: 0 0 20px;
+  align-items: stretch;
+  gap: 10px;
   font-size: 14px;
 }
 .sort-control { display: none; align-items: center; gap: 8px; color: #b9b1a4; }
 .js .sort-control { display: inline-flex; }
-.sort-bar select {
+.js .wrong-turn { display: inline-block; }
+.impact-link { margin: 14px 0 0; font-size: 14px; }
+.toolbar select {
   font: 14px var(--serif);
   color: #d8d1c4;
   background: var(--wall-2);
@@ -130,19 +140,37 @@ h1 span { color: var(--brass); font-style: italic; }
   padding: 6px 10px;
   max-width: 100%;
 }
-.sort-bar select:hover { border-color: var(--brass); }
+.toolbar select:hover { border-color: var(--brass); }
 .impact-how { color: #d8c08a; text-underline-offset: 3px; }
 .impact-how:hover { color: var(--brass); }
 
 button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
 
-/* ---------- language switch ---------- */
-.lang-bar {
+/* ---------- site bar: icon + museum name, then the 3D hall and the language switch ---------- */
+.site-bar {
   max-width: 1080px;
   margin: 0 auto;
   padding: 10px 20px 0;
-  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
+.brand { display: inline-flex; align-items: center; gap: 10px; min-width: 0; color: #e9e3d8; text-decoration: none; font-size: 15px; }
+a.brand:hover .brand-name { color: var(--brass); }
+.brand-icon { flex: none; display: block; }
+.site-links { display: inline-flex; align-items: center; gap: 14px; flex: none; }
+.hall-nav {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  font: 14px var(--serif-zh);
+  color: #d8c08a;
+  border: 1px solid #5a4a2a;
+  border-radius: 999px;
+  text-decoration: none;
+}
+.hall-nav:hover, .hall-nav[aria-current="page"] { border-color: var(--brass); color: var(--brass); }
 .lang-switch {
   display: inline-flex;
   align-items: center;
@@ -264,6 +292,9 @@ footer a:hover, .crumbs a:hover, .walk a:hover { color: var(--brass); }
   font-size: 0.95rem;
 }
 .gallery.single { grid-template-columns: minmax(0, 640px); justify-content: center; padding-top: 48px; }
+.lost-head { padding: 40px 20px 0; text-align: center; }
+.lost-head .brand-icon { display: inline-block; }
+.lost-head .slogan { margin: 6px 0 0; }
 .gallery.lost { grid-template-columns: minmax(0, 560px); justify-content: center; padding-top: 48px; }
 .about-event { margin: 0; color: #b9b1a4; }
 .walk {
@@ -316,6 +347,180 @@ kbd {
 .rubric h2 { margin: 24px 0 2px; font-size: 1.2rem; }
 .rubric p { margin: 8px 0; }
 
+/* ---------- 3D hall (/hall/) ---------- */
+.hall-link { color: #d8c08a; text-underline-offset: 3px; }
+.hall-link:hover { color: var(--brass); }
+.hall-3d { margin: 0; }
+.hall { max-width: 1080px; margin: 0 auto; padding: 32px 20px 64px; display: grid; gap: 40px; }
+.hall-page .crumbs { max-width: 1080px; }
+.hall-head { max-width: 640px; min-width: 0; }
+.hall-head h1 { font-size: clamp(2rem, 6vw, 2.8rem); }
+.hall-head p { margin: 12px 0; color: #b9b1a4; }
+.hall-poster {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  margin: 16px 0 0;
+  background: var(--wall-2);
+  border: 1px solid #2c2a31;
+  border-radius: 4px;
+}
+.hall-actions { margin: 16px 0 0; }
+/* The Enter button needs JS; without it the page is the map and the room list. */
+.hall-enter {
+  display: none;
+  max-width: 100%;
+  font: 15px var(--mono);
+  color: var(--wall);
+  background: var(--term);
+  border: 0;
+  border-radius: 4px;
+  padding: 10px 18px;
+  cursor: pointer;
+}
+.js .hall-enter { display: inline-block; }
+.js .hall-enter[hidden] { display: none; }
+.hall-enter:hover { filter: brightness(1.1); }
+.hall-enter:disabled { opacity: 0.6; cursor: progress; }
+.hall-status { min-height: 1.5em; margin: 8px 0 0; color: #b9b1a4; font-size: 0.95rem; }
+.hall-plan { min-width: 0; }
+.hall-plan > h2 { margin: 0 0 16px; font-size: 1.5rem; font-weight: 400; }
+/* Map and room list side by side when there is room for both, stacked otherwise; no extra breakpoint. */
+.hall-plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px 40px; align-items: start; }
+.hall-plan-map { min-width: 0; max-width: 420px; }
+.hall-map-hint { margin: 8px 0 0; color: var(--muted); font-size: 0.9rem; }
+.hall-rooms { display: grid; gap: 20px; min-width: 0; }
+.hall-room h3 { margin: 0; font-size: 1.2rem; font-weight: 400; color: var(--brass); }
+.hall-list { margin: 8px 0 0; padding-left: 1.6em; }
+.hall-list li { padding: 4px 0; overflow-wrap: anywhere; }
+.hall-list a { color: #e9e3d8; text-underline-offset: 3px; }
+.hall-list a:hover, .hall-list li:target a { color: var(--brass); }
+.hall-room:target h3 { text-decoration: underline; text-underline-offset: 4px; }
+.hall-meta { display: block; color: var(--muted); font-size: 0.85rem; }
+
+/* Map (public/hall.js mapSvg): route dashed like the plaque routes, rooms as brass nodes, "you are here" green. */
+.hall-map { display: block; width: 100%; height: auto; }
+.hall-map text { font: 13px var(--serif); fill: #d8d1c4; }
+.hall-map .map-cap { fill: var(--muted); }
+.hall-map .map-count { font: 11px var(--mono); fill: var(--ink); }
+.hall-map .map-route { fill: none; stroke: var(--brass); stroke-width: 2; stroke-dasharray: 5 4; }
+.hall-map .map-end { stroke: var(--brass); stroke-width: 4; stroke-linecap: round; }
+.hall-map .map-lobby { fill: var(--brass); }
+.hall-map .map-node { fill: var(--brass); stroke: var(--wall); stroke-width: 2; }
+.hall-map .map-hit { fill: transparent; }
+.hall-map .map-you { fill: var(--term); stroke: var(--wall); stroke-width: 2; }
+.hall-map .map-you[hidden] { display: none; }
+.hall-map a:hover .map-node, .hall-map a:focus-visible .map-node { fill: var(--plaque); }
+.hall-map a:hover .map-label, .hall-map a:focus-visible .map-label { fill: var(--brass); }
+.hall-map a:focus-visible { outline: none; }
+
+.hall-on, .hall-on body { overflow: hidden; }
+.hall-stage { position: fixed; inset: 0; z-index: 10; background: var(--wall); }
+.hall-stage[hidden] { display: none; }
+.hall-canvas, .hall-canvas canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; touch-action: none; }
+.hall-fade { position: absolute; inset: 0; background: var(--wall); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.hall-fade.on { opacity: 1; }
+/* Controls clear the notch, rounded corners and home indicator (the page opts in with viewport-fit=cover). */
+.hall-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left));
+  pointer-events: none;
+}
+.hall-top > * { pointer-events: auto; }
+.hall-caption {
+  min-width: 0;
+  margin: 0;
+  padding: 8px 12px;
+  overflow-wrap: anywhere;
+  background: rgba(17, 16, 20, 0.85);
+  border: 1px solid #2c2a31;
+  border-radius: 4px;
+  color: var(--plaque);
+}
+.hall-caption:empty { display: none; }
+.hall-exit { margin-left: auto; flex: none; }
+.hall-stage button {
+  font: 14px var(--serif);
+  color: #e9e3d8;
+  background: rgba(26, 24, 31, 0.92);
+  border: 1px solid #3a3640;
+  border-radius: 4px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.hall-stage button:hover { border-color: var(--brass); }
+/* Desktop: a small live map in the corner (hidden on narrow and touch screens, where the Map button opens it). */
+.hall-minimap {
+  position: absolute;
+  left: max(12px, env(safe-area-inset-left));
+  top: calc(max(12px, env(safe-area-inset-top)) + 56px);
+  width: 190px;
+  padding: 6px;
+  background: rgba(17, 16, 20, 0.8);
+  border: 1px solid #2c2a31;
+  border-radius: 4px;
+}
+.hall-help {
+  position: absolute;
+  bottom: calc(max(12px, env(safe-area-inset-bottom)) + 56px);
+  left: 50%;
+  width: min(calc(100% - 24px), 520px);
+  margin: 0;
+  padding: 8px 12px;
+  transform: translateX(-50%);
+  text-align: center;
+  background: rgba(17, 16, 20, 0.85);
+  border-radius: 4px;
+  color: #b9b1a4;
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+.hall-help[hidden] { display: none; }
+.hall-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+}
+.hall-bar button { min-width: 44px; }
+/* Poster renders (pnpm build --posters): the scene only. */
+.hall-shot .hall-top, .hall-shot .hall-help, .hall-shot .hall-bar, .hall-shot .hall-minimap { display: none; }
+
+.hall-dialog {
+  width: min(640px, calc(100% - 24px));
+  max-height: calc(100% - 24px);
+  padding: 12px;
+  overflow: auto;
+  border: 1px solid #3a3640;
+  border-radius: 4px;
+  background: var(--wall-2);
+  color: inherit;
+}
+.hall-dialog.panel { padding: 20px; }
+.hall-dialog::backdrop { background: rgba(10, 10, 12, 0.72); }
+.hall-dialog h2 { margin: 0 0 8px; font-size: 1.3rem; font-weight: 400; color: var(--brass); }
+.hall-dialog p { color: #d8d1c4; }
+.hall-dialog .hall-map { max-width: 360px; margin: 0 auto 8px; }
+#hall-read-dialog .exhibit { box-shadow: 0 0 0 1px #d9ccb3 inset; }
+.hall-dialog h3 { margin: 16px 0 6px; font-size: 1rem; font-weight: 400; color: #b9b1a4; }
+.hall-spots { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.hall-spots button { width: 100%; text-align: left; overflow-wrap: anywhere; }
+.hall-count { margin: 14px 0 0; color: var(--muted); font-size: 0.85rem; }
+.hall-dialog-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px 16px; margin: 12px 0 0; }
+.hall-full { color: #d8c08a; text-underline-offset: 3px; }
+
 /* ---------- Simplified Chinese ---------- */
 /* Swap the variable, then re-apply it only where the font is inherited from; elements with
    their own font (mono trace, plaque numbers, buttons via var(--serif)) keep working. */
@@ -327,8 +532,11 @@ body:lang(zh) { line-height: 1.75; }
 :lang(zh) h1 { letter-spacing: 0.06em; }
 
 @media (max-width: 480px), (hover: none) {
-  .rooms button, .wrong-turn, .lang-switch, .walk a, .sort-bar select, .impact-how { min-height: 44px; }
-  .impact-how { display: inline-flex; align-items: center; }
+  .rooms button, .wrong-turn, .lang-switch, .walk a, .toolbar select, .impact-how, .hall-link, .hall-full { min-height: 44px; }
+  .hall-enter, .hall-stage button, .brand, .hall-nav { min-height: 44px; }
+  /* .map-room: each room link carries a 56-unit tall hit area (public/hall.js mapSvg). */
+  .impact-how, .hall-link, .hall-full { display: inline-flex; align-items: center; }
+  .hall-minimap { display: none; }
   .rooms button { display: inline-flex; align-items: center; }
   .lang-switch { padding: 0 8px; }
   .walk a { display: flex; align-items: center; }
@@ -337,7 +545,15 @@ body:lang(zh) { line-height: 1.75; }
 
 @media (max-width: 480px) {
   .entrance { padding-top: 20px; }
-  .lang-bar { padding-inline: 14px; }
+  .site-bar { padding-inline: 14px; }
+  /* Icon only; the name stays for screen readers. */
+  .brand-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .rooms { display: grid; grid-template-columns: 1fr 1fr; }
+  .rooms button { justify-content: center; border-radius: 12px; }
+  .rooms button:first-child, .rooms button:last-child:nth-child(even) { grid-column: 1 / -1; }
+  .toolbar > * { flex: 1 1 auto; }
+  .toolbar select { flex: 1; }
+  .hall { padding: 20px 14px 48px; gap: 32px; }
   .trace { font-size: 11px; }
   .gallery { grid-template-columns: 1fr; gap: 28px; padding-inline: 14px; }
   .exhibit { padding: 20px 18px 16px; }

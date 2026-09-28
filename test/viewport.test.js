@@ -48,6 +48,7 @@ describe("narrow-screen check, pure parts", () => {
   test("contentType knows the site's file types", () => {
     assert.equal(V.contentType("index.html"), "text/html; charset=utf-8");
     assert.equal(V.contentType("og.png"), "image/png");
+    assert.equal(V.contentType("posters/lobby-480.webp"), "image/webp");
     assert.equal(V.contentType("x.bin"), "application/octet-stream");
   });
 
@@ -60,7 +61,44 @@ describe("narrow-screen check, pure parts", () => {
     assert.equal(V.findChrome("linux", {}, has()), null);
   });
 
+  test("the 3D hall is re-checked after entering; the helpers that drive it", () => {
+    assert.equal(V.isHallPage("/hall/"), true);
+    assert.equal(V.isHallPage("/zh/hall/"), true);
+    assert.equal(V.isHallPage("/exhibits/hall/"), true);
+    assert.equal(V.isHallPage("/"), false);
+    assert.equal(V.isHallPage("/hallway/"), false);
+    assert.deepEqual(["ready", "failed", "off", "loading", ""].map(V.hallSettled), [true, true, true, false, false]);
+    const click = (b) => new Function("document", `return ${V.HALL_ENTER}`)({ getElementById: () => b });
+    let clicked = 0;
+    assert.equal(click({ hidden: false, click: () => clicked++ }), true);
+    assert.equal(clicked, 1);
+    assert.equal(click({ hidden: true }), false);
+    assert.equal(click(null), false);
+    const state = (hall) => new Function("document", `return ${V.HALL_STATE}`)({ documentElement: { dataset: { hall } } });
+    assert.equal(state("ready"), "ready");
+    assert.equal(state(undefined), "");
+  });
+
+  test("problems reports a hall that never became ready", () => {
+    assert.deepEqual(V.problems([{ path: "/hall/ (3D)", width: 320, error: 'hall state "loading"' }]), ['/hall/ (3D) @320px: hall state "loading"']);
+  });
+
+  test("chromeFlags renders WebGL in software and adds --no-sandbox only in CI", () => {
+    const local = V.chromeFlags("/tmp/p");
+    assert.ok(local.includes("--user-data-dir=/tmp/p"));
+    assert.ok(local.includes("--enable-unsafe-swiftshader"));
+    assert.ok(!local.includes("--no-sandbox"));
+    assert.ok(V.chromeFlags("/tmp/p", true).includes("--no-sandbox"));
+  });
+
+  test("posterJobs: one screenshot per key and width", () => {
+    const jobs = V.posterJobs(["lobby", "time"], [480, 960], (w) => w / 2, (k, w) => `/posters/${k}-${w}.webp`);
+    assert.equal(jobs.length, 4);
+    assert.deepEqual(jobs[1], { key: "lobby", width: 960, height: 480, url: "/hall/?poster=lobby", file: "posters/lobby-960.webp" });
+  });
+
   test("shotName and shotsDir", () => {
+    assert.equal(V.shotName("/zh/hall/", 375, "3d"), "zh-hall-3d-375.png");
     assert.equal(V.shotName("/", 375), "home-375.png");
     assert.equal(V.shotName("/zh/exhibits/a/", 375), "zh-exhibits-a-375.png");
     assert.equal(V.shotName(V.MISSING, 320), "no-such-exhibit-320.png");
@@ -83,6 +121,9 @@ describe("style.css narrow-screen rules", () => {
     const block = css.match(/@media \(max-width: 480px\), \(hover: none\) \{([\s\S]*?)\n\}/)[1];
     for (const sel of V.TOUCH_SELECTOR.split(",").map((s) => s.trim())) {
       const name = sel === "button" ? ".rooms button" : sel;
+      if (sel === "button") assert.ok(block.includes(".hall-stage button") && block.includes(".hall-enter"), "3D hall buttons");
+      if (sel === ".map-room") continue; // sized by its 56-unit hit area in the SVG, noted in the block
+
       assert.ok(block.includes(name), `${name} missing from touch sizing`);
     }
     assert.match(block, /min-height: 44px/);
