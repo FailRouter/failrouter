@@ -162,6 +162,21 @@ export function walkRects(layout, plan = PLAN) {
 const inRect = (r, [x, z]) => x >= r.x0 && x <= r.x1 && z >= r.z0 && z <= r.z1;
 export const inside = (rects, p) => rects.some((r) => inRect(r, p));
 
+/** The walkable point closest to [x, z]: the point itself when it is walkable. */
+export function nearestWalkable(rects, [x, z]) {
+  let best = [x, z];
+  let bestD = Infinity;
+  for (const r of rects) {
+    const p = [clamp(x, r.x0, r.x1), clamp(z, r.z0, r.z1)];
+    const d = Math.hypot(p[0] - x, p[1] - z);
+    if (d < bestD) {
+      best = p;
+      bestD = d;
+    }
+  }
+  return best;
+}
+
 /** Move from `prev` towards `next`, sliding along walls: try the full step, then each axis alone. */
 export function slide(prev, next, rects) {
   if (inside(rects, next)) return next;
@@ -241,15 +256,21 @@ export function nearestInRoom(layout, roomIndex, [x, z]) {
 export function pathBetween(layout, from, to, plan = PLAN) {
   const a = locate(layout, from, plan);
   const b = locate(layout, to, plan);
-  if (a >= 0 && a === b) return [to];
   const junction = (i) => [0, layout.rooms[i].z];
   const entrance = (i) => roomPoint(layout.rooms[i], layout.rooms[i].u0 + 1.2, 0);
+  // Past the doorway between a side corridor and its room.
+  const deep = (i, p) => Math.abs(p[0]) > layout.rooms[i].u0;
+  // Same room: straight, unless one end is in the side corridor, then through the middle of the doorway.
+  if (a >= 0 && a === b) return deep(a, from) === deep(a, to) ? [to] : [roomPoint(layout.rooms[a], layout.rooms[a].u0, 0), to];
   const pts = [];
   if (a >= 0) {
-    if (Math.abs(from[0]) > layout.rooms[a].u0) pts.push(entrance(a));
+    if (deep(a, from)) pts.push(entrance(a));
     pts.push(junction(a));
   }
-  if (b >= 0) pts.push(junction(b), entrance(b));
+  if (b >= 0) {
+    pts.push(junction(b));
+    if (deep(b, to)) pts.push(entrance(b));
+  }
   pts.push(to);
   return pts.filter((p, i) => i === 0 || p[0] !== pts[i - 1][0] || p[1] !== pts[i - 1][1]);
 }
@@ -279,6 +300,59 @@ export const FADE_DISTANCE = 24;
 /** Walking speed between plaques, m/s, and the shortest walk in seconds. */
 export const WALK_SPEED = 6;
 export const walkSeconds = (length) => Math.max(0.6, length / WALK_SPEED);
+
+/** Taps on the floor closer than this (metres) to where the visitor stands don't walk. */
+export const MIN_WALK = 0.4;
+
+/**
+ * A walk that ends facing a wall head-on stops at least this far (metres) from it, so the view still
+ * takes in the floor and the sign above (at the ~52° vertical field of view of a portrait phone).
+ */
+export const STAND_OFF = 4;
+/** "Head-on": the walk meets the wall within this angle of its normal (cos 35°). */
+const HEAD_ON = Math.cos((35 * Math.PI) / 180);
+
+/**
+ * Free floor ahead of [x, z] looking along `yaw`, before leaving `floors`: `dist` in metres (up to
+ * `max`), and whether the wall there is met head-on.
+ */
+export function clearance(floors, [x, z], yaw, max = STAND_OFF, step = 0.05) {
+  const dx = -Math.sin(yaw);
+  const dz = -Math.cos(yaw);
+  for (let k = 1; k * step <= max; k++) {
+    const q = [x + dx * k * step, z + dz * k * step];
+    if (inside(floors, q)) continue;
+    const p = [x + dx * (k - 1) * step, z + dz * (k - 1) * step];
+    // The wall crossed runs along z when moving in x alone leaves the floor, else along x.
+    const normal = inside(floors, [q[0], p[1]]) ? Math.abs(dz) : Math.abs(dx);
+    return { dist: (k - 1) * step, headOn: normal >= HEAD_ON };
+  }
+  return { dist: max, headOn: false };
+}
+
+/**
+ * Where a tap on the floor at `hit` ([x, z]) takes the visitor from `from`: the nearest walkable
+ * point, facing the way of the last stretch of the walk, eyes level, pulled back along that stretch
+ * when it would end closer than STAND_OFF to a wall straight ahead. Null when it is too close to walk.
+ */
+export function floorTarget(layout, rects, from, hit, plan = PLAN) {
+  const end = nearestWalkable(rects, hit);
+  const path = [from, ...pathBetween(layout, from, end, plan)];
+  const length = polylineLength(path);
+  const { yaw } = pointAlong(path, length);
+  const ahead = clearance(floorRects(layout, plan), end, yaw);
+  const lastLeg = Math.hypot(end[0] - path.at(-2)[0], end[1] - path.at(-2)[1]);
+  const back = ahead.headOn ? Math.min(STAND_OFF - ahead.dist, lastLeg) : 0;
+  const { x, z } = pointAlong(path, length - back);
+  if (Math.hypot(x - from[0], z - from[1]) < MIN_WALK) return null;
+  return { x, z, yaw, pitch: 0 };
+}
+
+/** What a tap or hover on the first thing under the pointer means: pick an object, walk on the floor, or nothing (a wall). */
+export function hitIntent(data) {
+  if (data?.action) return "pick";
+  return data?.floor ? "walk" : "none";
+}
 
 /**
  * Camera pose `t` (0..1) of the way along `path` (starting at the current position): turn towards
@@ -324,9 +398,59 @@ export function moveStep([x, z], yaw, { forward, strafe }, dt, speed = 3) {
   return [x + (-Math.sin(yaw) * f + Math.cos(yaw) * s) * d, z + (-Math.cos(yaw) * f - Math.sin(yaw) * s) * d];
 }
 
-/** Drag to look: pixels to radians, pitch kept within ±0.9 rad. */
+/**
+ * Drag to look, "grab the view": the scene follows the pointer, so dragging right turns left and
+ * dragging down looks up. Pixels to radians, pitch kept within ±0.9 rad.
+ */
 export function lookDelta({ yaw, pitch }, dx, dy, sensitivity = 0.005) {
-  return { yaw: yaw - dx * sensitivity, pitch: clamp(pitch - dy * sensitivity, -0.9, 0.9) };
+  return { yaw: yaw + dx * sensitivity, pitch: clamp(pitch + dy * sensitivity, -0.9, 0.9) };
+}
+
+/** Radians per pixel that keep what is under the pointer under it: vertical field of view over canvas height. */
+export const grabSensitivity = (fovDeg, heightPx) => (fovDeg * Math.PI) / 180 / Math.max(1, heightPx);
+
+/** Keyboard turning speed, rad/s. */
+export const TURN_SPEED = 1.8;
+/** One step of keyboard turning: `turn` 1 turns right (yaw goes down). */
+export const turnStep = (yaw, turn, dt, speed = TURN_SPEED) => yaw - turn * speed * dt;
+
+/** Time constants (s) for easing keyboard walking in and out and for the glide after a drag. */
+export const SMOOTH_TAU = 0.06;
+export const GLIDE_TAU = 0.15;
+
+/**
+ * Ease walking input towards what the keys ask for, so starts and stops aren't abrupt. `tau` 0
+ * (reduced motion) follows the keys at once; values that die away snap to 0.
+ */
+export function smoothInput(prev, target, dt, tau = SMOOTH_TAU) {
+  const k = tau > 0 ? 1 - Math.exp(-dt / tau) : 1;
+  const out = {};
+  for (const key of ["forward", "strafe", "turn"]) {
+    const v = prev[key] + (target[key] - prev[key]) * k;
+    out[key] = target[key] === 0 && Math.abs(v) < 0.01 ? 0 : v;
+  }
+  return out;
+}
+export const isStill = (v) => !v.forward && !v.strafe && !v.turn;
+
+/**
+ * Look velocity (rad/s) when a drag ends, from its recent samples ({ t ms, yaw, pitch }): measured
+ * over the last `span` ms, zero if the pointer rested for `still` ms before letting go, capped.
+ */
+export function releaseVelocity(samples, now, { span = 80, still = 50, max = 8 } = {}) {
+  const last = samples.at(-1);
+  if (!last || now - last.t > still) return { yaw: 0, pitch: 0 };
+  const first = samples.find((s) => s.t >= last.t - span);
+  const dt = (last.t - first.t) / 1000;
+  if (dt <= 0) return { yaw: 0, pitch: 0 };
+  return { yaw: clamp((last.yaw - first.yaw) / dt, -max, max), pitch: clamp((last.pitch - first.pitch) / dt, -max, max) };
+}
+
+/** The glide after a drag slows down; it stops below `min` rad/s. Returns the new velocity, or null when stopped. */
+export function glide(v, dt, tau = GLIDE_TAU, min = 0.05) {
+  const k = Math.exp(-dt / tau);
+  const next = { yaw: v.yaw * k, pitch: v.pitch * k };
+  return Math.hypot(next.yaw, next.pitch) < min ? null : next;
 }
 
 /** Angle interpolation along the short way round. */
@@ -469,17 +593,20 @@ export function mapSvg(layout, rooms, lang = "en", cls = "hall-map") {
 }
 
 const FORWARD = { w: 1, arrowup: 1, s: -1, arrowdown: -1 };
-const STRAFE = { d: 1, arrowright: 1, a: -1, arrowleft: -1 };
+const STRAFE = { d: 1, a: -1 };
+const TURN = { arrowright: 1, arrowleft: -1 };
 
-/** Walking input from the keys held down (lower-cased `KeyboardEvent.key` values). */
+/** Walking input from the keys held down (lower-cased `KeyboardEvent.key` values): W/S and ↑/↓ walk, A/D step sideways, ←/→ turn. */
 export function keyInput(pressed) {
   let forward = 0;
   let strafe = 0;
+  let turn = 0;
   for (const k of pressed) {
     forward += FORWARD[k] ?? 0;
     strafe += STRAFE[k] ?? 0;
+    turn += TURN[k] ?? 0;
   }
-  return { forward: clamp(forward, -1, 1), strafe: clamp(strafe, -1, 1) };
+  return { forward: clamp(forward, -1, 1), strafe: clamp(strafe, -1, 1), turn: clamp(turn, -1, 1) };
 }
 
 /** Keys that walk the whole corridor: "j" next plaque, "k" previous (as on the home page). */
