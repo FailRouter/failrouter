@@ -1,6 +1,7 @@
 // Drive the 3D hall in headless Chrome and save screenshots. See SKILL.md beside this file.
 //   node run.mjs <outDir>                              interaction walk-through (floor tap, hover, drag, keys, touch)
 //   node run.mjs <outDir> --shots <label> <id> [...]   one 1200x800 shot per exhibit viewpoint: <label>-<id>.png
+//   node run.mjs <outDir> --back <label>               walk to the end of the hall, turn round, shot <label>-back.png
 import { spawn } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
@@ -45,6 +46,24 @@ async function enter(hash = "") {
   await ev(V.HALL_ENTER);
   for (let i = 0; i < 180 && (await ev(V.HALL_STATE)) !== "ready"; i++) await sleep(250);
   await sleep(500);
+}
+const backAt = process.argv.indexOf("--back");
+if (backAt > 0) {
+  const label = process.argv[backAt + 1] ?? "hall";
+  await send("Emulation.setDeviceMetricsOverride", { width: 900, height: 600, deviceScaleFactor: 1, mobile: false });
+  await enter("?t=back");
+  // One tap near the horizon: over FADE_DISTANCE, so it fades straight to the end. A second tap would hit the empty frame.
+  await mouse("mousePressed", 450, 330);
+  await mouse("mouseReleased", 450, 330);
+  await sleep(3500);
+  console.log("at the end", await dot());
+  // Hold ← for ~π / TURN_SPEED seconds to face the lobby.
+  await send("Input.dispatchKeyEvent", { type: "rawKeyDown", key: "ArrowLeft", code: "ArrowLeft", windowsVirtualKeyCode: 37 });
+  await sleep(1750);
+  await send("Input.dispatchKeyEvent", { type: "keyUp", key: "ArrowLeft", code: "ArrowLeft", windowsVirtualKeyCode: 37 });
+  await sleep(800);
+  await shot(`${label}-back`);
+  ws.close(); proc.kill(); server.close(); process.exit(0);
 }
 const shotsAt = process.argv.indexOf("--shots");
 if (shotsAt > 0) {
