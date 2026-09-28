@@ -127,7 +127,8 @@ Four weeks after an SEO change, check the per-page numbers in Google Search Cons
 
 ## Performance and cost constraints
 
-- The Worker's `workers.dev` URL stays behind Cloudflare Access (all traffic; account members + a service token for CI). The smoke test fails if it answers 200 without the token. Never write that URL into the repo; it lives in `SMOKE_URL`.
+- The Worker's `workers.dev` URL is public: it serves the same static files as `failrouter.com`, and every page declares the apex as canonical. The post-deploy smoke test reads it (`SMOKE_URL`, with the CI service token sent along). Never write that URL into the repo.
+- Preview URLs stay behind Cloudflare Access with the Worker's Access scope set to **Previews only** (account members + the `failrouter-ci` service token). Never switch the scope to *All traffic*: it also covers the custom domains and puts `failrouter.com` behind a login.
 - Stay assets-only: no Worker `main` script, no fetch handler, no bindings (KV / D1 / R2 / Cron) without the maintainer's approval. Assets-only requests don't count against Workers request quotas.
 - No third-party scripts, trackers, analytics beacons, web fonts (a CJK web font is megabytes) or CDNs. No deploy-time build step: generated pages are committed (see above).
 - Page weight budget, gzipped, enforced by `test/site.test.js`: home page HTML + CSS + all JS ≤ 50 KB; exhibit page HTML + CSS ≤ 15 KB. Raise `BUDGET` in `scripts/site.js` only with a reason in the PR.

@@ -8,7 +8,7 @@
     "directory": "./public",
     "not_found_handling": "404-page"
   },
-  // Keep the workers.dev URL on: the post-deploy smoke test reads it (behind Cloudflare Access).
+  // Keep the workers.dev URL on: the post-deploy smoke test reads it (public; previews stay behind Access).
   // Without this key, wrangler turns it off on every deploy because custom-domain routes are set.
   "workers_dev": true,
   // Both hosts serve the site directly; pages declare canonical = apex.
