@@ -1,6 +1,6 @@
 ---
 name: hall-interaction-check
-description: Verify 3D hall (/hall/) interactions end to end in headless Chrome over the DevTools protocol — floor taps, hover ring, grab-to-look drag, arrow-key turning, touch taps in a room — with synthetic mouse / key / touch input and screenshots, no new dependencies. Use when asked "3D 场景交互测一下", "点地板能不能走", "拖动方向对不对", "验证 hall 控制", "check the hall controls in Chrome", after changing public/hall-scene.js or the movement / picking functions in public/hall.js, or when a hall screenshot looks wrong (only a wall on screen, camera in the wrong place). Covers the run.mjs driver beside this file (reuses scripts/viewport.js helpers), reading the "you are here" map dot + caption + hash as position proof, the same-document hash navigation trap (no Page.loadEventFired), Input.dispatchTouchEvent for pointer type "touch", temporary window.__ debug hooks and removing them, and the portrait ~52° vertical FOV that makes a close wall fill the screen.
+description: Verify 3D hall (/hall/) interactions end to end in headless Chrome over the DevTools protocol — floor taps, hover ring, grab-to-look drag, arrow-key turning, touch taps in a room — with synthetic mouse / key / touch input and screenshots, no new dependencies; also before/after screenshots of exhibit viewpoints for scene changes (sculpture colours, materials, lighting). Use when asked "3D 场景交互测一下", "点地板能不能走", "拖动方向对不对", "验证 hall 控制", "check the hall controls in Chrome", "改前改后对比截图", "雕塑颜色改完看一下", "before/after hall screenshots", after changing public/hall-scene.js or the movement / picking functions in public/hall.js, or when a hall screenshot looks wrong (only a wall on screen, camera in the wrong place). Covers the run.mjs driver beside this file (reuses scripts/viewport.js helpers), reading the "you are here" map dot + caption + hash as position proof, the same-document hash navigation trap (no Page.loadEventFired), Input.dispatchTouchEvent for pointer type "touch", temporary window.__ debug hooks and removing them, the portrait ~52° vertical FOV that makes a close wall fill the screen, and the git stash → --shots before → stash pop → --shots after comparison loop with crops via sips.
 ---
 
 # hall-interaction-check
@@ -27,6 +27,23 @@ node .opencode/skills/hall-interaction-check/run.mjs /tmp/hallcheck
 
 截图用 `sips -Z 300 x.png --out small-x.png` 缩小后再 Read，省 token。
 
+## 改前改后对比（改了场景：材质、颜色、灯光、雕塑）
+挑几个分数不同的展品，最好覆盖半个节点（x.5）、高分和低分，例如 `facebook-2021`（4.8）、`crowdstrike-2024`（7.6）、`youtube-pakistan-2008`（2.8）。分数可以这样列出来：
+```sh
+node -e 'import("./public/exhibits.js").then(async m=>{const {impactScore}=await import("./public/museum.js");for(const e of m.EXHIBITS)console.log(e.id,impactScore(e).toFixed(1),e.room)})'
+```
+然后：
+```sh
+S=.opencode/skills/hall-interaction-check/run.mjs; IDS="facebook-2021 crowdstrike-2024 youtube-pakistan-2008"
+git stash                           # 先回到改前（未跟踪的新文件不受影响）
+node $S <out> --shots before $IDS
+git stash pop
+node $S <out> --shots after $IDS
+sips -c 360 260 --cropOffset 300 90 <out>/after-facebook-2021.png --out <out>/crop.png   # 可选：裁出雕塑
+```
+每个展品站在展牌的观看点，雕塑在展牌旁边。判读时把雕塑和展牌上的影响分圆点对照：红色节点数（含半个）应该和 ●◐○ 一致。
+改的是场景就要重新渲染海报：`pnpm build --posters`，然后 Read `public/posters/hall-960.webp` 看一眼，并检查每张不超过 60 KB。
+
 ## 验证
 - 终端打印的 `[cx, cy, hash, caption]` 每一步都符合预期。
 - 截图人工确认：有落点圈；拖动和转身方向正确；走完后不是满屏墙。
@@ -37,3 +54,5 @@ node .opencode/skills/hall-interaction-check/run.mjs /tmp/hallcheck
 - **截图满屏是墙，不一定是 bug**：竖屏手机的纵向视野只有约 52°（`fovFor(0.5)`），不是 80°。离墙 3 m 以内就看不到地板和墙顶的房间牌。先临时加 `window.__cam = cam`，并在 `walkTo` 里把 `floorTarget` 的输入输出记到 `window.__dbg`，用 `Runtime.evaluate` 读出来，确认相机到底在哪（2026-09 的这次正是这样定出 `STAND_OFF = 4`）。**提交前 `grep -c "__" public/hall-scene.js` 必须为 0。**
 - **触摸输入**：先 `Emulation.setTouchEmulationEnabled`，再用 `Input.dispatchTouchEvent` 发 touchStart / touchEnd，页面收到的是 `pointerType: "touch"`。鼠标悬停逻辑只认 `"mouse"`，所以触屏不会出现悬停圈，这是正常的。
 - 脚本从 `.opencode/skills/...` 往上三层定位仓库根目录。移动脚本位置时要同步改 `repo`。
+- `git stash` 只收已跟踪文件。只改了未跟踪的新文件时，「改前」截图其实已经是改后的样子，要用 `git stash -u`，或者直接切到 `origin/main` 的 worktree 截图。
+- 配色要让维护者看截图拍板，不要按「和圆点一致」之类的推理替他定。2026-09 那次把未填节点改成首页圆点的灰色（`#8c8579`），被维护者否了，改回了绿色 `#7fdc8c`，只保留了「下红上绿」和黄铜顶环。

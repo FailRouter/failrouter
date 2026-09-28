@@ -1,3 +1,6 @@
+// Drive the 3D hall in headless Chrome and save screenshots. See SKILL.md beside this file.
+//   node run.mjs <outDir>                              interaction walk-through (floor tap, hover, drag, keys, touch)
+//   node run.mjs <outDir> --shots <label> <id> [...]   one 1200x800 shot per exhibit viewpoint: <label>-<id>.png
 import { spawn } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
@@ -42,6 +45,19 @@ async function enter(hash = "") {
   await ev(V.HALL_ENTER);
   for (let i = 0; i < 180 && (await ev(V.HALL_STATE)) !== "ready"; i++) await sleep(250);
   await sleep(500);
+}
+const shotsAt = process.argv.indexOf("--shots");
+if (shotsAt > 0) {
+  const [label, ...ids] = process.argv.slice(shotsAt + 1);
+  await send("Emulation.setDeviceMetricsOverride", { width: 1200, height: 800, deviceScaleFactor: 1, mobile: false });
+  let n = 0;
+  for (const id of ids) {
+    await enter(`?t=${++n}#${id}`);
+    await sleep(800);
+    await shot(`${label}-${id}`);
+    console.log("shot", `${label}-${id}`, await dot());
+  }
+  ws.close(); proc.kill(); server.close(); process.exit(0);
 }
 await send("Emulation.setDeviceMetricsOverride", { width: 900, height: 600, deviceScaleFactor: 1, mobile: false });
 await enter();
