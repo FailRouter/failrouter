@@ -122,6 +122,8 @@ describe("style.css narrow-screen rules", () => {
     for (const sel of V.TOUCH_SELECTOR.split(",").map((s) => s.trim())) {
       const name = sel === "button" ? ".rooms button" : sel;
       if (sel === "button") assert.ok(block.includes(".hall-stage button") && block.includes(".hall-enter"), "3D hall buttons");
+      if (sel === ".map-room") continue; // sized by its 56-unit hit area in the SVG, noted in the block
+
       assert.ok(block.includes(name), `${name} missing from touch sizing`);
     }
     assert.match(block, /min-height: 44px/);

@@ -4,7 +4,7 @@ import { describe, test } from "node:test";
 import { gzipSync } from "node:zlib";
 import { EXHIBITS, ROOM_NAMES } from "../public/exhibits.js";
 import { LOCALES, RUBRIC, STRINGS, localizeExhibits, weightedLength } from "../public/i18n.js";
-import { DEFAULT_SORT, DIMENSIONS, sortExhibits } from "../public/museum.js";
+import { DEFAULT_SORT, DIMENSIONS, ICON, iconSvg, sortExhibits } from "../public/museum.js";
 import * as H from "../public/hall.js";
 import * as S from "../scripts/site.js";
 
@@ -242,18 +242,21 @@ describe("3D hall pages", () => {
       assert.equal(blocks[0].inLanguage, loc.html);
       assert.ok(html.includes(S.SITE.repo));
     });
-    test(`${file}: the floor plan is in the HTML, one poster per room, every exhibit linked and anchored`, () => {
+    test(`${file}: one entrance, the map and the room list are in the HTML; every exhibit linked and anchored`, () => {
       const html = FILES[file];
       const main = html.match(/<main[\s\S]*<\/main>/)[0];
       for (const e of EXHIBITS) {
         assert.ok(main.includes(`<li id="${e.id}"><a href="${prefix}/exhibits/${e.id}/">`), `${file}: ${e.id}`);
       }
       const posters = [...main.matchAll(/<img class="hall-poster" src="([^"]+)"[^>]*>/g)];
-      assert.deepEqual(posters.map((m) => m[1]), H.posterKeys(layout).map((k) => H.posterPath(k, 960)));
-      assert.match(posters[0][0], /fetchpriority="high"/, "lobby poster loads first");
-      for (const [tag] of posters.slice(1)) assert.match(tag, /loading="lazy"/);
-      for (const [tag] of posters) assert.match(tag, /width="960" height="540" alt="[^"]+"/);
-      assert.equal((main.match(/<section class="hall-room"/g) ?? []).length, layout.rooms.length);
+      assert.deepEqual(posters.map((m) => m[1]), [H.posterPath("hall", 960)], "a single poster");
+      assert.match(posters[0][0], /fetchpriority="high" width="960" height="540"|width="960" height="540"[^>]*fetchpriority="high"/);
+      assert.equal((main.match(/<button class="hall-enter"/g) ?? []).length, 1, "a single entrance");
+      assert.equal((main.match(/<svg class="hall-map"/g) ?? []).length, 1);
+      for (const r of layout.rooms) {
+        assert.ok(main.includes(`href="#room-${r.key}"`), `map links ${r.key}`);
+        assert.ok(main.includes(`<section class="hall-room" id="room-${r.key}"`), `list anchors ${r.key}`);
+      }
     });
     test(`${file}: Enter states the download size; the 3D controls are prerendered and hidden`, () => {
       const html = FILES[file];
@@ -261,17 +264,27 @@ describe("3D hall pages", () => {
       assert.match(html, /<div class="hall-stage" id="hall-stage" hidden>/);
       assert.equal((html.match(/data-spot="/g) ?? []).length, EXHIBITS.length);
       assert.match(html, /<script type="module" src="\/hall-app\.js"><\/script>/);
-      assert.ok(html.indexOf("<h1>") < html.indexOf('<h2 id="room-'), "headings in order");
+      const stage = html.match(/<div class="hall-stage"[\s\S]*<\/dialog>\s*<\/div>/)[0];
+      assert.match(stage, /<div class="hall-minimap" aria-hidden="true"><svg class="hall-map mini"/);
+      assert.match(stage, /<button id="hall-map-open" type="button">/);
+      assert.match(stage, /<dialog class="hall-dialog panel" id="hall-suggest-dialog"[\s\S]*href="https:\/\/github\.com\/FailRouter\/failrouter\/issues\/new/);
+      const heads = [...html.matchAll(/<h([1-3])[\s>]/g)].map((m) => Number(m[1]));
+      assert.equal(heads[0], 1);
+      assert.ok(heads.every((h, i) => i === 0 || h <= heads[i - 1] + 1), `headings in order: ${heads}`);
     });
   }
-  test("home pages and exhibit pages link to the hall, exhibit pages to their own spot in it", () => {
+  test("every page's site bar links the 3D hall; exhibit pages also link their own spot in it", () => {
+    for (const file of HTML_PAGES) {
+      const p = langOfFile(file) === "zh" ? "/zh" : "";
+      const current = neutral(file) === "/hall/" ? ' aria-current="page"' : "";
+      assert.ok(FILES[file].includes(`<a class="hall-nav" href="${p}/hall/"${current}>`), file);
+    }
     for (const [prefix, p] of [["", ""], ["zh/", "/zh"]]) {
-      assert.ok(FILES[`${prefix}index.html`].includes(`<a class="hall-link" href="${p}/hall/">`));
       for (const e of EXHIBITS) assert.ok(FILES[`${prefix}exhibits/${e.id}/index.html`].includes(`<a class="hall-link" href="${p}/hall/#${e.id}">`), e.id);
     }
   });
   test("every poster exists as WebP, both widths, and stays small", () => {
-    for (const key of H.posterKeys(layout)) {
+    for (const key of H.posterKeys()) {
       for (const w of H.POSTER_WIDTHS) {
         const buf = readFileSync(pub(H.posterPath(key, w).slice(1)));
         assert.equal(buf.subarray(0, 4).toString(), "RIFF");
@@ -279,20 +292,58 @@ describe("3D hall pages", () => {
         assert.ok(buf.length <= 60_000, `${key}-${w}: ${buf.length} bytes`);
       }
     }
-    assert.deepEqual(readdirSync(pub("posters")).sort(), H.posterKeys(layout).flatMap((k) => H.POSTER_WIDTHS.map((w) => `${k}-${w}.webp`)).sort());
+    assert.deepEqual(readdirSync(pub("posters")).sort(), H.posterKeys().flatMap((k) => H.POSTER_WIDTHS.map((w) => `${k}-${w}.webp`)).sort());
+  });
+});
+
+describe("icon and slogan", () => {
+  const png = (rel) => readFileSync(pub(rel));
+  test("favicon.svg is generated from ICON; the rendered icons are square PNGs of the right size", () => {
+    assert.equal(read("favicon.svg"), `${iconSvg()}\n`);
+    for (const [file, px] of S.ICON_FILES) {
+      const b = png(file);
+      assert.equal(b.subarray(1, 4).toString(), "PNG", file);
+      assert.deepEqual([b.readUInt32BE(16), b.readUInt32BE(20)], [px, px], file);
+    }
+    const ico = png("favicon.ico");
+    assert.equal(ico.readUInt16LE(4), S.ICO_SIZES.length);
+    S.ICO_SIZES.forEach((size, i) => assert.equal(ico[6 + 16 * i], size));
+  });
+  test("every page links the icons; the Organization carries the logo", () => {
+    for (const file of HTML_PAGES) {
+      const html = FILES[file];
+      assert.ok(html.includes('<link rel="icon" href="/favicon.ico" sizes="48x48">'), file);
+      assert.ok(html.includes('<link rel="apple-touch-icon" href="/apple-touch-icon.png">'), file);
+    }
+    assert.deepEqual(S.publisherLd().logo, { "@type": "ImageObject", url: `${S.SITE.origin}/logo.png`, width: 512, height: 512 });
+  });
+  test("share images use the same icon; the slogan is on the home pages, the share images and the 404", () => {
+    for (const [svg, lang] of [["og.svg", "en"], ["og-zh.svg", "zh"]]) {
+      const src = readFileSync(new URL(`../scripts/${svg}`, import.meta.url), "utf8");
+      for (const p of ICON.slice(1)) assert.ok(src.includes(`d="${p.d}"`), `${svg}: ${p.d}`);
+      assert.ok(src.includes(STRINGS[lang].slogan), svg);
+      assert.ok(FILES[lang === "en" ? "index.html" : "zh/index.html"].includes(`<p class="slogan">${STRINGS[lang].slogan}</p>`));
+      assert.ok(read("404.html").includes(STRINGS[lang].slogan), `404: ${lang}`);
+    }
+    assert.ok(read("404.html").includes(iconSvg('class="brand-icon" width="56" height="56" aria-hidden="true" focusable="false"')), "404 shows the icon");
+  });
+  test("home toolbar: sort and wrong turn together, the scoring rules link on its own line", () => {
+    for (const file of ["index.html", "zh/index.html"]) {
+      assert.match(FILES[file], /<div class="toolbar"><span class="sort-control">[\s\S]*?<\/span><button class="wrong-turn" id="wrong-turn" type="button">[^<]+<\/button><\/div>\s*<p class="impact-link"><a class="impact-how"/);
+    }
   });
 });
 
 describe("vendored three.js", () => {
   const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
-  const app = read("hall-app.js");
+  const app = read("hall-scene.js");
   test("pinned, and the bundle names its version and license", () => {
     assert.match(pkg.devDependencies.three, /^\d+\.\d+\.\d+$/, "exact version");
     const head = read(H.VENDOR.slice(1)).slice(0, 200);
     assert.ok(head.startsWith(`/* three.js ${pkg.devDependencies.three} `), head);
     assert.match(read("vendor/three.LICENSE"), /The MIT License/);
   });
-  test("hall-app.js uses exactly the three.js names that are bundled", () => {
+  test("hall-scene.js uses exactly the three.js names that are bundled", () => {
     const used = [...new Set([...app.matchAll(/THREE\.(\w+)/g)].map((m) => m[1]))].sort();
     assert.deepEqual(used, [...H.THREE_EXPORTS].sort());
     const bundle = read(H.VENDOR.slice(1));
@@ -317,20 +368,23 @@ describe("page weight budget (gzip)", () => {
   });
   test("3D hall before Enter: HTML + CSS + hall-app.js and its imports <= 35 KB", () => {
     for (const page of HALL_PAGES) {
-      const total = [page, "style.css", "hall-app.js", "hall.js", "museum.js", "i18n.js"].reduce((n, f) => n + gz(f), 0);
+      const total = [page, "style.css", "hall-app.js", "hall-mode.js", "i18n.js"].reduce((n, f) => n + gz(f), 0);
       assert.ok(total <= S.BUDGET.hall, `${page}: ${total} bytes`);
     }
   });
-  test("3D hall after Enter: three.js + exhibits.js <= 190 KB, and the size on the button is honest", () => {
-    const total = gz(H.VENDOR.slice(1)) + gz("exhibits.js");
+  test("3D hall after Enter: three.js + exhibits.js + hall-scene.js and its new imports <= 190 KB, and the size on the button is honest", () => {
+    const total = [H.VENDOR.slice(1), "exhibits.js", "hall-scene.js", "hall.js", "museum.js"].reduce((n, f) => n + gz(f), 0);
     assert.ok(total <= S.BUDGET.hall3d, `${total} bytes`);
     assert.ok(Math.abs(total / 1000 - H.DOWNLOAD_KB) <= H.DOWNLOAD_KB * 0.1, `button says ${H.DOWNLOAD_KB} KB, download is ${total} bytes`);
   });
   test("hall-app.js loads only what the two hall budgets count", () => {
     const src = read("hall-app.js");
-    assert.deepEqual([...src.matchAll(/from "\.\/([^"]+)"/g)].map((m) => m[1]).sort(), ["hall.js", "i18n.js", "museum.js"]);
-    assert.deepEqual([...src.matchAll(/import\(([^)]+)\)/g)].map((m) => m[1]).sort(), ['"./exhibits.js"', "H.VENDOR"]);
-    assert.ok(!read("hall.js").match(/from "\.\/exhibits\.js"/), "hall.js must not pull the exhibit data in before Enter");
+    assert.deepEqual([...src.matchAll(/from "\.\/([^"]+)"/g)].map((m) => m[1]).sort(), ["hall-mode.js", "i18n.js"]);
+    assert.deepEqual([...src.matchAll(/import\(([^)]+)\)/g)].map((m) => m[1]).sort(), ['"./exhibits.js"', '"./hall-scene.js"', "VENDOR"]);
+    assert.ok(!/\bimport\b/.test(read("hall-mode.js")), "hall-mode.js imports nothing");
+    assert.ok(!read("hall.js").match(/from "\.\/exhibits\.js"/), "hall.js must not pull the exhibit data in");
+    const scene = read("hall-scene.js");
+    assert.deepEqual([...scene.matchAll(/from "\.\/([^"]+)"/g)].map((m) => m[1]).sort(), ["hall.js", "i18n.js", "museum.js"], "hall-scene.js reuses modules already loaded");
   });
   test("app.js imports only modules counted in the budget", () => {
     const src = read("app.js");
@@ -458,9 +512,23 @@ describe("pure helpers", () => {
     assert.ok(S.footerHtml().includes(S.REPO_ISSUE.replace(/&/g, "&amp;")));
     assert.ok(S.footerHtml({ lang: "zh" }).includes(STRINGS.zh.footerLead));
   });
-  test("langSwitchHtml points at the other language and labels it in that language", () => {
-    assert.match(S.langSwitchHtml("en", "/exhibits/x/"), /href="\/zh\/exhibits\/x\/" hreflang="zh-Hans" lang="zh-Hans">中文</);
-    assert.match(S.langSwitchHtml("zh", "/"), /href="\/" hreflang="en" lang="en">English</);
+  test("siteBarHtml: icon + name (a link home except on the home page), the 3D hall, the other language", () => {
+    const ex = S.siteBarHtml("en", "/exhibits/x/");
+    assert.match(ex, /^<nav class="site-bar" aria-label="Site"><a class="brand" href="\/"><svg /);
+    assert.match(ex, /<span class="brand-name">Museum of Failed Routes<\/span><\/a>/);
+    assert.match(ex, /<a class="hall-nav" href="\/hall\/">3D hall<\/a><a class="lang-switch" id="lang-switch" href="\/zh\/exhibits\/x\/" hreflang="zh-Hans" lang="zh-Hans">中文</);
+    const home = S.siteBarHtml("zh", "/");
+    assert.match(home, /<span class="brand"><svg /);
+    assert.match(home, /href="\/" hreflang="en" lang="en">English</);
+    assert.match(S.siteBarHtml("zh", "/hall/"), /<a class="hall-nav" href="\/zh\/hall\/" aria-current="page">3D 展厅<\/a>/);
+  });
+  test("icoFile packs PNGs behind an ICO directory", () => {
+    const ico = S.icoFile([{ size: 32, png: Buffer.from("aaaa") }, { size: 256, png: Buffer.from("bbbbbb") }]);
+    assert.deepEqual([ico.readUInt16LE(0), ico.readUInt16LE(2), ico.readUInt16LE(4)], [0, 1, 2]);
+    assert.deepEqual([ico[6], ico[22]], [32, 0], "256 is written as 0");
+    assert.deepEqual([ico.readUInt32LE(14), ico.readUInt32LE(18)], [4, 38]);
+    assert.deepEqual([ico.readUInt32LE(30), ico.readUInt32LE(34)], [6, 42]);
+    assert.equal(ico.subarray(38).toString(), "aaaabbbbbb");
   });
   test("home copy stays inside the limits in both languages", () => {
     for (const t of [STRINGS.en, STRINGS.zh]) {

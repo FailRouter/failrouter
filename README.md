@@ -1,8 +1,12 @@
 # Failrouter: Museum of Failed Routes
 
+<img src="public/favicon.svg" width="64" height="64" alt="">
+
+*Every outage took a route.*
+
 A small museum of famous outages, each told as the route it took: one small change, a few hops, then a very bad day. Live at [failrouter.com](https://failrouter.com), and in Simplified Chinese at [failrouter.com/zh/](https://failrouter.com/zh/).
 
-Every exhibit is condensed from a public postmortem or investigation report, and each card names its source. The [3D hall](https://failrouter.com/hall/) hangs the same exhibits in a gallery you can walk through. Each one also has its own page, for example [the CrowdStrike outage](https://failrouter.com/exhibits/crowdstrike-2024/), with an impact score on five dimensions. [How impact is scored](https://failrouter.com/impact/) lists what every score means.
+Every exhibit is condensed from a public postmortem or investigation report, and each card names its source. The [3D hall](https://failrouter.com/hall/) hangs the same exhibits in a gallery you can walk through: a main corridor with a map, a short passage into each room, and next to every plaque a sculpture of its impact score. Each one also has its own page, for example [the CrowdStrike outage](https://failrouter.com/exhibits/crowdstrike-2024/), with an impact score on five dimensions. [How impact is scored](https://failrouter.com/impact/) lists what every score means.
 
 ## How the site works
 
@@ -14,8 +18,9 @@ It's a static site served by a Cloudflare Worker with only static assets, so no 
 | `public/i18n.js` | Interface strings in English and Chinese, plus locale helpers |
 | `public/museum.js` | Card markup, room filters, sorting, impact score and keyboard walk, as pure functions |
 | `public/app.js` | DOM wiring only |
-| `public/hall.js` | 3D hall floor plan, camera, movement, render tiers and plaque text layout, as pure functions |
-| `public/hall-app.js` | Wires the 3D hall to the page and to three.js |
+| `public/hall.js` | 3D hall floor plan, walls, paths, map, camera, movement, render tiers and plaque text layout, as pure functions |
+| `public/hall-mode.js` | What the hall page decides before Enter: whether to offer 3D, what Enter downloads |
+| `public/hall-app.js` | Wires the hall page; on Enter loads three.js and `hall-scene.js`, which builds the 3D world |
 | `scripts/site.js` | Page, sitemap and structured-data generator for both languages, pure |
 | `scripts/build.js` | Writes the generated files into `public/` |
 | `scripts/viewport.js` | Rules for the phone-width check; `viewport-run.js` runs it in headless Chrome |
@@ -29,7 +34,8 @@ You need Node 22 or newer and pnpm.
 pnpm install
 pnpm dev        # http://localhost:8787
 pnpm build      # regenerate pages after editing exhibits
-pnpm build --posters   # re-render the 3D hall posters (needs Chrome)
+pnpm build --og        # re-render share images and icons (needs rsvg-convert)
+pnpm build --posters   # re-render the 3D hall poster (needs Chrome)
 pnpm build --vendor    # re-bundle three.js after bumping it
 pnpm coverage   # tests + coverage gate (90% lines, branches, functions)
 pnpm viewport   # every page at 320 / 375 / 430 px wide in headless Chrome

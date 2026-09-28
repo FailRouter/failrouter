@@ -155,6 +155,51 @@ export function wrongTurnId(pool, current, rand) {
   return choices[Math.floor(rand * choices.length)].id;
 }
 
+// Radar chart geometry, in viewBox units. Sized so labels stay >= 12 px on a 320 px screen.
+// Shared by the exhibit pages (inline SVG, scripts/site.js) and the 3D plaques (canvas, hall-scene.js).
+export const RADAR = { w: 320, h: 250, cx: 160, cy: 130, r: 78, label: 14 };
+const round1 = (n) => Math.round(n * 10) / 10 || 0;
+
+/** Point at `value` (0-10) on axis `i`, axes clockwise from the top. `r` = radius of a 10. */
+export function radarPoint(i, value, r = RADAR.r) {
+  const a = -Math.PI / 2 + (i * 2 * Math.PI) / DIMENSIONS.length;
+  const d = (r * value) / 10;
+  return [round1(RADAR.cx + d * Math.cos(a)), round1(RADAR.cy + d * Math.sin(a))];
+}
+
+/** Axis label placement: x, text-anchor, and baselines of the name line and the score line. */
+export function radarLabel(i) {
+  const [x, y] = radarPoint(i, 10, RADAR.r + RADAR.label);
+  const dx = x - RADAR.cx;
+  const dy = y - RADAR.cy;
+  const anchor = Math.abs(dx) < 1 ? "middle" : dx > 0 ? "start" : "end";
+  const lines = dy < -RADAR.r ? [y - 18, y - 2] : dy > RADAR.r / 2 ? [y + 12, y + 28] : [y - 2, y + 14];
+  return { x, anchor, lines: lines.map(round1) };
+}
+
+// The site icon: a museum pediment and base, with a route of hops falling towards the base and
+// ending in a red node. 64-unit grid. Used for favicon.svg (scripts/site.js), the site bar and the 3D hall.
+const circle = (cx, cy, r) => `M${cx - r} ${cy}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0Z`;
+export const ICON = [
+  { d: "M12 0H52A12 12 0 0 1 64 12V52A12 12 0 0 1 52 64H12A12 12 0 0 1 0 52V12A12 12 0 0 1 12 0Z", fill: "#111014" },
+  { d: "M7 24L32 9L57 24Z", fill: "#c9a45c" },
+  { d: "M8 51H56A1 1 0 0 1 57 52V55A1 1 0 0 1 56 56H8A1 1 0 0 1 7 55V52A1 1 0 0 1 8 51Z", fill: "#c9a45c" },
+  { d: "M16 30L32 37L46 44", stroke: "#7fdc8c", width: 3.5 },
+  { d: circle(16, 30, 4.5), fill: "#7fdc8c" },
+  { d: circle(32, 37, 4.5), fill: "#7fdc8c" },
+  { d: circle(47, 44, 6), fill: "#c2412d" },
+];
+
+/** The icon as SVG markup. `attrs` go on the <svg> element (size, class, aria). */
+export function iconSvg(attrs = "") {
+  const parts = ICON.map((p) =>
+    p.stroke
+      ? `<path d="${p.d}" fill="none" stroke="${p.stroke}" stroke-width="${p.width}" stroke-linecap="round" stroke-linejoin="round"/>`
+      : `<path d="${p.d}" fill="${p.fill}"/>`,
+  ).join("");
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"${attrs ? ` ${attrs}` : ""}>${parts}</svg>`;
+}
+
 /** Keyboard walk: "j" next, "k" previous, clamped to the list. Unknown current = before the first. */
 export function stepId(list, current, key) {
   if (list.length === 0) return null;

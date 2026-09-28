@@ -1,7 +1,8 @@
 // File I/O only: writes what scripts/site.js generates into public/.
 //   pnpm build        regenerate index.html, exhibit pages, sitemap.xml, robots.txt
-//   pnpm build --og   also re-render public/og.png and og-zh.png from scripts/og*.svg (needs rsvg-convert
-//                     and a Simplified Chinese system font for og-zh)
+//   pnpm build --og   also re-render public/og.png and og-zh.png from scripts/og*.svg, and favicon.ico,
+//                     apple-touch-icon.png and logo.png from favicon.svg (needs rsvg-convert and a
+//                     Simplified Chinese system font for og-zh)
 //   pnpm build --vendor   re-bundle public/vendor/three.module.min.js from the pinned `three` devDependency,
 //                         keeping only THREE_EXPORTS (public/hall.js)
 //   pnpm build --posters  re-render public/posters/*.webp from the 3D hall in headless Chrome
@@ -13,7 +14,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { EXHIBITS, ROOM_NAMES } from "../public/exhibits.js";
 import { THREE_EXPORTS } from "../public/hall.js";
-import { buildSite } from "./site.js";
+import { ICON_FILES, ICO_SIZES, buildSite, icoFile } from "./site.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const pub = join(root, "public");
@@ -31,6 +32,14 @@ if (process.argv.includes("--og")) {
     execFileSync("rsvg-convert", ["-w", "1200", "-h", "630", join(root, `scripts/${name}.svg`), "-o", join(pub, `${name}.png`)]);
     console.log(`wrote ${name}.png`);
   }
+  const icon = join(pub, "favicon.svg");
+  const png = (px) => execFileSync("rsvg-convert", ["-w", String(px), "-h", String(px), icon]);
+  for (const [file, px] of ICON_FILES) {
+    writeFileSync(join(pub, file), png(px));
+    console.log(`wrote ${file}`);
+  }
+  writeFileSync(join(pub, "favicon.ico"), icoFile(ICO_SIZES.map((size) => ({ size, png: png(size) }))));
+  console.log("wrote favicon.ico");
 }
 
 if (process.argv.includes("--vendor")) {
