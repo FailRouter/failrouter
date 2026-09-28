@@ -6,7 +6,7 @@ export const WIDTHS = [320, 375, 430];
 /** Minimum touch target height in CSS px. */
 export const TARGET = 44;
 /** Controls that must meet TARGET on narrow / touch screens. Inline text links are exempt (WCAG 2.5.8). */
-export const TOUCH_SELECTOR = "button, .lang-switch, .walk a";
+export const TOUCH_SELECTOR = "button, .lang-switch, .walk a, .sort-bar select, .impact-how";
 /** A path that doesn't exist, to check the 404 page too. */
 export const MISSING = "/no-such-exhibit/";
 

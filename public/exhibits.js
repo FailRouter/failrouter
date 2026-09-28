@@ -5,6 +5,8 @@
 // `added` is the date the exhibit went up on failrouter.com (sitemap lastmod, JSON-LD).
 // `zh` holds the Simplified Chinese text: same facts, same number of hops, nothing added.
 // English is the source of truth; `source` stays in its original language on both sites.
+// `impact` scores five dimensions 0-10 against the levels in RUBRIC (i18n.js), from facts in `source` only;
+// `impactNotes` (and `zh.impactNotes`) give the one-line fact behind each score.
 
 export const ROOMS = {
   routing: "Hall of Lost Packets",
@@ -43,6 +45,14 @@ export const EXHIBITS = [
     ],
     lesson: "If your recovery tools live behind the thing that broke, you don't have recovery tools.",
     source: "Facebook Engineering blog, October 2021",
+    impact: { reach: 8, duration: 6, loss: 0, recovery: 8, cascade: 2 },
+    impactNotes: {
+      reach: "Facebook, Instagram and WhatsApp, worldwide",
+      duration: "About 6 hours",
+      loss: "None stated in the source",
+      recovery: "Engineers had to reach the data centers in person",
+      cascade: "Internal tools went down with it",
+    },
     zh: {
       subject: "Facebook 全球宕机（2021 年 10 月）",
       title: "Facebook 从互联网上消失的 6 小时",
@@ -55,6 +65,13 @@ export const EXHIBITS = [
         "工程师要到现场才能重置路由器，内部工具也一起挂了",
       ],
       lesson: "恢复工具如果也在出故障的那套系统后面，就等于没有恢复工具。",
+      impactNotes: {
+        reach: "Facebook、Instagram 和 WhatsApp，全球范围",
+        duration: "约 6 小时",
+        loss: "来源未提及永久损失",
+        recovery: "工程师必须亲自到数据中心现场",
+        cascade: "内部工具也随之宕机",
+      },
     },
   },
   {
@@ -74,6 +91,14 @@ export const EXHIBITS = [
     ],
     lesson: "BGP believes what it is told. Filter what your customers announce.",
     source: "RIPE NCC case study, 2008",
+    impact: { reach: 6, duration: 4, loss: 0, recovery: 4, cascade: 0 },
+    impactNotes: {
+      reach: "One product, users worldwide",
+      duration: "YouTube's more specific routes took over after about 1.5 hours",
+      loss: "None stated in the source",
+      recovery: "YouTube announced more specific routes; the upstream withdrew the bad one",
+      cascade: "Only YouTube traffic was affected",
+    },
     zh: {
       subject: "YouTube BGP 劫持事件（2008 年 2 月）",
       title: "一条 BGP 路由，把 YouTube 引向了巴基斯坦",
@@ -86,6 +111,13 @@ export const EXHIBITS = [
         "全球大部分 YouTube 流量涌向巴基斯坦，然后消失",
       ],
       lesson: "别人宣告什么，BGP 就信什么。客户宣告的路由要过滤。",
+      impactNotes: {
+        reach: "一个产品，全球用户",
+        duration: "约 1.5 小时后，YouTube 更具体的路由重新接管流量",
+        loss: "来源未提及永久损失",
+        recovery: "YouTube 宣告更具体的路由，上游撤回了错误路由",
+        cascade: "只影响 YouTube 的流量",
+      },
     },
   },
   {
@@ -105,6 +137,14 @@ export const EXHIBITS = [
     ],
     lesson: "Content updates are code updates. Stage them like code.",
     source: "CrowdStrike root cause analysis, August 2024",
+    impact: { reach: 10, duration: 10, loss: 0, recovery: 8, cascade: 10 },
+    impactNotes: {
+      reach: "About 8.5 million machines, in airlines, hospitals and banks",
+      duration: "Days to weeks to clean up",
+      loss: "None stated in the source",
+      recovery: "Machines were fixed one by one, by hand",
+      cascade: "Flights, hospitals and banks were disrupted",
+    },
     zh: {
       subject: "CrowdStrike 蓝屏事件（2024 年 7 月）",
       title: "一次内容更新，850 万台 Windows 蓝屏",
@@ -117,6 +157,13 @@ export const EXHIBITS = [
         "航空公司、医院和银行只能一台一台手动修",
       ],
       lesson: "内容更新也是代码更新，要像代码一样分阶段发布。",
+      impactNotes: {
+        reach: "约 850 万台电脑，涉及航空公司、医院和银行",
+        duration: "清理用了几天到几周",
+        loss: "来源未提及永久损失",
+        recovery: "电脑只能一台一台手动修",
+        cascade: "航班、医院和银行的服务受到冲击",
+      },
     },
   },
   {
@@ -136,6 +183,14 @@ export const EXHIBITS = [
     ],
     lesson: "The fastest deploy pipeline is also the fastest outage pipeline.",
     source: "Cloudflare blog, July 2019",
+    impact: { reach: 8, duration: 2, loss: 0, recovery: 2, cascade: 6 },
+    impactNotes: {
+      reach: "Sites behind Cloudflare, worldwide",
+      duration: "27 minutes",
+      loss: "None stated in the source",
+      recovery: "A global kill switch for the WAF rules",
+      cascade: "Customer sites returned 502 errors",
+    },
     zh: {
       subject: "Cloudflare 正则表达式宕机（2019 年 7 月）",
       title: "一条正则拖垮全球边缘节点",
@@ -148,6 +203,13 @@ export const EXHIBITS = [
         "关掉 WAF 规则的全局开关后，流量恢复",
       ],
       lesson: "最快的部署流水线，也是最快的宕机流水线。",
+      impactNotes: {
+        reach: "接入 Cloudflare 的站点，全球范围",
+        duration: "27 分钟",
+        loss: "来源未提及永久损失",
+        recovery: "关掉 WAF 规则的全局开关",
+        cascade: "客户站点返回 502 错误",
+      },
     },
   },
   {
@@ -167,6 +229,14 @@ export const EXHIBITS = [
     ],
     lesson: "A bug can wait patiently for the one input that wakes it.",
     source: "Fastly blog, June 2021",
+    impact: { reach: 8, duration: 4, loss: 0, recovery: 2, cascade: 6 },
+    impactNotes: {
+      reach: "Most of the edge network, worldwide",
+      duration: "95% of the network back within 49 minutes",
+      loss: "None stated in the source",
+      recovery: "The customer configuration was disabled",
+      cascade: "Customer sites went blank, major news sites among them",
+    },
     zh: {
       subject: "Fastly 宕机事件（2021 年 6 月）",
       title: "一次客户配置，唤醒了潜伏几周的 bug",
@@ -179,6 +249,13 @@ export const EXHIBITS = [
         "工程师找到这项配置并停用，流量恢复",
       ],
       lesson: "bug 可以耐心地等，等那个能唤醒它的输入。",
+      impactNotes: {
+        reach: "大部分边缘网络，全球范围",
+        duration: "49 分钟内 95% 的网络恢复",
+        loss: "来源未提及永久损失",
+        recovery: "停用了那项客户配置",
+        cascade: "客户站点一片空白，其中有几家大新闻网站",
+      },
     },
   },
   {
@@ -198,6 +275,14 @@ export const EXHIBITS = [
     ],
     lesson: "Tools should refuse to remove too much capacity too fast, however it's typed.",
     source: "AWS service disruption summary, March 2017",
+    impact: { reach: 4, duration: 6, loss: 0, recovery: 6, cascade: 8 },
+    impactNotes: {
+      reach: "S3 in one region, us-east-1",
+      duration: "About 4 hours",
+      loss: "None stated in the source",
+      recovery: "Two subsystems needed a full restart, the first in years",
+      cascade: "A large part of the web, AWS's own status dashboard included",
+    },
     zh: {
       subject: "AWS S3 宕机事件（2017 年 2 月）",
       title: "一条命令输错，S3 宕机约 4 小时",
@@ -210,6 +295,13 @@ export const EXHIBITS = [
         "大片网站宕机，AWS 自己的状态面板也在其中",
       ],
       lesson: "不管命令怎么输，工具都应该拒绝一次移除太多、太快的容量。",
+      impactNotes: {
+        reach: "一个区域（us-east-1）的 S3",
+        duration: "约 4 小时",
+        loss: "来源未提及永久损失",
+        recovery: "两个子系统需要完全重启，多年来第一次",
+        cascade: "大片网站宕机，AWS 自己的状态面板也在其中",
+      },
     },
   },
   {
@@ -229,6 +321,14 @@ export const EXHIBITS = [
     ],
     lesson: "A backup you have never restored is a hope, not a backup.",
     source: "GitLab postmortem, February 2017",
+    impact: { reach: 6, duration: 8, loss: 6, recovery: 6, cascade: 0 },
+    impactNotes: {
+      reach: "GitLab.com users worldwide",
+      duration: "About 18 hours",
+      loss: "About 6 hours of database data lost",
+      recovery: "Restored from a staging snapshot",
+      cascade: "Contained to GitLab.com",
+    },
     zh: {
       subject: "GitLab 数据库误删事故（2017 年 1 月）",
       title: "rm -rf 敲在了主库上",
@@ -241,6 +341,13 @@ export const EXHIBITS = [
         "从预发环境快照恢复，全程公开直播",
       ],
       lesson: "从没恢复过的备份只是一个愿望，算不上备份。",
+      impactNotes: {
+        reach: "GitLab.com 的全球用户",
+        duration: "约 18 小时",
+        loss: "丢了大约 6 小时的数据库数据",
+        recovery: "从预发环境快照恢复",
+        cascade: "只影响 GitLab.com",
+      },
     },
   },
   {
@@ -260,6 +367,14 @@ export const EXHIBITS = [
     ],
     lesson: "Delete dead code. Verify every deploy target. Never recycle a flag.",
     source: "SEC order, October 2013",
+    impact: { reach: 2, duration: 4, loss: 8, recovery: 4, cascade: 4 },
+    impactNotes: {
+      reach: "One trading firm's systems",
+      duration: "45 minutes",
+      loss: "Hundreds of millions of dollars; the firm needed a rescue",
+      recovery: "Staff intervened by hand while the market was open",
+      cascade: "Millions of unintended orders moved prices in 154 stocks",
+    },
     zh: {
       subject: "骑士资本交易事故（2012 年 8 月）",
       title: "45 分钟亏掉 4.4 亿美元",
@@ -272,6 +387,13 @@ export const EXHIBITS = [
         "公司亏损约 4.4 亿美元，需要外部救援",
       ],
       lesson: "删掉死代码，核对每个部署目标，永远别复用标志位。",
+      impactNotes: {
+        reach: "一家交易公司的系统",
+        duration: "45 分钟",
+        loss: "亏损数亿美元，公司需要外部救援",
+        recovery: "开盘期间由员工手动介入",
+        cascade: "数百万笔非预期订单影响了 154 只股票的价格",
+      },
     },
   },
   {
@@ -291,6 +413,14 @@ export const EXHIBITS = [
     ],
     lesson: "Reused code carries the assumptions of the system it was written for.",
     source: "Ariane 501 Inquiry Board report, July 1996",
+    impact: { reach: 0, duration: 10, loss: 10, recovery: 10, cascade: 0 },
+    impactNotes: {
+      reach: "No outside users",
+      duration: "The flight could not be recovered",
+      loss: "The rocket was destroyed",
+      recovery: "Nothing to repair; only a new flight",
+      cascade: "No spillover",
+    },
     zh: {
       subject: "阿丽亚娜 5 号火箭首飞失败（1996 年）",
       title: "整数溢出，火箭 37 秒后自毁",
@@ -303,6 +433,13 @@ export const EXHIBITS = [
         "火箭偏离航线并自毁",
       ],
       lesson: "复用的代码，带着它原本那套系统的假设。",
+      impactNotes: {
+        reach: "没有外部用户",
+        duration: "这次飞行无法挽回",
+        loss: "火箭被摧毁",
+        recovery: "无从修复，只能重新发射",
+        cascade: "没有外溢",
+      },
     },
   },
   {
@@ -322,6 +459,14 @@ export const EXHIBITS = [
     ],
     lesson: "Units belong in the interface contract, not in someone's head.",
     source: "NASA Mishap Investigation Board, November 1999",
+    impact: { reach: 0, duration: 10, loss: 10, recovery: 10, cascade: 0 },
+    impactNotes: {
+      reach: "No outside users",
+      duration: "The orbiter was never recovered",
+      loss: "The spacecraft was lost",
+      recovery: "Nothing to repair once it was gone",
+      cascade: "No spillover",
+    },
     zh: {
       subject: "火星气候探测者号失联（1999 年）",
       title: "英制对公制：丢失的火星探测器",
@@ -334,6 +479,13 @@ export const EXHIBITS = [
         "它消失在火星大气中",
       ],
       lesson: "单位应该写进接口约定，而不是留在某个人的脑子里。",
+      impactNotes: {
+        reach: "没有外部用户",
+        duration: "探测器再也没有找回",
+        loss: "探测器损失",
+        recovery: "失联之后无从修复",
+        cascade: "没有外溢",
+      },
     },
   },
   {
@@ -353,6 +505,14 @@ export const EXHIBITS = [
     ],
     lesson: "Time is an input. Test the weird ones.",
     source: "Public postmortems and kernel mailing list, July 2012",
+    impact: { reach: 8, duration: 6, loss: 0, recovery: 4, cascade: 2 },
+    impactNotes: {
+      reach: "Reddit, Mozilla and others",
+      duration: "Hours, depending on the site",
+      loss: "None stated in the source",
+      recovery: "Set the clock again, or reboot, server by server",
+      cascade: "Each site's own Java and MySQL servers",
+    },
     zh: {
       subject: "闰秒 bug（2012 年 6 月）",
       title: "闰秒那一秒，服务器 CPU 占满",
@@ -365,6 +525,13 @@ export const EXHIBITS = [
         "修复办法：重新设置一次时钟，或者重启",
       ],
       lesson: "时间也是输入。怪的那些时刻要测。",
+      impactNotes: {
+        reach: "Reddit、Mozilla 等多家网站",
+        duration: "几小时，因网站而异",
+        loss: "来源未提及永久损失",
+        recovery: "逐台重新设置时钟，或者重启",
+        cascade: "各家自己的 Java 和 MySQL 服务器",
+      },
     },
   },
   {
@@ -384,6 +551,14 @@ export const EXHIBITS = [
     ],
     lesson: "An expiry date years away is still a date. Put it in a calendar.",
     source: "Let's Encrypt announcements, 2020 to 2021",
+    impact: { reach: 8, duration: 10, loss: 2, recovery: 9, cascade: 6 },
+    impactNotes: {
+      reach: "Old phones, old OpenSSL and embedded devices, worldwide",
+      duration: "A long tail on old devices",
+      loss: "Some devices had to be replaced",
+      recovery: "From config changes to buying new hardware",
+      cascade: "TLS failed for the sites and services those clients used",
+    },
     zh: {
       subject: "Let's Encrypt 根证书过期（2021 年 9 月）",
       title: "根证书一过期，旧设备连不上 HTTPS",
@@ -396,6 +571,13 @@ export const EXHIBITS = [
         "修复办法从改配置到买新硬件不等",
       ],
       lesson: "几年后的过期日也是一个日期。记进日历。",
+      impactNotes: {
+        reach: "全球的旧手机、旧版 OpenSSL 和嵌入式设备",
+        duration: "旧设备上拖了很久",
+        loss: "部分设备只能更换",
+        recovery: "从改配置到买新硬件不等",
+        cascade: "这些客户端访问站点和服务时 TLS 握手失败",
+      },
     },
   },
 ];

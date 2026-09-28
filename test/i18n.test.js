@@ -3,18 +3,22 @@ import { readFileSync } from "node:fs";
 import { describe, test } from "node:test";
 import { EXHIBITS, ROOMS, ROOMS_ZH } from "../public/exhibits.js";
 import * as I from "../public/i18n.js";
+import { DIMENSIONS } from "../public/museum.js";
 
 const CJK = /[\u4e00-\u9fff]/;
+const rubricTexts = (lang) => Object.values(I.RUBRIC[lang]).flatMap((d) => [d.name, d.what, ...d.levels]);
 // Every string a visitor reads, per language.
 const zhTexts = () => [
   ...Object.values(I.STRINGS.zh),
   ...Object.values(ROOMS_ZH),
-  ...EXHIBITS.flatMap((e) => [e.zh.subject, e.zh.title, e.zh.duration, e.zh.lesson, ...e.zh.hops]),
+  ...EXHIBITS.flatMap((e) => [e.zh.subject, e.zh.title, e.zh.duration, e.zh.lesson, ...e.zh.hops, ...Object.values(e.zh.impactNotes)]),
+  ...rubricTexts("zh"),
 ];
 const enTexts = () => [
   ...Object.values(I.STRINGS.en),
   ...Object.values(ROOMS),
-  ...EXHIBITS.flatMap((e) => [e.subject, e.title, e.duration, e.lesson, e.source, ...e.hops]),
+  ...EXHIBITS.flatMap((e) => [e.subject, e.title, e.duration, e.lesson, e.source, ...e.hops, ...Object.values(e.impactNotes)]),
+  ...rubricTexts("en"),
 ];
 const plain = (s) => s.replace(/<[^>]+>/g, "");
 
@@ -32,6 +36,23 @@ describe("dictionaries", () => {
   });
   test("every zh value is Chinese text or Chinese punctuation, never a leftover English string", () => {
     for (const [k, v] of Object.entries(I.STRINGS.zh)) assert.match(v, /[\u3000-\u9fff\uff00-\uffef]/, `zh.${k}`);
+  });
+});
+
+describe("impact rubric", () => {
+  test("both languages describe the same dimensions, in axis order, with six levels each", () => {
+    assert.deepEqual(Object.keys(I.RUBRIC).sort(), [...I.LANGS].sort());
+    for (const lang of I.LANGS) {
+      assert.deepEqual(Object.keys(I.RUBRIC[lang]), DIMENSIONS, lang);
+      for (const k of DIMENSIONS) {
+        const d = I.RUBRIC[lang][k];
+        assert.ok(d.name && d.what, `${lang}.${k}`);
+        assert.equal(d.levels.length, 6, `${lang}.${k}: levels for 0, 2, 4, 6, 8, 10`);
+      }
+    }
+  });
+  test("Chinese rubric is Chinese", () => {
+    for (const s of rubricTexts("zh")) assert.match(s, CJK, s);
   });
 });
 

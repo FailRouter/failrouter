@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { EXHIBITS, ROOM_NAMES, ROOMS, ROOMS_ZH } from "../public/exhibits.js";
+import { DIMENSIONS } from "../public/museum.js";
 
 test("every exhibit has the required fields", () => {
   for (const e of EXHIBITS) {
@@ -52,7 +53,22 @@ test("every exhibit has a complete Simplified Chinese version with the same numb
     assert.equal(e.zh.hops?.length, e.hops.length, `${e.id}: zh.hops must match hops one to one`);
     // Titles may be a proper name ("Channel File 291"); the rest must actually be Chinese.
     for (const s of [e.zh.subject, e.zh.duration, e.zh.lesson, ...e.zh.hops]) assert.match(s, CJK, `${e.id}: "${s}"`);
-    assert.deepEqual(Object.keys(e.zh).sort(), ["duration", "hops", "lesson", "subject", "title"], `${e.id}: zh keys`);
+    assert.deepEqual(Object.keys(e.zh).sort(), ["duration", "hops", "impactNotes", "lesson", "subject", "title"], `${e.id}: zh keys`);
+  }
+});
+
+test("every exhibit scores all five impact dimensions as whole numbers 0-10, each with a note in both languages", () => {
+  const CJK = /[\u4e00-\u9fff]/;
+  for (const e of EXHIBITS) {
+    assert.deepEqual(Object.keys(e.impact), DIMENSIONS, `${e.id}: impact keys, in axis order`);
+    for (const k of DIMENSIONS) {
+      assert.ok(Number.isInteger(e.impact[k]) && e.impact[k] >= 0 && e.impact[k] <= 10, `${e.id}: impact.${k}`);
+    }
+    for (const notes of [e.impactNotes, e.zh.impactNotes]) {
+      assert.deepEqual(Object.keys(notes), DIMENSIONS, `${e.id}: note keys`);
+      for (const k of DIMENSIONS) assert.ok(typeof notes[k] === "string" && notes[k].length > 0, `${e.id}: note ${k}`);
+    }
+    for (const k of DIMENSIONS) assert.match(e.zh.impactNotes[k], CJK, `${e.id}: zh note ${k}`);
   }
 });
 

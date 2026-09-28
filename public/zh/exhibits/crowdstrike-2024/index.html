@@ -37,15 +37,22 @@
     <p class="plaque-no">展品 003 · 全局推送厅</p>
     <h1>一次内容更新，850 万台 Windows 蓝屏</h1>
     <p class="meta"><time datetime="2024-07-19">2024-07-19</time> · 修复用了几小时，清理用了几天到几周</p>
+    <p class="impact"><span class="pips" aria-hidden="true" style="--v:74.3%"></span>影响 7.6/10</p>
     <ol class="route"><li class=""><span class="hop"> 1</span>安全厂商给 Windows 传感器推送了一次例行内容更新</li><li class=""><span class="hop"> 2</span>更新定义的输入字段比传感器代码预期的多</li><li class=""><span class="hop"> 3</span>内核驱动越界读取，随即崩溃</li><li class=""><span class="hop"> 4</span>约 850 万台 Windows 电脑蓝屏，反复重启</li><li class="fail"><span class="hop"> 5</span>航空公司、医院和银行只能一台一台手动修 <b class="x" aria-label="失败">✕</b></li></ol>
     <p class="lesson">内容更新也是代码更新，要像代码一样分阶段发布。</p>
     <p class="source">来源：<span lang="en">CrowdStrike root cause analysis, August 2024</span></p>
   </article>
+    <section class="impact-panel" aria-labelledby="impact-h">
+      <h2 id="impact-h">影响评估</h2>
+      <p class="impact-note">五个维度各 0 到 10 分，总分 7.6/10 是它们的平均值。<a href="/zh/impact/">影响分怎么算</a></p>
+      <svg class="radar" viewBox="0 0 320 250" role="img" aria-label="五个维度影响分的雷达图，下表列出同样的分数。"><polygon class="grid" points="160,114.4 174.8,125.2 169.2,142.6 150.8,142.6 145.2,125.2"/><polygon class="grid" points="160,98.8 189.7,120.4 178.3,155.2 141.7,155.2 130.3,120.4"/><polygon class="grid" points="160,83.2 204.5,115.5 187.5,167.9 132.5,167.9 115.5,115.5"/><polygon class="grid" points="160,67.6 219.3,110.7 196.7,180.5 123.3,180.5 100.7,110.7"/><polygon class="grid" points="160,52 234.2,105.9 205.8,193.1 114.2,193.1 85.8,105.9"/><line class="grid" x1="160" y1="130" x2="160" y2="52"/><line class="grid" x1="160" y1="130" x2="234.2" y2="105.9"/><line class="grid" x1="160" y1="130" x2="205.8" y2="193.1"/><line class="grid" x1="160" y1="130" x2="114.2" y2="193.1"/><line class="grid" x1="160" y1="130" x2="85.8" y2="105.9"/><polygon class="area" points="160,52 234.2,105.9 160,130 123.3,180.5 85.8,105.9"/><circle class="dot" cx="160" cy="52" r="3"/><circle class="dot" cx="234.2" cy="105.9" r="3"/><circle class="dot" cx="160" cy="130" r="3"/><circle class="dot" cx="123.3" cy="180.5" r="3"/><circle class="dot" cx="85.8" cy="105.9" r="3"/><text text-anchor="middle"><tspan x="160" y="20">范围</tspan><tspan class="v" x="160" y="36">10</tspan></text><text text-anchor="start"><tspan x="247.5" y="99.6">时长</tspan><tspan class="v" x="247.5" y="115.6">10</tspan></text><text text-anchor="start"><tspan x="214.1" y="216.4">损失</tspan><tspan class="v" x="214.1" y="232.4">0</tspan></text><text text-anchor="end"><tspan x="105.9" y="216.4">恢复难度</tspan><tspan class="v" x="105.9" y="232.4">8</tspan></text><text text-anchor="end"><tspan x="72.5" y="99.6">连锁</tspan><tspan class="v" x="72.5" y="115.6">10</tspan></text></svg>
+      <table class="impact-table"><thead><tr><th scope="col">维度</th><th scope="col">分数</th><th scope="col">依据</th></tr></thead><tbody><tr><th scope="row">范围</th><td class="n">10</td><td>约 850 万台电脑，涉及航空公司、医院和银行</td></tr><tr><th scope="row">时长</th><td class="n">10</td><td>清理用了几天到几周</td></tr><tr><th scope="row">损失</th><td class="n">0</td><td>来源未提及永久损失</td></tr><tr><th scope="row">恢复难度</th><td class="n">8</td><td>电脑只能一台一台手动修</td></tr><tr><th scope="row">连锁</th><td class="n">10</td><td>航班、医院和银行的服务受到冲击</td></tr></tbody></table>
+    </section>
     <p class="about-event">CrowdStrike 蓝屏事件（2024 年 7 月）。持续时间：修复用了几小时，清理用了几天到几周。从第一个改动到故障，共 5 跳。</p>
     <nav class="walk" aria-label="更多展品">
-      <a class="walk-prev" rel="prev" href="/zh/exhibits/youtube-pakistan-2008/">← 一条 BGP 路由，把 YouTube 引向了巴基斯坦</a>
+      <span class="walk-prev"></span>
       <a class="walk-hall" href="/zh/#crowdstrike-2024">回到主展厅</a>
-      <a class="walk-next" rel="next" href="/zh/exhibits/cloudflare-regex-2019/">→ 一条正则拖垮全球边缘节点</a>
+      <a class="walk-next" rel="next" href="/zh/exhibits/facebook-2021/">→ Facebook 从互联网上消失的 6 小时</a>
     </nav>
   </main>
 

@@ -37,13 +37,20 @@
     <p class="plaque-no">展品 006 · 回车键画廊</p>
     <h1>一条命令输错，S3 宕机约 4 小时</h1>
     <p class="meta"><time datetime="2017-02-28">2017-02-28</time> · 约 4 小时</p>
+    <p class="impact"><span class="pips" aria-hidden="true" style="--v:48.6%"></span>影响 4.8/10</p>
     <ol class="route"><li class=""><span class="hop"> 1</span>工程师排查一个变慢的计费系统，执行一条已审批的操作手册命令</li><li class=""><span class="hop"> 2</span>一个参数输错，移除的服务器远多于预期</li><li class=""><span class="hop"> 3</span>us-east-1 的两个 S3 子系统需要完全重启</li><li class=""><span class="hop"> 4</span>它们多年没有完全重启过，花了好几个小时</li><li class="fail"><span class="hop"> 5</span>大片网站宕机，AWS 自己的状态面板也在其中 <b class="x" aria-label="失败">✕</b></li></ol>
     <p class="lesson">不管命令怎么输，工具都应该拒绝一次移除太多、太快的容量。</p>
     <p class="source">来源：<span lang="en">AWS service disruption summary, March 2017</span></p>
   </article>
+    <section class="impact-panel" aria-labelledby="impact-h">
+      <h2 id="impact-h">影响评估</h2>
+      <p class="impact-note">五个维度各 0 到 10 分，总分 4.8/10 是它们的平均值。<a href="/zh/impact/">影响分怎么算</a></p>
+      <svg class="radar" viewBox="0 0 320 250" role="img" aria-label="五个维度影响分的雷达图，下表列出同样的分数。"><polygon class="grid" points="160,114.4 174.8,125.2 169.2,142.6 150.8,142.6 145.2,125.2"/><polygon class="grid" points="160,98.8 189.7,120.4 178.3,155.2 141.7,155.2 130.3,120.4"/><polygon class="grid" points="160,83.2 204.5,115.5 187.5,167.9 132.5,167.9 115.5,115.5"/><polygon class="grid" points="160,67.6 219.3,110.7 196.7,180.5 123.3,180.5 100.7,110.7"/><polygon class="grid" points="160,52 234.2,105.9 205.8,193.1 114.2,193.1 85.8,105.9"/><line class="grid" x1="160" y1="130" x2="160" y2="52"/><line class="grid" x1="160" y1="130" x2="234.2" y2="105.9"/><line class="grid" x1="160" y1="130" x2="205.8" y2="193.1"/><line class="grid" x1="160" y1="130" x2="114.2" y2="193.1"/><line class="grid" x1="160" y1="130" x2="85.8" y2="105.9"/><polygon class="area" points="160,98.8 204.5,115.5 160,130 132.5,167.9 100.7,110.7"/><circle class="dot" cx="160" cy="98.8" r="3"/><circle class="dot" cx="204.5" cy="115.5" r="3"/><circle class="dot" cx="160" cy="130" r="3"/><circle class="dot" cx="132.5" cy="167.9" r="3"/><circle class="dot" cx="100.7" cy="110.7" r="3"/><text text-anchor="middle"><tspan x="160" y="20">范围</tspan><tspan class="v" x="160" y="36">4</tspan></text><text text-anchor="start"><tspan x="247.5" y="99.6">时长</tspan><tspan class="v" x="247.5" y="115.6">6</tspan></text><text text-anchor="start"><tspan x="214.1" y="216.4">损失</tspan><tspan class="v" x="214.1" y="232.4">0</tspan></text><text text-anchor="end"><tspan x="105.9" y="216.4">恢复难度</tspan><tspan class="v" x="105.9" y="232.4">6</tspan></text><text text-anchor="end"><tspan x="72.5" y="99.6">连锁</tspan><tspan class="v" x="72.5" y="115.6">8</tspan></text></svg>
+      <table class="impact-table"><thead><tr><th scope="col">维度</th><th scope="col">分数</th><th scope="col">依据</th></tr></thead><tbody><tr><th scope="row">范围</th><td class="n">4</td><td>一个区域（us-east-1）的 S3</td></tr><tr><th scope="row">时长</th><td class="n">6</td><td>约 4 小时</td></tr><tr><th scope="row">损失</th><td class="n">0</td><td>来源未提及永久损失</td></tr><tr><th scope="row">恢复难度</th><td class="n">6</td><td>两个子系统需要完全重启，多年来第一次</td></tr><tr><th scope="row">连锁</th><td class="n">8</td><td>大片网站宕机，AWS 自己的状态面板也在其中</td></tr></tbody></table>
+    </section>
     <p class="about-event">AWS S3 宕机事件（2017 年 2 月）。持续时间：约 4 小时。从第一个改动到故障，共 5 跳。</p>
     <nav class="walk" aria-label="更多展品">
-      <a class="walk-prev" rel="prev" href="/zh/exhibits/fastly-2021/">← 一次客户配置，唤醒了潜伏几周的 bug</a>
+      <a class="walk-prev" rel="prev" href="/zh/exhibits/cloudflare-regex-2019/">← 一条正则拖垮全球边缘节点</a>
       <a class="walk-hall" href="/zh/#s3-2017">回到主展厅</a>
       <a class="walk-next" rel="next" href="/zh/exhibits/gitlab-2017/">→ rm -rf 敲在了主库上</a>
     </nav>

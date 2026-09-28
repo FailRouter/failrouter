@@ -25,6 +25,70 @@ export function visibleIn(exhibits, room) {
   return room === ALL ? exhibits : exhibits.filter((e) => e.room === room);
 }
 
+/** Impact dimensions, in radar-axis order (clockwise from the top). Same keys as RUBRIC in i18n.js. */
+export const DIMENSIONS = ["reach", "duration", "loss", "recovery", "cascade"];
+
+/** Overall impact: plain average of the five 0-10 scores, one decimal place. */
+export const impactScore = (e) => (DIMENSIONS.reduce((n, k) => n + e.impact[k], 0) * 2) / 10;
+
+/** Sort orders offered on the home page; the first is the default and the prerendered order. */
+export const SORTS = {
+  "date-desc": "sortDateDesc",
+  "date-asc": "sortDateAsc",
+  "impact-desc": "sortImpactDesc",
+  "impact-asc": "sortImpactAsc",
+};
+export const DEFAULT_SORT = "date-desc";
+
+/** A known sort key, or the default (e.g. a stale value restored by the browser). */
+export const parseSort = (v) => (Object.hasOwn(SORTS, v) ? v : DEFAULT_SORT);
+
+const byDateDesc = (a, b) => b.date.localeCompare(a.date);
+const byId = (a, b) => a.id.localeCompare(b.id);
+const PRIMARY = {
+  "date-desc": byDateDesc,
+  "date-asc": (a, b) => -byDateDesc(a, b),
+  "impact-desc": (a, b) => impactScore(b) - impactScore(a),
+  "impact-asc": (a, b) => impactScore(a) - impactScore(b),
+};
+
+/** A sorted copy. Ties fall back to newest first, then id, so the order is always the same. */
+export function sortExhibits(exhibits, sort = DEFAULT_SORT) {
+  const primary = PRIMARY[parseSort(sort)];
+  return [...exhibits].sort((a, b) => primary(a, b) || byDateDesc(a, b) || byId(a, b));
+}
+
+/** What the gallery shows: one room, in one order. */
+export const viewList = (exhibits, room, sort) => sortExhibits(visibleIn(exhibits, room), sort);
+
+/** <option>s for the sort <select>, current one selected. */
+export function sortOptionsHtml(current, lang = "en") {
+  return Object.entries(SORTS)
+    .map(([k, label]) => `<option value="${k}"${k === current ? " selected" : ""}>${esc(STRINGS[lang][label])}</option>`)
+    .join("");
+}
+
+// Dot row geometry, matching .pips in style.css: 5 cells of 14 px, each with a 10 px dot in the middle.
+const PIP = { cell: 14, dot: 10, count: 5 };
+
+/**
+ * How far to fill the dot row, in % of its width, so `score / 2` dots look filled: 2.5 dots = two full
+ * dots and exactly half of the third. The gaps between dots are skipped, so a whole number ends in a gap.
+ */
+export function pipsFill(score) {
+  const dots = score / 2;
+  const full = Math.floor(dots);
+  const frac = dots - full;
+  const px = full * PIP.cell + (frac > 0 ? (PIP.cell - PIP.dot) / 2 + frac * PIP.dot : 0);
+  return Math.round((px / (PIP.cell * PIP.count)) * 1000) / 10;
+}
+
+/** Overall impact line: five dots filled to score / 2, plus the number as text (the dots are decoration). */
+export function impactHtml(e, lang = "en") {
+  const score = impactScore(e);
+  return `<p class="impact"><span class="pips" aria-hidden="true" style="--v:${pipsFill(score)}%"></span>${esc(fmt(STRINGS[lang].impact, { score: score.toFixed(1) }))}</p>`;
+}
+
 /** Room filter buttons: [key, label, count], "all" first. */
 export function roomButtons(exhibits, rooms, lang = "en") {
   const counts = {};
@@ -70,14 +134,16 @@ export function exhibitHtml(e, { no, i, rooms, page = false, lang = "en" }) {
     <p class="plaque-no">${esc(fmt(t.plaqueNo, { no: String(no).padStart(3, "0") }))} · ${esc(rooms[e.room])}</p>
     ${heading}
     <p class="meta"><time datetime="${esc(e.date)}">${esc(e.date)}</time> · ${esc(e.duration)}</p>
+    ${impactHtml(e, lang)}
     <ol class="route">${hops}</ol>
     <p class="lesson">${esc(e.lesson)}</p>
     <p class="source">${esc(t.source)}${src}</p>
   </article>`;
 }
 
-export function galleryHtml(exhibits, rooms, room, lang = "en") {
-  return visibleIn(exhibits, room)
+/** Cards for one room in one order. Catalogue numbers come from `exhibits` order, so they never change. */
+export function galleryHtml(exhibits, rooms, room, lang = "en", sort = DEFAULT_SORT) {
+  return viewList(exhibits, room, sort)
     .map((e, i) => exhibitHtml(e, { no: exhibits.indexOf(e) + 1, i, rooms, lang }))
     .join("");
 }

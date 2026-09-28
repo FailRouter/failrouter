@@ -6,10 +6,11 @@ import {
   TRACE,
   galleryHtml,
   isMuseumKey,
+  parseSort,
   roomsHtml,
   stepId,
   traceDelay,
-  visibleIn,
+  viewList,
   wrongTurnId,
 } from "./museum.js";
 
@@ -20,10 +21,14 @@ const rooms = ROOM_NAMES[lang];
 const langSwitch = $("#lang-switch");
 const gallery = $("#gallery");
 const roomsNav = $("#rooms");
+const sortSelect = $("#sort");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const hashId = () => location.hash.slice(1);
 
 let currentRoom = ALL;
+// The browser may restore a previous choice on back/forward; start from what the control shows.
+let currentSort = parseSort(sortSelect.value);
+const shown = () => viewList(exhibits, currentRoom, currentSort);
 
 async function playTrace() {
   const el = $("#trace");
@@ -35,7 +40,7 @@ async function playTrace() {
 
 function render() {
   roomsNav.innerHTML = roomsHtml(exhibits, rooms, currentRoom, lang);
-  gallery.innerHTML = galleryHtml(exhibits, rooms, currentRoom, lang);
+  gallery.innerHTML = galleryHtml(exhibits, rooms, currentRoom, lang, currentSort);
   observe();
 }
 
@@ -74,7 +79,7 @@ function focusExhibit(id, push = true) {
   langSwitch.href = switchHref(langSwitch.getAttribute("href"), id);
 }
 
-const wrongTurn = () => focusExhibit(wrongTurnId(visibleIn(exhibits, currentRoom), hashId(), Math.random()));
+const wrongTurn = () => focusExhibit(wrongTurnId(shown(), hashId(), Math.random()));
 
 roomsNav.addEventListener("click", (ev) => {
   const btn = ev.target.closest("button[data-room]");
@@ -83,12 +88,17 @@ roomsNav.addEventListener("click", (ev) => {
   render();
 });
 
+sortSelect.addEventListener("change", () => {
+  currentSort = parseSort(sortSelect.value);
+  render();
+});
+
 $("#wrong-turn").addEventListener("click", wrongTurn);
 
 document.addEventListener("keydown", (ev) => {
   if (!isMuseumKey(ev)) return;
   if (ev.key === "r") wrongTurn();
-  else focusExhibit(stepId(visibleIn(exhibits, currentRoom), hashId(), ev.key));
+  else focusExhibit(stepId(shown(), hashId(), ev.key));
 });
 
 window.addEventListener("hashchange", () => focusExhibit(hashId(), false));
