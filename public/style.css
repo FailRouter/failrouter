@@ -109,7 +109,32 @@ h1 span { color: var(--brass); font-style: italic; }
 }
 .wrong-turn:hover { filter: brightness(1.1); }
 
-button:focus-visible, a:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
+/* Sort control: useless without JS, so it only appears once app.js can drive it. */
+.sort-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px 16px;
+  margin: 0 0 20px;
+  font-size: 14px;
+}
+.sort-control { display: none; align-items: center; gap: 8px; color: #b9b1a4; }
+.js .sort-control { display: inline-flex; }
+.sort-bar select {
+  font: 14px var(--serif);
+  color: #d8d1c4;
+  background: var(--wall-2);
+  border: 1px solid #3a3640;
+  border-radius: 4px;
+  padding: 6px 10px;
+  max-width: 100%;
+}
+.sort-bar select:hover { border-color: var(--brass); }
+.impact-how { color: #d8c08a; text-underline-offset: 3px; }
+.impact-how:hover { color: var(--brass); }
+
+button:focus-visible, a:focus-visible, select:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
 
 /* ---------- language switch ---------- */
 .lang-bar {
@@ -180,6 +205,17 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--brass); outline
 .exhibit h2 a:hover { text-decoration: underline; text-decoration-color: var(--brass); }
 .meta { margin: 4px 0 16px; color: #6f6656; font-size: 0.92rem; }
 
+/* Overall impact: five 10px dots in 14px cells (PIP in museum.js), filled to --v; the number is the accessible text. */
+.impact { display: flex; align-items: center; gap: 8px; margin: -10px 0 16px; color: #6f6656; font-size: 0.92rem; }
+.pips {
+  flex: none;
+  width: 70px;
+  height: 10px;
+  background: linear-gradient(90deg, var(--fail) var(--v), var(--muted) var(--v));
+  -webkit-mask: radial-gradient(circle 5px at 7px 50%, #000 calc(100% - 0.5px), transparent 100%) 0 0 / 14px 100% repeat-x;
+  mask: radial-gradient(circle 5px at 7px 50%, #000 calc(100% - 0.5px), transparent 100%) 0 0 / 14px 100% repeat-x;
+}
+
 .route {
   list-style: none;
   margin: 0 0 16px;
@@ -247,6 +283,39 @@ kbd {
   color: #cfc8bb;
 }
 
+/* ---------- impact panel (exhibit pages) and scoring rules page ---------- */
+.impact-panel {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  background: var(--plaque);
+  color: var(--ink);
+  padding: 22px 26px 16px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px #d9ccb3 inset;
+}
+.impact-panel h2 { margin: 0 0 4px; font-size: 1.25rem; font-weight: 600; }
+.impact-note { margin: 0 0 12px; color: #6f6656; font-size: 0.92rem; }
+.impact-note a { color: inherit; text-underline-offset: 3px; }
+.radar { display: block; width: 100%; max-width: 380px; height: auto; margin: 0 auto 12px; }
+.radar .grid { fill: none; stroke: #c9bda5; stroke-width: 1; }
+.radar .area { fill: var(--fail); fill-opacity: 0.18; stroke: var(--fail); stroke-width: 2; stroke-linejoin: round; }
+.radar .dot { fill: var(--fail); }
+.radar text { font: 15px var(--serif); fill: var(--ink); }
+.radar .v { font-family: var(--mono); font-weight: 700; fill: var(--fail); }
+.impact-table, .rubric-table { width: 100%; border-collapse: collapse; margin: 0 0 8px; font-size: 0.92rem; }
+.impact-table th, .impact-table td, .rubric-table th, .rubric-table td {
+  padding: 6px 10px 6px 0;
+  border-top: 1px solid #dccfb6;
+  text-align: left;
+  vertical-align: top;
+}
+.impact-table thead th, .rubric-table thead th { border-top: 0; color: #6f6656; font-size: 0.85rem; font-weight: 400; white-space: nowrap; }
+.rubric-table thead th:first-child { width: 4.5em; }
+.impact-table tbody th { font-weight: 600; white-space: nowrap; }
+.impact-table .n, .rubric-table .n { font-family: var(--mono); font-weight: 700; color: var(--fail); white-space: nowrap; }
+.rubric h2 { margin: 24px 0 2px; font-size: 1.2rem; }
+.rubric p { margin: 8px 0; }
+
 /* ---------- Simplified Chinese ---------- */
 /* Swap the variable, then re-apply it only where the font is inherited from; elements with
    their own font (mono trace, plaque numbers, buttons via var(--serif)) keep working. */
@@ -258,7 +327,8 @@ body:lang(zh) { line-height: 1.75; }
 :lang(zh) h1 { letter-spacing: 0.06em; }
 
 @media (max-width: 480px), (hover: none) {
-  .rooms button, .wrong-turn, .lang-switch, .walk a { min-height: 44px; }
+  .rooms button, .wrong-turn, .lang-switch, .walk a, .sort-bar select, .impact-how { min-height: 44px; }
+  .impact-how { display: inline-flex; align-items: center; }
   .rooms button { display: inline-flex; align-items: center; }
   .lang-switch { padding: 0 8px; }
   .walk a { display: flex; align-items: center; }

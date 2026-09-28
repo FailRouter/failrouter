@@ -52,7 +52,7 @@ Not optimising for: people looking for blame, live incident status, or vendor co
 
 ## Generated pages (hard rule)
 
-`public/index.html`, `public/exhibits/<id>/index.html`, `public/zh/index.html`, `public/zh/exhibits/<id>/index.html`, `public/sitemap.xml` and `public/robots.txt` are **generated** by `scripts/site.js` (pure) via `scripts/build.js` (I/O). Never hand-edit them.
+`public/index.html`, `public/exhibits/<id>/index.html`, `public/impact/index.html` and their `public/zh/` twins, `public/sitemap.xml` and `public/robots.txt` are **generated** by `scripts/site.js` (pure) via `scripts/build.js` (I/O). Never hand-edit them.
 
 - After changing `public/exhibits.js`, `public/i18n.js`, `public/museum.js` or `scripts/site.js`: run `pnpm build` and commit the output. `test/site.test.js` fails when a committed file is stale, so deploy needs no build step.
 - `public/og.png` and `public/og-zh.png` are rendered from `scripts/og.svg` and `scripts/og-zh.svg` with `pnpm build --og` (needs `rsvg-convert` and a Simplified Chinese system font). Commit the PNGs.
@@ -88,7 +88,7 @@ pnpm viewport --shots <dir>   # same, plus 375 px full-page screenshots for revi
 
 - Every page must fit **320, 375 and 430 px** wide with no sideways scrolling. `pnpm viewport` checks all pages, including the 404, and runs in CI.
 - **Two breakpoints only**, both in `public/style.css`: `(max-width: 480px)` for layout and `(max-width: 480px), (hover: none)` for touch sizing. No other breakpoints, no user-agent sniffing, no JS layout switches. A test pins the list.
-- **Touch targets ≥ 44 px high** on narrow or touch screens: room buttons, the wrong-turn button, the language switch, and the previous / next / main-hall links. Inline text links in sentences are exempt. Add any new control to `TOUCH_SELECTOR` in `scripts/viewport.js` and to the touch block in the CSS.
+- **Touch targets ≥ 44 px high** on narrow or touch screens: room buttons, the wrong-turn button, the sort select, the "how impact is scored" link, the language switch, and the previous / next / main-hall links. Inline text links in sentences are exempt. Add any new control to `TOUCH_SELECTOR` in `scripts/viewport.js` and to the touch block in the CSS.
 - Long unbreakable text (hostnames, commands, `rm -rf`) must wrap: cards and the trace use `overflow-wrap: anywhere`; grid children need `min-width: 0`.
 - Keyboard hints are hidden on touch screens (`.keys-hint`).
 - Anything fixed to a screen edge must clear `env(safe-area-inset-*)`. There is none today; keep it that way unless it's needed.
@@ -120,7 +120,9 @@ Four weeks after an SEO change, check the per-page numbers in Google Search Cons
 
 - Facts come only from public postmortems, official incident reports or investigation reports; `source` names it.
 - No speculation, no blame on named individuals, no insider information.
-- Each exhibit: unique url-safe `id`, `subject`, `added` (ISO date it went live here), a known `room`, ISO `date`, ≥ 3 `hops` ending at the failure, a one-line `lesson`, a `source`, and a complete `zh` block with the same number of hops. Tests enforce the shape.
+- Each exhibit: unique url-safe `id`, `subject`, `added` (ISO date it went live here), a known `room`, ISO `date`, ≥ 3 `hops` ending at the failure, a one-line `lesson`, a `source`, `impact` + `impactNotes`, and a complete `zh` block with the same number of hops and its own `impactNotes`. Tests enforce the shape.
+- **Impact score**: five whole-number scores 0–10 (`reach`, `duration`, `loss`, `recovery`, `cascade`), each matched against the levels in `RUBRIC` (`public/i18n.js`, shown on `/impact/`). Only facts stated in `source` count: no stated money, no money-based score. Odd numbers only when the facts sit between two levels. The overall score is the plain average, one decimal. It measures reach, not fault. Never add `AggregateRating` / `Review` markup for it (self-serving ratings; `test/site.test.js` checks).
+- Home order is newest first (`DEFAULT_SORT`), in the HTML, the `ItemList` and the exhibit pages' previous / next links. Catalogue numbers (`No. 003`) follow `EXHIBITS` order and never change.
 - Once an exhibit `id` is live, it's a public URL. Don't rename it.
 
 ## Performance and cost constraints
@@ -141,6 +143,8 @@ Four weeks after an SEO change, check the per-page numbers in Google Search Cons
 | Exhibit facts | English fields ↔ the exhibit's `zh` block (same hops, same facts) |
 | Language codes, share images | `LOCALES` in `public/i18n.js` ↔ `scripts/og*.svg` ↔ `public/og*.png` |
 | Touch-sized controls | `TOUCH_SELECTOR` in `scripts/viewport.js` ↔ the `(hover: none)` block in `public/style.css` |
+| Impact dimensions | `DIMENSIONS` in `public/museum.js` ↔ `RUBRIC` in `public/i18n.js` (both languages) ↔ each exhibit's `impact` / `impactNotes` / `zh.impactNotes` |
+| Impact dots | `PIP` in `public/museum.js` ↔ `.pips` in `public/style.css` |
 | Breakpoints | `public/style.css` ↔ `test/viewport.test.js` ↔ this file |
 | Page weight budget | `BUDGET` in `scripts/site.js` ↔ this file |
 | 404 page | `public/404.html` English card ↔ Chinese card |

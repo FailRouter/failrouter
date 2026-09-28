@@ -13,7 +13,7 @@ import { buildSite } from "./site.js";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const pub = join(root, "public");
 
-for (const dir of ["exhibits", "zh"]) rmSync(join(pub, dir), { recursive: true, force: true });
+for (const dir of ["exhibits", "impact", "zh"]) rmSync(join(pub, dir), { recursive: true, force: true });
 const files = buildSite(EXHIBITS, ROOM_NAMES);
 for (const [rel, content] of Object.entries(files)) {
   mkdirSync(dirname(join(pub, rel)), { recursive: true });

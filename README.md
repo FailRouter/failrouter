@@ -2,7 +2,7 @@
 
 A small museum of famous outages, each told as the route it took: one small change, a few hops, then a very bad day. Live at [failrouter.com](https://failrouter.com), and in Simplified Chinese at [failrouter.com/zh/](https://failrouter.com/zh/).
 
-Every exhibit is condensed from a public postmortem or investigation report, and each card names its source. Each one also has its own page, for example [the CrowdStrike outage](https://failrouter.com/exhibits/crowdstrike-2024/).
+Every exhibit is condensed from a public postmortem or investigation report, and each card names its source. Each one also has its own page, for example [the CrowdStrike outage](https://failrouter.com/exhibits/crowdstrike-2024/), with an impact score on five dimensions. [How impact is scored](https://failrouter.com/impact/) lists what every score means.
 
 ## How the site works
 
@@ -12,7 +12,7 @@ It's a static site served by a Cloudflare Worker with only static assets, so no 
 |---|---|
 | `public/exhibits.js` | The collection: rooms and exhibits, each with its Chinese text in `zh` |
 | `public/i18n.js` | Interface strings in English and Chinese, plus locale helpers |
-| `public/museum.js` | Card markup, room filters and keyboard walk, as pure functions |
+| `public/museum.js` | Card markup, room filters, sorting, impact score and keyboard walk, as pure functions |
 | `public/app.js` | DOM wiring only |
 | `scripts/site.js` | Page, sitemap and structured-data generator for both languages, pure |
 | `scripts/build.js` | Writes the generated files into `public/` |
@@ -37,7 +37,9 @@ pnpm viewport   # every page at 320 / 375 / 430 px wide in headless Chrome
 
 Append an object to `EXHIBITS` in `public/exhibits.js`, run `pnpm build`, and commit both. The tests check the shape: a url-safe unique `id`, a `subject` written the way people search for the event, the `added` date, a known `room`, an ISO `date`, at least three `hops` where the last hop is the failure, a one-line `lesson` and a `source`. They also fail if you forget the build.
 
-Every exhibit also needs a `zh` block with the Chinese `subject`, `title`, `duration`, `hops` and `lesson`: same facts, same number of hops. The tests fail without it. If you don't write Chinese, open the PR anyway and say so in the description; the maintainer can add it before merging.
+Score it with `impact`: whole numbers 0 to 10 for `reach`, `duration`, `loss`, `recovery` and `cascade`, each matched against the levels in `RUBRIC` (`public/i18n.js`) using only facts from the source. `impactNotes` gives the one-line fact behind each score.
+
+Every exhibit also needs a `zh` block with the Chinese `subject`, `title`, `duration`, `hops`, `lesson` and `impactNotes`: same facts, same number of hops. The tests fail without it. If you don't write Chinese, open the PR anyway and say so in the description; the maintainer can add it before merging.
 
 Keep to what the public report says. Describe systems and decisions, not individual people. Not sure an incident fits? [Open an issue](https://github.com/FailRouter/failrouter/issues/new) first.
 

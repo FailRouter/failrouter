@@ -3,7 +3,8 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { describe, test } from "node:test";
 import { gzipSync } from "node:zlib";
 import { EXHIBITS, ROOM_NAMES } from "../public/exhibits.js";
-import { LOCALES, STRINGS, localizeExhibits, weightedLength } from "../public/i18n.js";
+import { LOCALES, RUBRIC, STRINGS, localizeExhibits, weightedLength } from "../public/i18n.js";
+import { DEFAULT_SORT, DIMENSIONS, sortExhibits } from "../public/museum.js";
 import * as S from "../scripts/site.js";
 
 const pub = (rel) => new URL(`../public/${rel}`, import.meta.url);
@@ -31,6 +32,8 @@ const ex = (id, extra = {}) => ({
   hops: ["Start here.", "Middle", "Everything falls over."],
   lesson: "Learn it.",
   source: "Report",
+  impact: { reach: 8, duration: 6, loss: 0, recovery: 8, cascade: 2 },
+  impactNotes: { reach: "Everyone", duration: "Hours", loss: "None <stated>", recovery: "On site", cascade: "Tools" },
   zh: { subject: "某事故（2020 年）", title: `标题 ${id}`, duration: "一小时", hops: ["从这里开始。", "中间", "全部倒下。"], lesson: "记住。" },
   ...extra,
 });
@@ -59,7 +62,7 @@ describe("generated files are committed and current", () => {
     const en = HTML_PAGES.filter((f) => langOfFile(f) === "en").map(neutral).sort();
     const zh = HTML_PAGES.filter((f) => langOfFile(f) === "zh").map(neutral).sort();
     assert.deepEqual(zh, en);
-    assert.equal(en.length, EXHIBITS.length + 1);
+    assert.equal(en.length, EXHIBITS.length + 2, "home + impact rules + one page per exhibit");
   });
 });
 
@@ -144,19 +147,69 @@ describe("SEO gate on every indexable page", () => {
     }
   });
 
-  test("exhibit pages carry Article + BreadcrumbList and walk to neighbours in the same language", () => {
+  test("exhibit pages carry Article + BreadcrumbList and walk to neighbours in the hall's default order", () => {
+    const order = sortExhibits(EXHIBITS, DEFAULT_SORT);
     for (const prefix of ["", "zh/"]) {
-      const first = FILES[`${prefix}exhibits/${EXHIBITS[0].id}/index.html`];
-      const last = FILES[`${prefix}exhibits/${EXHIBITS.at(-1).id}/index.html`];
+      const first = FILES[`${prefix}exhibits/${order[0].id}/index.html`];
+      const last = FILES[`${prefix}exhibits/${order.at(-1).id}/index.html`];
       const p = prefix ? "/zh" : "";
       assert.match(first, /"@type":"Article"/);
       assert.match(first, /"@type":"BreadcrumbList"/);
       assert.match(first, /<span class="walk-prev"><\/span>/);
-      assert.match(first, new RegExp(`rel="next" href="${p}/exhibits/${EXHIBITS[1].id}/"`));
-      assert.match(first, new RegExp(`class="walk-hall" href="${p}/#${EXHIBITS[0].id}"`));
+      assert.match(first, new RegExp(`rel="next" href="${p}/exhibits/${order[1].id}/"`));
+      assert.match(first, new RegExp(`class="walk-hall" href="${p}/#${order[0].id}"`));
       assert.match(last, /<span class="walk-next"><\/span>/);
-      assert.match(last, new RegExp(`rel="prev" href="${p}/exhibits/${EXHIBITS.at(-2).id}/"`));
+      assert.match(last, new RegExp(`rel="prev" href="${p}/exhibits/${order.at(-2).id}/"`));
       assert.ok(!first.includes("/app.js"), "exhibit pages need no JS");
+    }
+  });
+
+  test("home pages list exhibits newest first, in the HTML and in the ItemList", () => {
+    const expected = sortExhibits(EXHIBITS, DEFAULT_SORT).map((e) => e.id);
+    for (const file of ["index.html", "zh/index.html"]) {
+      const html = FILES[file];
+      const cards = [...html.matchAll(/<article class="exhibit" id="([^"]+)"/g)].map((m) => m[1]);
+      assert.deepEqual(cards, expected, file);
+      const list = JSON.parse(html.match(/<script type="application\/ld\+json">(\{"@context":"https:\/\/schema.org","@type":"CollectionPage".*?)<\/script>/)[1]);
+      assert.deepEqual(list.mainEntity.itemListElement.map((i) => i.url.split("/").at(-2)), expected, `${file} ItemList`);
+    }
+  });
+
+  test("home pages offer the sort control and link the impact rules; no rating markup anywhere", () => {
+    for (const [file, prefix] of [["index.html", ""], ["zh/index.html", "/zh"]]) {
+      const html = FILES[file];
+      assert.match(html, /<span class="sort-control"><label for="sort">[^<]+<\/label> <select id="sort"><option value="date-desc" selected>/);
+      assert.ok(html.includes(`<a class="impact-how" href="${prefix}/impact/">`), file);
+      assert.equal((html.match(/<p class="impact">/g) ?? []).length, EXHIBITS.length, `${file}: a score on every card`);
+    }
+    for (const file of HTML_PAGES) assert.ok(!/AggregateRating|"Review"|ratingValue/.test(FILES[file]), file);
+  });
+
+  test("every exhibit page shows the radar, the score table and a link to the rules, in its language", () => {
+    for (const e of EXHIBITS) {
+      for (const [prefix, lang] of [["", "en"], ["zh/", "zh"]]) {
+        const html = FILES[`${prefix}exhibits/${e.id}/index.html`];
+        const panel = html.match(/<section class="impact-panel"[\s\S]*?<\/section>/)?.[0];
+        assert.ok(panel, `${prefix}${e.id}: impact panel`);
+        assert.match(panel, /<svg class="radar" viewBox="0 0 320 250" role="img" aria-label="[^"]+">/);
+        assert.equal((panel.match(/<tr><th scope="row">/g) ?? []).length, 5);
+        assert.ok(panel.includes(`href="${prefix ? "/zh" : ""}/impact/"`), `${prefix}${e.id}: rules link`);
+        for (const k of DIMENSIONS) assert.ok(panel.includes(`>${RUBRIC[lang][k].name}</th><td class="n">${e.impact[k]}</td>`), `${prefix}${e.id}: ${k}`);
+        assert.ok(html.indexOf("<h1>") < html.indexOf('<h2 id="impact-h">'), "headings in order");
+      }
+    }
+  });
+
+  test("impact rules pages: one table per dimension, linked back to the hall", () => {
+    for (const [file, lang, prefix] of [["impact/index.html", "en", ""], ["zh/impact/index.html", "zh", "/zh"]]) {
+      const html = FILES[file];
+      assert.equal((html.match(/<table class="rubric-table">/g) ?? []).length, DIMENSIONS.length, file);
+      assert.equal((html.match(/<td class="n">/g) ?? []).length, DIMENSIONS.length * 6, file);
+      assert.ok(html.includes(`<h1>${STRINGS[lang].impactHow}</h1>`));
+      assert.ok(html.includes(`class="walk-hall" href="${prefix}/"`));
+      assert.match(html, /"@type":"Article"/);
+      assert.match(html, /"@type":"BreadcrumbList"/);
+      for (const k of DIMENSIONS) assert.ok(html.includes(`<h2 id="${k}">${RUBRIC[lang][k].name}</h2>`), `${file}: ${k}`);
     }
   });
 });
@@ -245,6 +298,47 @@ describe("pure helpers", () => {
       "Thing outage, 2020. Start here; 2 hops later, everything falls over. Learn it.",
     );
     assert.match(S.exhibitMeta(ex("a", { hops: ["x", "y", "DNS stops."] })).description, /later, DNS stops\./);
+  });
+  test("radarPoint: axes clockwise from the top, 0 at the centre, 10 on the outer ring", () => {
+    assert.deepEqual(S.radarPoint(0, 10), [160, 52]);
+    assert.deepEqual(S.radarPoint(0, 0), [160, 130]);
+    assert.deepEqual(S.radarPoint(3, 0), [160, 130]);
+    assert.deepEqual(S.radarPoint(1, 10), [234.2, 105.9]);
+    assert.deepEqual(S.radarPoint(4, 10), [85.8, 105.9]);
+    assert.deepEqual(S.radarPoint(2, 5), [182.9, 161.6]);
+  });
+  test("radarLabel: centred on top, outward on the sides, below at the bottom", () => {
+    assert.deepEqual(S.radarLabel(0), { x: 160, anchor: "middle", lines: [20, 36] });
+    assert.deepEqual(S.radarLabel(1), { x: 247.5, anchor: "start", lines: [99.6, 115.6] });
+    assert.deepEqual(S.radarLabel(2), { x: 214.1, anchor: "start", lines: [216.4, 232.4] });
+    assert.equal(S.radarLabel(3).anchor, "end");
+    assert.equal(S.radarLabel(4).anchor, "end");
+    for (let i = 0; i < 5; i++) {
+      const { lines } = S.radarLabel(i);
+      assert.ok(lines[0] >= 16 && lines[1] <= 250 - 8, `label ${i} inside the viewBox`);
+    }
+  });
+  test("radarSvg draws five rings, five axes, the data polygon and labelled scores", () => {
+    const svg = S.radarSvg(ex("a"), "zh");
+    assert.equal((svg.match(/<polygon class="grid"/g) ?? []).length, 5);
+    assert.equal((svg.match(/<line class="grid"/g) ?? []).length, 5);
+    assert.match(svg, /<polygon class="area" points="160,67.6 204.5,115.5 160,130 123.3,180.5 145.2,125.2"\/>/);
+    assert.equal((svg.match(/<circle class="dot"/g) ?? []).length, 5);
+    assert.match(svg, /<tspan x="160" y="20">范围<\/tspan><tspan class="v" x="160" y="36">8<\/tspan>/);
+    assert.match(svg, new RegExp(`aria-label="${STRINGS.zh.radarLabel}"`));
+  });
+  test("impactPanelHtml: summary with the average, escaped notes, no stray space after Chinese punctuation", () => {
+    const en = S.impactPanelHtml(ex("a"));
+    assert.match(en, /Five dimensions, 0 to 10 each\. The overall 4\.8\/10 is their average\. <a href="\/impact\/">How impact is scored<\/a>/);
+    assert.ok(en.includes("<td>None &lt;stated&gt;</td>"));
+    const [zh] = localizeExhibits([ex("a", { zh: { ...ex("a").zh, impactNotes: { reach: "所有人", duration: "几小时", loss: "无", recovery: "现场", cascade: "工具" } } })], "zh");
+    assert.match(S.impactPanelHtml(zh, "zh"), /总分 4\.8\/10 是它们的平均值。<a href="\/zh\/impact\/">影响分怎么算<\/a>/);
+    assert.match(S.impactPanelHtml(zh, "zh"), /<td class="n">8<\/td><td>所有人<\/td>/);
+  });
+  test("sitemap lists the impact rules page with its own lastmod", () => {
+    const xml = S.sitemapXml([ex("a")]);
+    assert.match(xml, new RegExp(`<loc>https://failrouter\\.com/impact/</loc>\n    <lastmod>${S.IMPACT_UPDATED}</lastmod>`));
+    assert.match(xml, /<loc>https:\/\/failrouter\.com\/zh\/impact\/<\/loc>/);
   });
   test("ldJson escapes '<' so a string can't close the script tag", () => {
     assert.equal(S.ldJson({ a: "</script>" }), '{"a":"\\u003c/script>"}');

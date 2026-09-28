@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>失败路由博物馆：宕机影响分怎么算</title>
+  <meta name="description" content="馆内每起宕机事故都按范围、时长、损失、恢复难度、连锁五个维度打 0 到 10 分，只依据公开复盘报告里的事实。">
+  <link rel="canonical" href="https://failrouter.com/zh/impact/">
+  <link rel="alternate" hreflang="en" href="https://failrouter.com/impact/">
+  <link rel="alternate" hreflang="zh-Hans" href="https://failrouter.com/zh/impact/">
+  <link rel="alternate" hreflang="x-default" href="https://failrouter.com/impact/">
+  <meta property="og:site_name" content="Failrouter">
+  <meta property="og:title" content="失败路由博物馆：宕机影响分怎么算">
+  <meta property="og:description" content="馆内每起宕机事故都按范围、时长、损失、恢复难度、连锁五个维度打 0 到 10 分，只依据公开复盘报告里的事实。">
+  <meta property="og:url" content="https://failrouter.com/zh/impact/">
+  <meta property="og:type" content="article">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:locale:alternate" content="en_US">
+  <meta property="og:image" content="https://failrouter.com/og-zh.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="失败路由博物馆：知名宕机事故，逐跳复盘">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#111014">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"失败路由博物馆：宕机影响分怎么算","description":"馆内每起宕机事故都按范围、时长、损失、恢复难度、连锁五个维度打 0 到 10 分，只依据公开复盘报告里的事实。","url":"https://failrouter.com/zh/impact/","mainEntityOfPage":"https://failrouter.com/zh/impact/","inLanguage":"zh-Hans","image":"https://failrouter.com/og-zh.png","datePublished":"2026-09-28","isPartOf":{"@type":"WebSite","name":"失败路由博物馆","url":"https://failrouter.com/zh/"},"author":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]},"publisher":{"@type":"Organization","name":"Failrouter","url":"https://failrouter.com/","sameAs":["https://github.com/FailRouter/failrouter"]}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"失败路由博物馆","item":"https://failrouter.com/zh/"},{"@type":"ListItem","position":2,"name":"影响分怎么算","item":"https://failrouter.com/zh/impact/"}]}</script>
+</head>
+<body class="exhibit-page">
+  <p class="lang-bar"><a class="lang-switch" id="lang-switch" href="/impact/" hreflang="en" lang="en">English</a></p>
+  <nav class="crumbs" aria-label="面包屑导航"><a href="/zh/">失败路由博物馆</a> <span aria-hidden="true">›</span> 影响分怎么算</nav>
+
+  <main class="gallery single">
+  <article class="exhibit lit rubric">
+    <h1>影响分怎么算</h1>
+    <p>每件展品按五个维度各打 0 到 10 分，只依据展品注明的公开来源里的事实。总影响分是五项的平均值，保留一位小数。首页用五个圆点表示，每 2 分一个点。</p>
+    <p>分数落在下表的档位上。奇数分表示事实正好落在两档之间。</p>
+    <p class="lesson">分数衡量的是故障波及多广，不评判谁的过错。</p>
+    <h2 id="reach">范围</h2>
+    <p>直接受影响的是谁</p>
+    <table class="rubric-table"><thead><tr><th scope="col">分数</th><th scope="col">标准</th></tr></thead><tbody><tr><td class="n">0</td><td>没有外部用户</td></tr><tr><td class="n">2</td><td>一家机构内部</td></tr><tr><td class="n">4</td><td>一个产品在一个区域的用户</td></tr><tr><td class="n">6</td><td>一个产品的全球用户</td></tr><tr><td class="n">8</td><td>多个主要服务的全球用户</td></tr><tr><td class="n">10</td><td>跨行业、社会层面的影响</td></tr></tbody></table>
+    <h2 id="duration">时长</h2>
+    <p>主服务恢复用了多久</p>
+    <table class="rubric-table"><thead><tr><th scope="col">分数</th><th scope="col">标准</th></tr></thead><tbody><tr><td class="n">0</td><td>不到 5 分钟</td></tr><tr><td class="n">2</td><td>5 到 30 分钟</td></tr><tr><td class="n">4</td><td>30 分钟到 2 小时</td></tr><tr><td class="n">6</td><td>2 到 8 小时</td></tr><tr><td class="n">8</td><td>8 到 48 小时</td></tr><tr><td class="n">10</td><td>超过 48 小时，或再也没有恢复</td></tr></tbody></table>
+    <h2 id="loss">损失</h2>
+    <p>永久失去了什么</p>
+    <table class="rubric-table"><thead><tr><th scope="col">分数</th><th scope="col">标准</th></tr></thead><tbody><tr><td class="n">0</td><td>没有</td></tr><tr><td class="n">2</td><td>可以恢复的小额成本</td></tr><tr><td class="n">4</td><td>来源写明有收入损失，没有丢数据</td></tr><tr><td class="n">6</td><td>部分数据永久丢失，或来源写明损失在 1000 万美元以上</td></tr><tr><td class="n">8</td><td>大量数据永久丢失，或来源写明损失在 1 亿美元以上</td></tr><tr><td class="n">10</td><td>整件资产全部损失：飞行器损毁、任务失败</td></tr></tbody></table>
+    <h2 id="recovery">恢复难度</h2>
+    <p>恢复有多难</p>
+    <table class="rubric-table"><thead><tr><th scope="col">分数</th><th scope="col">标准</th></tr></thead><tbody><tr><td class="n">0</td><td>系统自动恢复</td></tr><tr><td class="n">2</td><td>一键回滚或撤回配置</td></tr><tr><td class="n">4</td><td>远程人工介入</td></tr><tr><td class="n">6</td><td>多团队协同，需要重建系统</td></tr><tr><td class="n">8</td><td>必须到现场，或逐台设备手动修</td></tr><tr><td class="n">10</td><td>修不了，只能换掉</td></tr></tbody></table>
+    <h2 id="cascade">连锁</h2>
+    <p>影响在故障系统之外传了多远</p>
+    <table class="rubric-table"><thead><tr><th scope="col">分数</th><th scope="col">标准</th></tr></thead><tbody><tr><td class="n">0</td><td>没有外溢</td></tr><tr><td class="n">2</td><td>只影响自家的依赖系统</td></tr><tr><td class="n">4</td><td>少数客户或合作方</td></tr><tr><td class="n">6</td><td>某家供应商的大量下游站点</td></tr><tr><td class="n">8</td><td>互联网的大片区域，或多个行业</td></tr><tr><td class="n">10</td><td>航班、医院、急救这类现实世界服务大面积停摆</td></tr></tbody></table>
+  </article>
+    <nav class="walk" aria-label="更多展品">
+      <span class="walk-prev"></span>
+      <a class="walk-hall" href="/zh/">回到主展厅</a>
+      <span class="walk-next"></span>
+    </nav>
+  </main>
+
+  <footer>
+    <p>免费参观。出口标得很清楚，这点比馆里大多数系统强。</p>
+    <p class="small">展品摘要均据公开的事后复盘报告与调查报告整理。</p>
+    <p class="small"><a href="https://github.com/FailRouter/failrouter">GitHub 源码</a> · <a href="https://github.com/FailRouter/failrouter/issues/new?title=Exhibit%20suggestion%3A%20">推荐展品</a> · MIT 许可</p>
+  </footer>
+</body>
+</html>

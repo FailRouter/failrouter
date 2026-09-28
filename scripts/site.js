@@ -2,8 +2,20 @@
 // scripts/build.js writes the result into public/; tests compare it with what is committed.
 // Every page exists in English (root) and Simplified Chinese (/zh/). Paths passed around here are
 // language-neutral ("/", "/exhibits/<id>/"); localePath() adds the prefix.
-import { LANGS, LOCALES, STRINGS, fmt, localePath, localizeExhibits, otherLang, weightedLength, charWeight } from "../public/i18n.js";
-import { ALL, esc, exhibitHtml, exhibitPath, galleryHtml, roomsHtml } from "../public/museum.js";
+import { LANGS, LOCALES, RUBRIC, STRINGS, fmt, localePath, localizeExhibits, otherLang, weightedLength, charWeight } from "../public/i18n.js";
+import {
+  ALL,
+  DEFAULT_SORT,
+  DIMENSIONS,
+  esc,
+  exhibitHtml,
+  exhibitPath,
+  galleryHtml,
+  impactScore,
+  roomsHtml,
+  sortExhibits,
+  sortOptionsHtml,
+} from "../public/museum.js";
 
 export const SITE = {
   origin: "https://failrouter.com",
@@ -15,6 +27,9 @@ export const SITE = {
 export const REPO_ISSUE = `${SITE.repo}/issues/new?title=${encodeURIComponent("Exhibit suggestion: ")}`;
 /** Gzipped bytes per page, enforced in test/site.test.js. Home = HTML + CSS + all JS; exhibit = HTML + CSS. */
 export const BUDGET = { home: 50_000, exhibit: 15_000 };
+/** Language-neutral path of the page that explains the impact score, and when its text last changed. */
+export const IMPACT_PATH = "/impact/";
+export const IMPACT_UPDATED = "2026-09-28";
 /** Search-result limits, measured with weightedLength (CJK = 2). */
 export const LIMITS = { title: 60, descriptionMin: 70, description: 155 };
 
@@ -195,6 +210,12 @@ export function footerHtml({ keys = false, lang = "en" } = {}) {
   </footer>`;
 }
 
+/** Sort control (shown only when JS runs; see .sort-control in style.css) and the link to the scoring rules. */
+export function sortBarHtml(lang = "en") {
+  const t = STRINGS[lang];
+  return `<p class="sort-bar"><span class="sort-control"><label for="sort">${esc(t.sortLabel)}</label> <select id="sort">${sortOptionsHtml(DEFAULT_SORT, lang)}</select></span> <a class="impact-how" href="${localePath(lang, IMPACT_PATH)}">${esc(t.impactHow)}</a></p>`;
+}
+
 export function homePage(exhibits, rooms, lang = "en") {
   const t = STRINGS[lang];
   const list = localizeExhibits(exhibits, lang);
@@ -204,7 +225,7 @@ export function homePage(exhibits, rooms, lang = "en") {
     path: "/",
     type: "website",
     lang,
-    jsonLd: [websiteLd(lang), collectionLd(list, lang)],
+    jsonLd: [websiteLd(lang), collectionLd(sortExhibits(list, DEFAULT_SORT), lang)],
   });
   return `<!doctype html>
 <html lang="${LOCALES[lang].html}">
@@ -218,10 +239,11 @@ ${head}
     <h1>${t.h1Html}</h1>
     <p class="tagline">${esc(t.tagline)}</p>
     <nav class="rooms" id="rooms" aria-label="${esc(t.roomsLabel)}">${roomsHtml(list, rooms, ALL, lang)}</nav>
+    ${sortBarHtml(lang)}
     <button class="wrong-turn" id="wrong-turn" type="button">${esc(t.wrongTurn)}</button>
   </header>
 
-  <main id="gallery" class="gallery" aria-live="polite">${galleryHtml(list, rooms, ALL, lang)}
+  <main id="gallery" class="gallery" aria-live="polite">${galleryHtml(list, rooms, ALL, lang, DEFAULT_SORT)}
   </main>
 
 ${footerHtml({ keys: true, lang })}
@@ -230,6 +252,58 @@ ${footerHtml({ keys: true, lang })}
 </body>
 </html>
 `;
+}
+
+// Radar chart geometry, in viewBox units. Sized so labels stay >= 12 px on a 320 px screen.
+const RADAR = { w: 320, h: 250, cx: 160, cy: 130, r: 78, label: 14 };
+const round1 = (n) => Math.round(n * 10) / 10 || 0;
+const points = (list) => list.map((p) => p.join(",")).join(" ");
+
+/** Point at `value` (0-10) on axis `i`, axes clockwise from the top. `r` = radius of a 10. */
+export function radarPoint(i, value, r = RADAR.r) {
+  const a = -Math.PI / 2 + (i * 2 * Math.PI) / DIMENSIONS.length;
+  const d = (r * value) / 10;
+  return [round1(RADAR.cx + d * Math.cos(a)), round1(RADAR.cy + d * Math.sin(a))];
+}
+
+/** Axis label placement: x, text-anchor, and baselines of the name line and the score line. */
+export function radarLabel(i) {
+  const [x, y] = radarPoint(i, 10, RADAR.r + RADAR.label);
+  const dx = x - RADAR.cx;
+  const dy = y - RADAR.cy;
+  const anchor = Math.abs(dx) < 1 ? "middle" : dx > 0 ? "start" : "end";
+  const lines = dy < -RADAR.r ? [y - 18, y - 2] : dy > RADAR.r / 2 ? [y + 12, y + 28] : [y - 2, y + 14];
+  return { x, anchor, lines: lines.map(round1) };
+}
+
+/** Pentagon radar of the five impact scores, as inline SVG (static, no JS, no image request). */
+export function radarSvg(e, lang = "en") {
+  const names = RUBRIC[lang];
+  const ring = (v) => `<polygon class="grid" points="${points(DIMENSIONS.map((_, i) => radarPoint(i, v)))}"/>`;
+  const axis = (_, i) => {
+    const [x, y] = radarPoint(i, 10);
+    return `<line class="grid" x1="${RADAR.cx}" y1="${RADAR.cy}" x2="${x}" y2="${y}"/>`;
+  };
+  const data = DIMENSIONS.map((k, i) => radarPoint(i, e.impact[k]));
+  const label = (k, i) => {
+    const { x, anchor, lines } = radarLabel(i);
+    return `<text text-anchor="${anchor}"><tspan x="${x}" y="${lines[0]}">${esc(names[k].name)}</tspan><tspan class="v" x="${x}" y="${lines[1]}">${esc(e.impact[k])}</tspan></text>`;
+  };
+  return `<svg class="radar" viewBox="0 0 ${RADAR.w} ${RADAR.h}" role="img" aria-label="${esc(STRINGS[lang].radarLabel)}">${[2, 4, 6, 8, 10].map(ring).join("")}${DIMENSIONS.map(axis).join("")}<polygon class="area" points="${points(data)}"/>${data.map(([x, y]) => `<circle class="dot" cx="${x}" cy="${y}" r="3"/>`).join("")}${DIMENSIONS.map(label).join("")}</svg>`;
+}
+
+/** Impact section of an exhibit page: summary, radar, and the same scores with their basis as a table. */
+export function impactPanelHtml(e, lang = "en") {
+  const t = STRINGS[lang];
+  const rows = DIMENSIONS.map(
+    (k) => `<tr><th scope="row">${esc(RUBRIC[lang][k].name)}</th><td class="n">${esc(e.impact[k])}</td><td>${esc(e.impactNotes[k])}</td></tr>`,
+  ).join("");
+  return `<section class="impact-panel" aria-labelledby="impact-h">
+      <h2 id="impact-h">${esc(t.impactHeading)}</h2>
+      <p class="impact-note">${esc(fmt(t.impactSummary, { score: impactScore(e).toFixed(1) }))}${lang === "zh" ? "" : " "}<a href="${localePath(lang, IMPACT_PATH)}">${esc(t.impactHow)}</a></p>
+      ${radarSvg(e, lang)}
+      <table class="impact-table"><thead><tr><th scope="col">${esc(t.impactDimension)}</th><th scope="col">${esc(t.impactScore)}</th><th scope="col">${esc(t.impactBasis)}</th></tr></thead><tbody>${rows}</tbody></table>
+    </section>`;
 }
 
 function neighbourLink(e, rel, label, lang) {
@@ -243,6 +317,9 @@ export function exhibitPage(e, exhibits, rooms, lang = "en") {
   const list = localizeExhibits(exhibits, lang);
   const idx = exhibits.indexOf(e);
   const x = list[idx];
+  // Walk in the home page's default order, so "next" on a page matches the next card in the hall.
+  const order = sortExhibits(list, DEFAULT_SORT);
+  const pos = order.indexOf(x);
   const { title, description } = exhibitMeta(x, lang);
   const path = `/exhibits/${e.id}/`;
   const hall = localePath(lang, "/");
@@ -268,11 +345,84 @@ ${head}
   <nav class="crumbs" aria-label="${esc(t.crumbsLabel)}"><a href="${hall}">${esc(t.museum)}</a> <span aria-hidden="true">›</span> ${esc(rooms[e.room])}</nav>
 
   <main class="gallery single">${exhibitHtml(x, { no: idx + 1, i: 0, rooms, page: true, lang })}
+    ${impactPanelHtml(x, lang)}
     <p class="about-event">${esc(fmt(t.aboutEvent, { subject: x.subject, duration: x.duration, n: x.hops.length }))}</p>
     <nav class="walk" aria-label="${esc(t.walkLabel)}">
-      ${neighbourLink(list[idx - 1], "prev", "←", lang)}
+      ${neighbourLink(order[pos - 1], "prev", "←", lang)}
       <a class="walk-hall" href="${hall}#${esc(e.id)}">${esc(t.backToHall)}</a>
-      ${neighbourLink(list[idx + 1], "next", "→", lang)}
+      ${neighbourLink(order[pos + 1], "next", "→", lang)}
+    </nav>
+  </main>
+
+${footerHtml({ lang })}
+</body>
+</html>
+`;
+}
+
+export function impactLd(lang = "en") {
+  const t = STRINGS[lang];
+  const page = url(lang, IMPACT_PATH);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: t.impactPageTitle,
+    description: t.impactPageDescription,
+    url: page,
+    mainEntityOfPage: page,
+    inLanguage: LOCALES[lang].html,
+    image: abs(LOCALES[lang].ogImage),
+    datePublished: IMPACT_UPDATED,
+    isPartOf: { "@type": "WebSite", name: t.museum, url: url(lang, "/") },
+    author: publisherLd(),
+    publisher: publisherLd(),
+  };
+}
+
+/** The page that explains the impact score: what each dimension measures and what each level means. */
+export function impactPage(lang = "en") {
+  const t = STRINGS[lang];
+  const hall = localePath(lang, "/");
+  const crumbs = [
+    [t.museum, hall],
+    [t.impactHow, localePath(lang, IMPACT_PATH)],
+  ];
+  const head = headHtml({
+    title: t.impactPageTitle,
+    description: t.impactPageDescription,
+    path: IMPACT_PATH,
+    type: "article",
+    lang,
+    jsonLd: [impactLd(lang), breadcrumbLd(crumbs)],
+  });
+  const dims = DIMENSIONS.map((k) => {
+    const d = RUBRIC[lang][k];
+    const rows = d.levels.map((level, i) => `<tr><td class="n">${i * 2}</td><td>${esc(level)}</td></tr>`).join("");
+    return `
+    <h2 id="${k}">${esc(d.name)}</h2>
+    <p>${esc(d.what)}</p>
+    <table class="rubric-table"><thead><tr><th scope="col">${esc(t.impactScore)}</th><th scope="col">${esc(t.impactLevel)}</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }).join("");
+  return `<!doctype html>
+<html lang="${LOCALES[lang].html}">
+<head>
+${head}
+</head>
+<body class="exhibit-page">
+  ${langSwitchHtml(lang, IMPACT_PATH)}
+  <nav class="crumbs" aria-label="${esc(t.crumbsLabel)}"><a href="${hall}">${esc(t.museum)}</a> <span aria-hidden="true">›</span> ${esc(t.impactHow)}</nav>
+
+  <main class="gallery single">
+  <article class="exhibit lit rubric">
+    <h1>${esc(t.impactHow)}</h1>
+    <p>${esc(t.impactIntro)}</p>
+    <p>${esc(t.impactLevels)}</p>
+    <p class="lesson">${esc(t.impactNoBlame)}</p>${dims}
+  </article>
+    <nav class="walk" aria-label="${esc(t.walkLabel)}">
+      <span class="walk-prev"></span>
+      <a class="walk-hall" href="${hall}">${esc(t.backToHall)}</a>
+      <span class="walk-next"></span>
     </nav>
   </main>
 
@@ -284,7 +434,7 @@ ${footerHtml({ lang })}
 
 export function sitemapXml(exhibits) {
   const latest = exhibits.map((e) => e.added).sort().at(-1);
-  const paths = [["/", latest], ...exhibits.map((e) => [`/exhibits/${e.id}/`, e.added])];
+  const paths = [["/", latest], [IMPACT_PATH, IMPACT_UPDATED], ...exhibits.map((e) => [`/exhibits/${e.id}/`, e.added])];
   const links = (path) =>
     alternates(path)
       .map(([hl, href]) => `    <xhtml:link rel="alternate" hreflang="${hl}" href="${href}"/>`)
@@ -313,6 +463,7 @@ export function buildSite(exhibits, rooms) {
   for (const lang of LANGS) {
     const dir = localePath(lang, "/").slice(1);
     files[`${dir}index.html`] = homePage(exhibits, rooms[lang], lang);
+    files[`${dir}impact/index.html`] = impactPage(lang);
     for (const e of exhibits) files[`${dir}exhibits/${e.id}/index.html`] = exhibitPage(e, exhibits, rooms[lang], lang);
   }
   return files;

@@ -37,15 +37,22 @@
     <p class="plaque-no">No. 012 · Clock Room</p>
     <h1>The Root That Expired</h1>
     <p class="meta"><time datetime="2021-09-30">2021-09-30</time> · a long tail on old devices</p>
+    <p class="impact"><span class="pips" aria-hidden="true" style="--v:70%"></span>Impact 7.0/10</p>
     <ol class="route"><li class=""><span class="hop"> 1</span>An old root certificate reaches its long-announced expiry date</li><li class=""><span class="hop"> 2</span>Modern systems use the newer root and don&#39;t notice</li><li class=""><span class="hop"> 3</span>Old phones, old OpenSSL and embedded devices still trust only the old one</li><li class=""><span class="hop"> 4</span>TLS handshakes start failing on those clients</li><li class="fail"><span class="hop"> 5</span>Fixes range from config changes to buying new hardware <b class="x" aria-label="failed">✕</b></li></ol>
     <p class="lesson">An expiry date years away is still a date. Put it in a calendar.</p>
     <p class="source">Source: Let&#39;s Encrypt announcements, 2020 to 2021</p>
   </article>
+    <section class="impact-panel" aria-labelledby="impact-h">
+      <h2 id="impact-h">Impact</h2>
+      <p class="impact-note">Five dimensions, 0 to 10 each. The overall 7.0/10 is their average. <a href="/impact/">How impact is scored</a></p>
+      <svg class="radar" viewBox="0 0 320 250" role="img" aria-label="Radar chart of the five impact scores. The table below lists the same scores."><polygon class="grid" points="160,114.4 174.8,125.2 169.2,142.6 150.8,142.6 145.2,125.2"/><polygon class="grid" points="160,98.8 189.7,120.4 178.3,155.2 141.7,155.2 130.3,120.4"/><polygon class="grid" points="160,83.2 204.5,115.5 187.5,167.9 132.5,167.9 115.5,115.5"/><polygon class="grid" points="160,67.6 219.3,110.7 196.7,180.5 123.3,180.5 100.7,110.7"/><polygon class="grid" points="160,52 234.2,105.9 205.8,193.1 114.2,193.1 85.8,105.9"/><line class="grid" x1="160" y1="130" x2="160" y2="52"/><line class="grid" x1="160" y1="130" x2="234.2" y2="105.9"/><line class="grid" x1="160" y1="130" x2="205.8" y2="193.1"/><line class="grid" x1="160" y1="130" x2="114.2" y2="193.1"/><line class="grid" x1="160" y1="130" x2="85.8" y2="105.9"/><polygon class="area" points="160,67.6 234.2,105.9 169.2,142.6 118.7,186.8 115.5,115.5"/><circle class="dot" cx="160" cy="67.6" r="3"/><circle class="dot" cx="234.2" cy="105.9" r="3"/><circle class="dot" cx="169.2" cy="142.6" r="3"/><circle class="dot" cx="118.7" cy="186.8" r="3"/><circle class="dot" cx="115.5" cy="115.5" r="3"/><text text-anchor="middle"><tspan x="160" y="20">Reach</tspan><tspan class="v" x="160" y="36">8</tspan></text><text text-anchor="start"><tspan x="247.5" y="99.6">Duration</tspan><tspan class="v" x="247.5" y="115.6">10</tspan></text><text text-anchor="start"><tspan x="214.1" y="216.4">Loss</tspan><tspan class="v" x="214.1" y="232.4">2</tspan></text><text text-anchor="end"><tspan x="105.9" y="216.4">Recovery</tspan><tspan class="v" x="105.9" y="232.4">9</tspan></text><text text-anchor="end"><tspan x="72.5" y="99.6">Cascade</tspan><tspan class="v" x="72.5" y="115.6">6</tspan></text></svg>
+      <table class="impact-table"><thead><tr><th scope="col">Dimension</th><th scope="col">Score</th><th scope="col">Basis</th></tr></thead><tbody><tr><th scope="row">Reach</th><td class="n">8</td><td>Old phones, old OpenSSL and embedded devices, worldwide</td></tr><tr><th scope="row">Duration</th><td class="n">10</td><td>A long tail on old devices</td></tr><tr><th scope="row">Loss</th><td class="n">2</td><td>Some devices had to be replaced</td></tr><tr><th scope="row">Recovery</th><td class="n">9</td><td>From config changes to buying new hardware</td></tr><tr><th scope="row">Cascade</th><td class="n">6</td><td>TLS failed for the sites and services those clients used</td></tr></tbody></table>
+    </section>
     <p class="about-event">Let&#39;s Encrypt root expiry, September 2021. Duration: a long tail on old devices. 5 hops from the first change to the failure.</p>
     <nav class="walk" aria-label="More exhibits">
-      <a class="walk-prev" rel="prev" href="/exhibits/leap-second-2012/">← The Extra Second</a>
+      <a class="walk-prev" rel="prev" href="/exhibits/facebook-2021/">← The Day Facebook Left the Internet</a>
       <a class="walk-hall" href="/#lets-encrypt-root-2021">Back to the main hall</a>
-      <span class="walk-next"></span>
+      <a class="walk-next" rel="next" href="/exhibits/fastly-2021/">→ One Customer, One Setting</a>
     </nav>
   </main>
 
