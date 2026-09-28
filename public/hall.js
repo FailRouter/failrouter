@@ -380,6 +380,15 @@ export function nodeFill(score) {
   return Array.from({ length: NODES }, (_, k) => clamp(red - k, 0, 1));
 }
 
+/**
+ * Which half of a node is red for its fill (from nodeFill): red rises from the bottom like a level,
+ * so a half node is red below and unlit above, and the colour changes only once up the sculpture.
+ */
+export const hemispheres = (fill) => ({ bottom: fill > 0, top: fill === 1 });
+
+/** Whether the rod between two nodes (fills below and above) is red: only where red continues upwards. */
+export const rodLit = (below, above) => below === 1 && above > 0;
+
 /** Sculpture nodes: a fixed spiral rising from the plinth top. Local [x, y, z]. */
 export function routePoints(count = NODES, { base = 1.1, rise = 0.95, radius = 0.26, turn = 1.25 } = {}) {
   return Array.from({ length: count }, (_, k) => {
