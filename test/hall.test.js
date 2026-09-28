@@ -102,6 +102,17 @@ describe("walk order and floor plan", () => {
   test("signs point to the side the corridor turns to; each corridor gets an installation", () => {
     assert.equal(H.signText("A", -1), "← A");
     assert.equal(H.signText("A", 1), "A →");
+    const signs = H.spineSigns(layout);
+    assert.equal(signs.length, 2 * layout.rooms.length, "two signs per side corridor");
+    for (const room of layout.rooms) {
+      const [inbound, back] = signs.filter((g) => g.room === room.index);
+      // Walking in (towards -z) a sign faces +z (rotY 0); walking back it faces -z (rotY π). Arrows swap.
+      assert.deepEqual([inbound.rotY, inbound.arrow, back.rotY, back.arrow], [0, room.side, Math.PI, -room.side]);
+      assert.ok(inbound.z > room.z && back.z < room.z, "before the junction, whichever way you walk");
+      assert.equal(Math.sign(inbound.x), room.side);
+      assert.equal(back.x, inbound.x);
+      assert.ok(back.z > layout.end, "inside the hall");
+    }
     assert.deepEqual(KEYS.map(H.propFor), ["rack", "rollout", "keyboard", "counter", "clocks"]);
     assert.equal(H.propFor("new-room"), "rack");
     assert.deepEqual(layout.rooms.map(H.propWall), [1, -1]);

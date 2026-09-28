@@ -483,6 +483,18 @@ export function splitAtColon(text) {
 /** Text of the sign hanging in the spine before a side corridor: an arrow on the side it turns to. */
 export const signText = (name, side) => (side < 0 ? `← ${name}` : `${name} →`);
 
+/**
+ * Signs hanging over the spine, two per side corridor: one before the junction facing the lobby
+ * (seen walking in), one past it facing the end wall (seen walking back). Each hangs on its room's
+ * side of the spine; `arrow` is the side the room lies on as seen by whoever reads that sign.
+ */
+export function spineSigns(layout, { offset = 2.2, inset = 1.2 } = {}) {
+  return layout.rooms.flatMap((room) => [
+    { room: room.index, x: room.side * inset, z: room.z + offset, rotY: 0, arrow: room.side },
+    { room: room.index, x: room.side * inset, z: room.z - offset, rotY: Math.PI, arrow: -room.side },
+  ]);
+}
+
 /** The installation in each room's side corridor; rooms added later get the network rack. */
 export const CORRIDOR_PROPS = { routing: "rack", config: "rollout", human: "keyboard", numbers: "counter", time: "clocks" };
 export const propFor = (key) => CORRIDOR_PROPS[key] ?? "rack";
