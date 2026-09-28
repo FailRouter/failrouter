@@ -52,16 +52,18 @@ Not optimising for: people looking for blame, live incident status, or vendor co
 
 ## Generated pages (hard rule)
 
-`public/index.html`, `public/exhibits/<id>/index.html`, `public/impact/index.html` and their `public/zh/` twins, `public/sitemap.xml` and `public/robots.txt` are **generated** by `scripts/site.js` (pure) via `scripts/build.js` (I/O). Never hand-edit them.
+`public/index.html`, `public/exhibits/<id>/index.html`, `public/impact/index.html`, `public/hall/index.html` and their `public/zh/` twins, `public/sitemap.xml` and `public/robots.txt` are **generated** by `scripts/site.js` (pure) via `scripts/build.js` (I/O). Never hand-edit them.
 
 - After changing `public/exhibits.js`, `public/i18n.js`, `public/museum.js` or `scripts/site.js`: run `pnpm build` and commit the output. `test/site.test.js` fails when a committed file is stale, so deploy needs no build step.
 - `public/og.png` and `public/og-zh.png` are rendered from `scripts/og.svg` and `scripts/og-zh.svg` with `pnpm build --og` (needs `rsvg-convert` and a Simplified Chinese system font). Commit the PNGs.
+- `public/vendor/three.module.min.js` is a subset of the pinned `three` devDependency, bundled by `pnpm build --vendor` from `THREE_EXPORTS` in `public/hall.js`, with `three.LICENSE` beside it. Run it after bumping `three` or changing `THREE_EXPORTS`; a test fails when the bundle and the names `hall-app.js` uses drift apart.
+- `public/posters/<room>-<width>.webp` are screenshots of the 3D hall, rendered with `pnpm build --posters` (headless Chrome with software WebGL). They carry no text, so both languages share them. Re-render after changing the scene or adding a room.
 - `public/404.html` is hand-written, bilingual on one page (Workers assets serve a single 404), and stays `noindex`.
 
 ## Tests and coverage gate (hard rule)
 
-- **Core code = `public/*.js` and `scripts/*.js`, except `public/app.js`, `scripts/build.js` and `scripts/viewport-run.js`. Lines, branches and functions must each stay ≥ 90%.** `pnpm coverage` enforces it locally and in CI.
-- The three excluded files are glue: `app.js` wires the DOM, `build.js` writes files, `viewport-run.js` drives Chrome. Keep them that way: any decision (filtering, formatting, navigation, escaping, page markup, metadata, language choice, what counts as a narrow-screen failure) goes into `public/museum.js`, `public/i18n.js`, `scripts/site.js` or `scripts/viewport.js` as a pure function with tests. Don't move logic into glue to dodge the gate.
+- **Core code = `public/*.js` and `scripts/*.js`, except `public/app.js`, `public/hall-app.js`, `scripts/build.js` and `scripts/viewport-run.js` (and the vendored `public/vendor/**`). Lines, branches and functions must each stay ≥ 90%.** `pnpm coverage` enforces it locally and in CI.
+- The four excluded files are glue: `app.js` wires the home page, `hall-app.js` wires the 3D hall to the DOM and three.js, `build.js` writes files, `viewport-run.js` drives Chrome. Keep them that way: any decision (filtering, formatting, navigation, escaping, page markup, metadata, language choice, floor plan, camera framing, movement, render tier, plaque text layout, what counts as a narrow-screen failure) goes into `public/museum.js`, `public/i18n.js`, `public/hall.js`, `scripts/site.js` or `scripts/viewport.js` as a pure function with tests. Don't move logic into glue to dodge the gate.
 - Never widen `--test-coverage-exclude`, lower a threshold, or delete tests to get green. If an exclusion is truly needed, explain why in the PR.
 - Unit tests make no network calls. `pnpm viewport` only talks to a local server and a local Chrome.
 
@@ -88,10 +90,10 @@ pnpm viewport --shots <dir>   # same, plus 375 px full-page screenshots for revi
 
 - Every page must fit **320, 375 and 430 px** wide with no sideways scrolling. `pnpm viewport` checks all pages, including the 404, and runs in CI.
 - **Two breakpoints only**, both in `public/style.css`: `(max-width: 480px)` for layout and `(max-width: 480px), (hover: none)` for touch sizing. No other breakpoints, no user-agent sniffing, no JS layout switches. A test pins the list.
-- **Touch targets ≥ 44 px high** on narrow or touch screens: room buttons, the wrong-turn button, the sort select, the "how impact is scored" link, the language switch, and the previous / next / main-hall links. Inline text links in sentences are exempt. Add any new control to `TOUCH_SELECTOR` in `scripts/viewport.js` and to the touch block in the CSS.
+- **Touch targets ≥ 44 px high** on narrow or touch screens: room buttons, the wrong-turn button, the sort select, the "how impact is scored" link, the 3D hall links, the language switch, the previous / next / main-hall links, and every button of the 3D hall (Enter, the 3D controls, the dialogs). Inline text links in sentences are exempt. Add any new control to `TOUCH_SELECTOR` in `scripts/viewport.js` and to the touch block in the CSS.
 - Long unbreakable text (hostnames, commands, `rm -rf`) must wrap: cards and the trace use `overflow-wrap: anywhere`; grid children need `min-width: 0`.
 - Keyboard hints are hidden on touch screens (`.keys-hint`).
-- Anything fixed to a screen edge must clear `env(safe-area-inset-*)`. There is none today; keep it that way unless it's needed.
+- Anything fixed to a screen edge must clear `env(safe-area-inset-*)`. Today that is only the 3D view's top and bottom bars, and only `/hall/` sets `viewport-fit=cover`; keep it that way unless it's needed.
 - Chinese typography: `body:lang(zh)` line height 1.75, **system CJK fonts only** (`--serif-zh`), no italics on Chinese text. Set fonts on `body` / `article`, never on a bare `:lang(zh)` rule (it overrides every component's own font).
 - Before opening a PR that changes page output, look at the `--shots` screenshots at 375 px for both languages.
 
@@ -111,7 +113,8 @@ Four weeks after an SEO change, check the per-page numbers in Google Search Cons
 
 - Every indexable page is static HTML with its content in the markup; JS only adds filters, keyboard and motion. Pages must read fine with JS off (`.js` class gates the dim/fade effect).
 - Per page: title ≤ 60, description 70–155, both measured on visible text with `weightedLength` (CJK and full-width punctuation count 2); exactly one `h1`; absolute canonical with trailing slash; `<html lang>` matching the path (`en` / `zh-Hans`); hreflang `en`, `zh-Hans`, `x-default` (→ English), identical on both twins; `og:*` + `og:locale` + `og:locale:alternate` + `twitter:card`; `og:image` = `/og.png` (English) or `/og-zh.png` (Chinese); ≥ 2 JSON-LD blocks with `inLanguage` (home: `WebSite` + `CollectionPage`/`ItemList`; exhibit: `Article` + `BreadcrumbList`); a link to the GitHub repo; a link to the other language; no render-blocking `<script src>`.
-- `sitemap.xml` lists exactly the generated HTML pages in both languages, each with the same three `xhtml:link` alternates as the page; `robots.txt` declares it.
+- The 3D hall (`/hall/`, `/zh/hall/`) is the one exception to the rules above: it repeats the home page's list, so it is `noindex` and stays out of the sitemap. It still has its own title, description, canonical, hreflang, `og:*`, `WebPage` + `BreadcrumbList` JSON-LD, and its floor plan (a poster and the exhibit links per room) is in the HTML. `test/site.test.js` checks it separately.
+- `sitemap.xml` lists exactly the indexable generated HTML pages in both languages, each with the same three `xhtml:link` alternates as the page; `robots.txt` declares it.
 - URLs are permanent: `/exhibits/<id>/`, `/zh/exhibits/<id>/` and the `#<id>` anchor on both home pages. Renaming an `id` breaks all of them; if unavoidable, add a redirect first.
 - Exhibit page titles come from `subject` plus the exhibit title, falling back to "`subject`, hop by hop" / "`subject`：原因与经过" when too long; write `subject` the way people search for it, in each language.
 - `www` also serves the site; canonical is always the apex.
@@ -129,8 +132,8 @@ Four weeks after an SEO change, check the per-page numbers in Google Search Cons
 
 - The Worker's `workers.dev` URL stays behind Cloudflare Access (all traffic; account members + a service token for CI). The smoke test fails if it answers 200 without the token. Never write that URL into the repo; it lives in `SMOKE_URL`.
 - Stay assets-only: no Worker `main` script, no fetch handler, no bindings (KV / D1 / R2 / Cron) without the maintainer's approval. Assets-only requests don't count against Workers request quotas.
-- No third-party scripts, trackers, analytics beacons, web fonts (a CJK web font is megabytes) or CDNs. No deploy-time build step: generated pages are committed (see above).
-- Page weight budget, gzipped, enforced by `test/site.test.js`: home page HTML + CSS + all JS ≤ 50 KB; exhibit page HTML + CSS ≤ 15 KB. Raise `BUDGET` in `scripts/site.js` only with a reason in the PR.
+- No third-party scripts, trackers, analytics beacons, web fonts (a CJK web font is megabytes) or CDNs. No deploy-time build step: generated pages are committed (see above). The one approved exception is three.js for the 3D hall: MIT, pinned, self-hosted under `public/vendor/`, and downloaded only when the visitor presses Enter. Adding another library needs the maintainer's approval.
+- Page weight budget, gzipped, enforced by `test/site.test.js`: home page HTML + CSS + all JS ≤ 50 KB; exhibit page HTML + CSS ≤ 15 KB; 3D hall before Enter (HTML + CSS + `hall-app.js` and its imports) ≤ 35 KB; what Enter downloads (three.js + `exhibits.js`) ≤ 190 KB, and the size printed on the button (`DOWNLOAD_KB` in `public/hall.js`) must stay within 10% of it. Posters ≤ 60 KB each. Raise `BUDGET` in `scripts/site.js` only with a reason in the PR.
 - All user-visible strings rendered into HTML go through `esc()`. Dictionary values ending in `Html` are trusted markup and must not contain data.
 
 ## Keep these in sync
@@ -142,6 +145,8 @@ Four weeks after an SEO change, check the per-page numbers in Google Search Cons
 | Room names | `ROOMS` ↔ `ROOMS_ZH` in `public/exhibits.js` (same keys) |
 | Exhibit facts | English fields ↔ the exhibit's `zh` block (same hops, same facts) |
 | Language codes, share images | `LOCALES` in `public/i18n.js` ↔ `scripts/og*.svg` ↔ `public/og*.png` |
+| three.js subset | `THREE_EXPORTS` in `public/hall.js` ↔ `THREE.*` names in `public/hall-app.js` ↔ `public/vendor/three.module.min.js` (`pnpm build --vendor`) ↔ `three` in `package.json` |
+| 3D hall posters | rooms in `public/exhibits.js` ↔ `public/posters/*.webp` (`pnpm build --posters`) |
 | Touch-sized controls | `TOUCH_SELECTOR` in `scripts/viewport.js` ↔ the `(hover: none)` block in `public/style.css` |
 | Impact dimensions | `DIMENSIONS` in `public/museum.js` ↔ `RUBRIC` in `public/i18n.js` (both languages) ↔ each exhibit's `impact` / `impactNotes` / `zh.impactNotes` |
 | Impact dots | `PIP` in `public/museum.js` ↔ `.pips` in `public/style.css` |

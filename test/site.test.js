@@ -5,12 +5,16 @@ import { gzipSync } from "node:zlib";
 import { EXHIBITS, ROOM_NAMES } from "../public/exhibits.js";
 import { LOCALES, RUBRIC, STRINGS, localizeExhibits, weightedLength } from "../public/i18n.js";
 import { DEFAULT_SORT, DIMENSIONS, sortExhibits } from "../public/museum.js";
+import * as H from "../public/hall.js";
 import * as S from "../scripts/site.js";
 
 const pub = (rel) => new URL(`../public/${rel}`, import.meta.url);
 const read = (rel) => readFileSync(pub(rel), "utf8");
 const FILES = S.buildSite(EXHIBITS, ROOM_NAMES);
 const HTML_PAGES = Object.keys(FILES).filter((f) => f.endsWith(".html"));
+const HALL_PAGES = ["hall/index.html", "zh/hall/index.html"];
+// The 3D hall repeats the home page's list, so it is noindex and outside the sitemap; everything else is indexed.
+const INDEXABLE = HTML_PAGES.filter((f) => !HALL_PAGES.includes(f));
 // Lengths are measured on the text a user sees, not on HTML entities.
 const unesc = (s) =>
   s?.replace(/&(amp|lt|gt|quot|#39);/g, (_, e) => ({ amp: "&", lt: "<", gt: ">", quot: '"', "#39": "'" })[e]);
@@ -62,12 +66,12 @@ describe("generated files are committed and current", () => {
     const en = HTML_PAGES.filter((f) => langOfFile(f) === "en").map(neutral).sort();
     const zh = HTML_PAGES.filter((f) => langOfFile(f) === "zh").map(neutral).sort();
     assert.deepEqual(zh, en);
-    assert.equal(en.length, EXHIBITS.length + 2, "home + impact rules + one page per exhibit");
+    assert.equal(en.length, EXHIBITS.length + 3, "home + impact rules + 3D hall + one page per exhibit");
   });
 });
 
 describe("SEO gate on every indexable page", () => {
-  for (const file of HTML_PAGES) {
+  for (const file of INDEXABLE) {
     test(file, () => {
       const html = FILES[file];
       const lang = langOfFile(file);
@@ -214,6 +218,89 @@ describe("SEO gate on every indexable page", () => {
   });
 });
 
+
+describe("3D hall pages", () => {
+  const layout = H.hallLayout(H.walkOrder(EXHIBITS, Object.keys(ROOM_NAMES.en)), Object.keys(ROOM_NAMES.en));
+  for (const [file, lang, prefix] of [["hall/index.html", "en", ""], ["zh/hall/index.html", "zh", "/zh"]]) {
+    test(`${file}: noindex, outside the sitemap, with the same head rules as every page`, () => {
+      const html = FILES[file];
+      const loc = LOCALES[lang];
+      const self = `${S.SITE.origin}${prefix}/hall/`;
+      assert.match(html, /<meta name="robots" content="noindex">/);
+      assert.ok(!FILES["sitemap.xml"].includes("/hall/"));
+      assert.ok(html.includes(`<link rel="canonical" href="${self}">`));
+      assert.ok(html.includes(`<html lang="${loc.html}">`));
+      assert.ok(html.includes('content="width=device-width, initial-scale=1, viewport-fit=cover"'), "opts in to safe-area insets");
+      const title = unesc(html.match(/<title>([^<]*)<\/title>/)[1]);
+      const desc = unesc(html.match(/<meta name="description" content="([^"]*)">/)[1]);
+      assert.ok(weightedLength(title) <= S.LIMITS.title, title);
+      const dl = weightedLength(desc);
+      assert.ok(dl >= S.LIMITS.descriptionMin && dl <= S.LIMITS.description, `${dl}`);
+      assert.equal((html.match(/<h1[\s>]/g) ?? []).length, 1);
+      const blocks = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/g)].map((m) => JSON.parse(m[1]));
+      assert.deepEqual(blocks.map((b) => b["@type"]), ["WebPage", "BreadcrumbList"]);
+      assert.equal(blocks[0].inLanguage, loc.html);
+      assert.ok(html.includes(S.SITE.repo));
+    });
+    test(`${file}: the floor plan is in the HTML, one poster per room, every exhibit linked and anchored`, () => {
+      const html = FILES[file];
+      const main = html.match(/<main[\s\S]*<\/main>/)[0];
+      for (const e of EXHIBITS) {
+        assert.ok(main.includes(`<li id="${e.id}"><a href="${prefix}/exhibits/${e.id}/">`), `${file}: ${e.id}`);
+      }
+      const posters = [...main.matchAll(/<img class="hall-poster" src="([^"]+)"[^>]*>/g)];
+      assert.deepEqual(posters.map((m) => m[1]), H.posterKeys(layout).map((k) => H.posterPath(k, 960)));
+      assert.match(posters[0][0], /fetchpriority="high"/, "lobby poster loads first");
+      for (const [tag] of posters.slice(1)) assert.match(tag, /loading="lazy"/);
+      for (const [tag] of posters) assert.match(tag, /width="960" height="540" alt="[^"]+"/);
+      assert.equal((main.match(/<section class="hall-room"/g) ?? []).length, layout.rooms.length);
+    });
+    test(`${file}: Enter states the download size; the 3D controls are prerendered and hidden`, () => {
+      const html = FILES[file];
+      assert.ok(html.includes(`>${STRINGS[lang].hallEnter.replace("{kb}", H.DOWNLOAD_KB)}</button>`));
+      assert.match(html, /<div class="hall-stage" id="hall-stage" hidden>/);
+      assert.equal((html.match(/data-spot="/g) ?? []).length, EXHIBITS.length);
+      assert.match(html, /<script type="module" src="\/hall-app\.js"><\/script>/);
+      assert.ok(html.indexOf("<h1>") < html.indexOf('<h2 id="room-'), "headings in order");
+    });
+  }
+  test("home pages and exhibit pages link to the hall, exhibit pages to their own spot in it", () => {
+    for (const [prefix, p] of [["", ""], ["zh/", "/zh"]]) {
+      assert.ok(FILES[`${prefix}index.html`].includes(`<a class="hall-link" href="${p}/hall/">`));
+      for (const e of EXHIBITS) assert.ok(FILES[`${prefix}exhibits/${e.id}/index.html`].includes(`<a class="hall-link" href="${p}/hall/#${e.id}">`), e.id);
+    }
+  });
+  test("every poster exists as WebP, both widths, and stays small", () => {
+    for (const key of H.posterKeys(layout)) {
+      for (const w of H.POSTER_WIDTHS) {
+        const buf = readFileSync(pub(H.posterPath(key, w).slice(1)));
+        assert.equal(buf.subarray(0, 4).toString(), "RIFF");
+        assert.equal(buf.subarray(8, 12).toString(), "WEBP");
+        assert.ok(buf.length <= 60_000, `${key}-${w}: ${buf.length} bytes`);
+      }
+    }
+    assert.deepEqual(readdirSync(pub("posters")).sort(), H.posterKeys(layout).flatMap((k) => H.POSTER_WIDTHS.map((w) => `${k}-${w}.webp`)).sort());
+  });
+});
+
+describe("vendored three.js", () => {
+  const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+  const app = read("hall-app.js");
+  test("pinned, and the bundle names its version and license", () => {
+    assert.match(pkg.devDependencies.three, /^\d+\.\d+\.\d+$/, "exact version");
+    const head = read(H.VENDOR.slice(1)).slice(0, 200);
+    assert.ok(head.startsWith(`/* three.js ${pkg.devDependencies.three} `), head);
+    assert.match(read("vendor/three.LICENSE"), /The MIT License/);
+  });
+  test("hall-app.js uses exactly the three.js names that are bundled", () => {
+    const used = [...new Set([...app.matchAll(/THREE\.(\w+)/g)].map((m) => m[1]))].sort();
+    assert.deepEqual(used, [...H.THREE_EXPORTS].sort());
+    const bundle = read(H.VENDOR.slice(1));
+    const exported = bundle.match(/export\{([^}]+)\}/)[1].split(",").map((s) => s.split(" as ").at(-1)).sort();
+    assert.deepEqual(exported, [...H.THREE_EXPORTS].sort(), "run `pnpm build --vendor` after changing THREE_EXPORTS");
+  });
+});
+
 describe("page weight budget (gzip)", () => {
   const gz = (rel) => gzipSync(readFileSync(pub(rel))).length;
   test("home page: HTML + CSS + every JS module <= 50 KB", () => {
@@ -228,6 +315,23 @@ describe("page weight budget (gzip)", () => {
       assert.ok(total <= S.BUDGET.exhibit, `${f}: ${total} bytes`);
     }
   });
+  test("3D hall before Enter: HTML + CSS + hall-app.js and its imports <= 35 KB", () => {
+    for (const page of HALL_PAGES) {
+      const total = [page, "style.css", "hall-app.js", "hall.js", "museum.js", "i18n.js"].reduce((n, f) => n + gz(f), 0);
+      assert.ok(total <= S.BUDGET.hall, `${page}: ${total} bytes`);
+    }
+  });
+  test("3D hall after Enter: three.js + exhibits.js <= 190 KB, and the size on the button is honest", () => {
+    const total = gz(H.VENDOR.slice(1)) + gz("exhibits.js");
+    assert.ok(total <= S.BUDGET.hall3d, `${total} bytes`);
+    assert.ok(Math.abs(total / 1000 - H.DOWNLOAD_KB) <= H.DOWNLOAD_KB * 0.1, `button says ${H.DOWNLOAD_KB} KB, download is ${total} bytes`);
+  });
+  test("hall-app.js loads only what the two hall budgets count", () => {
+    const src = read("hall-app.js");
+    assert.deepEqual([...src.matchAll(/from "\.\/([^"]+)"/g)].map((m) => m[1]).sort(), ["hall.js", "i18n.js", "museum.js"]);
+    assert.deepEqual([...src.matchAll(/import\(([^)]+)\)/g)].map((m) => m[1]).sort(), ['"./exhibits.js"', "H.VENDOR"]);
+    assert.ok(!read("hall.js").match(/from "\.\/exhibits\.js"/), "hall.js must not pull the exhibit data in before Enter");
+  });
   test("app.js imports only modules counted in the budget", () => {
     const src = read("app.js");
     const imports = [...src.matchAll(/from "\.\/([^"]+)"/g)].map((m) => m[1]).sort();
@@ -238,7 +342,7 @@ describe("page weight budget (gzip)", () => {
 describe("sitemap and robots", () => {
   test("sitemap lists exactly the indexable pages, both languages", () => {
     const locs = [...FILES["sitemap.xml"].matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]).sort();
-    assert.deepEqual(locs, HTML_PAGES.map((f) => `${S.SITE.origin}${pathOf(f)}`).sort());
+    assert.deepEqual(locs, INDEXABLE.map((f) => `${S.SITE.origin}${pathOf(f)}`).sort());
     assert.match(FILES["sitemap.xml"], /<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
     assert.match(FILES["sitemap.xml"], /xmlns:xhtml="http:\/\/www\.w3\.org\/1999\/xhtml"/);
   });

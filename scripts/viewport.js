@@ -6,7 +6,7 @@ export const WIDTHS = [320, 375, 430];
 /** Minimum touch target height in CSS px. */
 export const TARGET = 44;
 /** Controls that must meet TARGET on narrow / touch screens. Inline text links are exempt (WCAG 2.5.8). */
-export const TOUCH_SELECTOR = "button, .lang-switch, .walk a, .sort-bar select, .impact-how";
+export const TOUCH_SELECTOR = "button, .lang-switch, .walk a, .sort-bar select, .impact-how, .hall-link, .hall-full";
 /** A path that doesn't exist, to check the 404 page too. */
 export const MISSING = "/no-such-exhibit/";
 
@@ -31,14 +31,54 @@ export function measureExpression(selector = TOUCH_SELECTOR, target = TARGET) {
 })()`;
 }
 
+/** Pages that also get checked after entering 3D: the 3D hall in each language. */
+export const isHallPage = (path) => /(^|\/)hall\/$/.test(path);
+/** Clicks the hall's Enter button; returns whether there was one to click. */
+export const HALL_ENTER = `(() => { const b = document.getElementById("hall-enter"); if (!b || b.hidden) return false; b.click(); return true; })()`;
+/** The hall's state as hall-app.js reports it on <html data-hall>: loading, ready, failed, off or "". */
+export const HALL_STATE = `document.documentElement.dataset.hall || ""`;
+/** How long to wait for the 3D hall (software WebGL in CI is slow). */
+export const HALL_TIMEOUT_MS = 45000;
+/** Whether polling for the hall can stop, given its reported state. */
+export const hallSettled = (state) => ["ready", "failed", "off"].includes(state);
+
 /**
- * Human-readable failures from [{ path, width, vw, sw, small }]. Empty = pass.
+ * Chrome flags: headless, a throwaway profile, and WebGL through SwiftShader (software) so the 3D hall
+ * renders on machines and CI runners without a GPU.
+ */
+export function chromeFlags(profile, ci = false) {
+  const flags = [
+    "--headless=new",
+    "--remote-debugging-port=0",
+    `--user-data-dir=${profile}`,
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--disable-gpu",
+    "--use-angle=swiftshader",
+    "--enable-unsafe-swiftshader",
+  ];
+  return ci ? [...flags, "--no-sandbox"] : flags;
+}
+
+/** One screenshot per poster key and width: where to load it and where to save it (relative to public/). */
+export function posterJobs(keys, widths, height, path) {
+  return keys.flatMap((key) =>
+    widths.map((width) => ({ key, width, height: height(width), url: `/hall/?poster=${key}`, file: path(key, width).slice(1) })),
+  );
+}
+
+/**
+ * Human-readable failures from [{ path, width, vw, sw, small, error? }]. Empty = pass.
  * Compares against the emulated device `width`, not `vw`: mobile Chrome zooms out to fit wide
  * content, so window.innerWidth grows with the overflow and would hide it.
  */
 export function problems(results) {
   const out = [];
   for (const r of results) {
+    if (r.error) {
+      out.push(`${r.path} @${r.width}px: ${r.error}`);
+      continue;
+    }
     const wide = Math.max(r.sw, r.vw);
     if (wide > r.width) out.push(`${r.path} @${r.width}px: page is ${wide}px wide (sideways scroll)`);
     for (const s of r.small) out.push(`${r.path} @${r.width}px: touch target ${s.h}px < ${TARGET}px: ${s.html}`);
@@ -52,6 +92,7 @@ const TYPES = {
   js: "text/javascript; charset=utf-8",
   svg: "image/svg+xml",
   png: "image/png",
+  webp: "image/webp",
   xml: "application/xml",
   txt: "text/plain; charset=utf-8",
 };
@@ -81,8 +122,12 @@ export function findChrome(platform, env, exists) {
 
 /** Width used for review screenshots (`pnpm viewport --shots <dir>`). */
 export const SHOT_WIDTH = 375;
-/** Screenshot file name for a page: "/" → "home-375.png", "/zh/exhibits/a/" → "zh-exhibits-a-375.png". */
-export const shotName = (path, width) => `${path.replace(/^\/|\/$/g, "").replace(/\//g, "-") || "home"}-${width}.png`;
+/**
+ * Screenshot file name for a page: "/" → "home-375.png", "/zh/exhibits/a/" → "zh-exhibits-a-375.png";
+ * a `state` ("3d") goes before the width.
+ */
+export const shotName = (path, width, state = "") =>
+  `${path.replace(/^\/|\/$/g, "").replace(/\//g, "-") || "home"}${state ? `-${state}` : ""}-${width}.png`;
 
 /** Value after `--shots`, or null. */
 export function shotsDir(argv) {
