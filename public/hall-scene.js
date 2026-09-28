@@ -266,6 +266,8 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
   }
 
   // ---------- the building ----------
+  // What a tap can land on: pickable objects, the floor (walk there) and walls (block both).
+  const surfaces = [];
   const floorMat = lambert({ map: planks });
   const ceilMat = basic({ color: 0x0c0b0f });
   for (const r of H.floorRects(layout)) {
@@ -273,13 +275,15 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
     const d = r.z1 - r.z0;
     const cx = (r.x0 + r.x1) / 2;
     const cz = (r.z0 + r.z1) / 2;
-    add(tiled(w, d, 2), floorMat, [cx, 0, cz], [-Math.PI / 2, 0, 0]);
+    const floor = add(tiled(w, d, 2), floorMat, [cx, 0, cz], [-Math.PI / 2, 0, 0]);
+    floor.userData.floor = true;
+    surfaces.push(floor);
     add(new THREE.PlaneGeometry(w, d), ceilMat, [cx, P.wallHeight, cz], [Math.PI / 2, 0, 0]);
   }
   const wallMat = lambert({ map: panels });
   const brass = lambert({ color: 0xc9a45c, emissive: 0x2a2010 });
   for (const s of H.wallSegments(layout)) {
-    add(tiled(s.len, P.wallHeight, 2.1), wallMat, [s.x, P.wallHeight / 2, s.z], [0, s.rotY, 0]);
+    surfaces.push(add(tiled(s.len, P.wallHeight, 2.1), wallMat, [s.x, P.wallHeight / 2, s.z], [0, s.rotY, 0]));
     const nx = Math.sin(s.rotY) * 0.02;
     const nz = Math.cos(s.rotY) * 0.02;
     for (const y of [0.06, 3.55]) add(new THREE.BoxGeometry(s.len, 0.05, 0.04), brass, [s.x + nx, y, s.z + nz], [0, s.rotY, 0]);
@@ -520,6 +524,30 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
     }
   }
 
+  // Where a floor tap walks to (and, with a mouse, where it would): a brass ring on the floor.
+  const ring = canvasTexture(128, 128, (g, w) => {
+    g.strokeStyle = "rgba(201,164,92,0.95)";
+    g.lineWidth = 9;
+    g.beginPath();
+    g.arc(w / 2, w / 2, w / 2 - 12, 0, Math.PI * 2);
+    g.stroke();
+    g.fillStyle = "rgba(201,164,92,0.5)";
+    g.beginPath();
+    g.arc(w / 2, w / 2, 10, 0, Math.PI * 2);
+    g.fill();
+  });
+  const marker = (opacity) => {
+    const m = add(new THREE.PlaneGeometry(0.7, 0.7), glow(ring, opacity), [0, 0.02, 0], [-Math.PI / 2, 0, 0]);
+    m.visible = false;
+    return m;
+  };
+  const goal = marker(0.9);
+  const hover = marker(0.4);
+  const showAt = (m, x, z) => {
+    m.position.set(x, 0.02, z);
+    m.visible = true;
+  };
+
   // ---------- camera, walking, picking ----------
   const cam = { x: 0, z: 0, yaw: 0, pitch: 0 };
   const pose = ({ pos, look }) => ({ x: pos[0], z: pos[2], ...H.lookAngles(pos, look) });
@@ -557,11 +585,17 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
   }
 
   let tween = null;
+  let glideV = null; // look velocity after a drag, rad/s
   const fade = $("#hall-fade");
+  function stopWalk() {
+    tween = null;
+    goal.visible = false;
+  }
   function travel(target, after = () => {}) {
     const path = [[cam.x, cam.z], ...H.pathBetween(layout, [cam.x, cam.z], [target.x, target.z])];
     const length = H.polylineLength(path);
     help.hidden = true;
+    glideV = null;
     const arrive = () => {
       Object.assign(cam, target);
       after();
@@ -580,10 +614,21 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
     tween = { path, start: { yaw: cam.yaw, pitch: cam.pitch }, target, t0: performance.now(), dur: H.walkSeconds(length) * 1000, after };
     schedule();
   }
-  const goTo = (i) => travel(pose(H.viewpoint(layout.slots[i])));
+  const goTo = (i) => {
+    goal.visible = false;
+    travel(pose(H.viewpoint(layout.slots[i])));
+  };
   function goRoom(index) {
     const room = layout.rooms[index];
+    goal.visible = false;
     travel(pose(H.roomView(room)), () => setHash(`room-${room.key}`));
+  }
+  function walkTo([x, z]) {
+    const target = H.floorTarget(layout, rects, [cam.x, cam.z], [x, z]);
+    if (!target) return;
+    showAt(goal, target.x, target.z);
+    hover.visible = false;
+    travel(target, () => (goal.visible = false));
   }
 
   function resize() {
@@ -597,6 +642,7 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
   }
 
   const pressed = new Set();
+  let vel = { forward: 0, strafe: 0, turn: 0 }; // eased keyboard input
   let drag = null;
   let running = false;
   let last = 0;
@@ -616,11 +662,18 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
       whereAmI();
       moving = true;
     }
-    const input = H.keyInput(pressed);
-    if (input.forward || input.strafe) {
-      tween = null;
-      [cam.x, cam.z] = H.slide([cam.x, cam.z], H.moveStep([cam.x, cam.z], cam.yaw, input, dt), rects);
+    const keys = H.keyInput(pressed);
+    vel = H.smoothInput(vel, keys, dt, mode.jump ? 0 : H.SMOOTH_TAU);
+    if (!H.isStill(keys)) stopWalk();
+    if (!H.isStill(vel)) {
+      cam.yaw = H.turnStep(cam.yaw, vel.turn, dt);
+      [cam.x, cam.z] = H.slide([cam.x, cam.z], H.moveStep([cam.x, cam.z], cam.yaw, vel, dt), rects);
       whereAmI();
+      moving = true;
+    }
+    if (glideV && !drag) {
+      Object.assign(cam, H.lookDelta(cam, glideV.yaw * dt, glideV.pitch * dt, 1));
+      glideV = H.glide(glideV, dt);
       moving = true;
     }
     camera.position.set(cam.x, P.eye, cam.z);
@@ -644,26 +697,66 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
 
   const canvas = renderer.domElement;
   const raycaster = new THREE.Raycaster();
+  const ndc = new THREE.Vector2();
+  // The first pickable object, floor or wall under a point on the canvas, as { intent, action, point }.
+  function hitAt(clientX, clientY) {
+    const r = canvas.getBoundingClientRect();
+    ndc.set(((clientX - r.left) / r.width) * 2 - 1, -((clientY - r.top) / r.height) * 2 + 1);
+    raycaster.setFromCamera(ndc, camera);
+    const hit = raycaster.intersectObjects([...pickable, ...surfaces], false)[0];
+    return { intent: H.hitIntent(hit?.object.userData), action: hit?.object.userData.action, point: hit?.point };
+  }
+  let hoverAt = null;
+  function updateHover() {
+    const at = hoverAt;
+    hoverAt = null;
+    if (!at) return;
+    const wasVisible = hover.visible;
+    const { intent, point } = hitAt(at.x, at.y);
+    canvas.style.cursor = intent === "pick" ? "pointer" : "";
+    hover.visible = intent === "walk" && !tween;
+    if (hover.visible) {
+      const [x, z] = H.nearestWalkable(rects, [point.x, point.z]);
+      showAt(hover, x, z);
+    }
+    if (hover.visible || wasVisible) schedule();
+  }
   on(canvas, "pointerdown", (ev) => {
-    drag = { x: ev.clientX, y: ev.clientY, sx: ev.clientX, sy: ev.clientY };
+    drag = { x: ev.clientX, y: ev.clientY, sx: ev.clientX, sy: ev.clientY, k: H.grabSensitivity(camera.fov, canvas.clientHeight), samples: [] };
+    glideV = null;
     canvas.setPointerCapture(ev.pointerId);
   });
   on(canvas, "pointermove", (ev) => {
-    if (!drag) return;
-    Object.assign(cam, H.lookDelta(cam, ev.clientX - drag.x, ev.clientY - drag.y));
+    if (!drag) {
+      if (ev.pointerType !== "mouse") return;
+      if (!hoverAt) requestAnimationFrame(updateHover);
+      hoverAt = { x: ev.clientX, y: ev.clientY };
+      return;
+    }
+    Object.assign(cam, H.lookDelta(cam, ev.clientX - drag.x, ev.clientY - drag.y, drag.k));
     drag.x = ev.clientX;
     drag.y = ev.clientY;
-    tween = null;
+    drag.samples.push({ t: ev.timeStamp, yaw: cam.yaw, pitch: cam.pitch });
+    if (drag.samples.length > 8) drag.samples.shift();
+    if (!H.isTap(ev.clientX - drag.sx, ev.clientY - drag.sy)) {
+      stopWalk();
+      hover.visible = false;
+      canvas.style.cursor = "grabbing";
+    }
     help.hidden = true;
     schedule();
   });
   on(canvas, "pointerup", (ev) => {
     const tap = drag && H.isTap(ev.clientX - drag.sx, ev.clientY - drag.sy);
+    const samples = drag?.samples ?? [];
     drag = null;
-    if (!tap) return;
-    const r = canvas.getBoundingClientRect();
-    raycaster.setFromCamera(new THREE.Vector2(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1), camera);
-    const action = raycaster.intersectObjects(pickable, false)[0]?.object.userData.action;
+    canvas.style.cursor = "";
+    if (!tap) {
+      if (!mode.jump) glideV = H.glide(H.releaseVelocity(samples, ev.timeStamp), 0);
+      return schedule();
+    }
+    const { intent, action, point } = hitAt(ev.clientX, ev.clientY);
+    if (intent === "walk") return walkTo([point.x, point.z]);
     if (!action) return;
     if (action.suggest) return suggestDialog.showModal();
     if (action.room !== undefined) return goRoom(action.room);
@@ -671,6 +764,12 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
     else goTo(action.index);
   });
   on(canvas, "pointercancel", () => (drag = null));
+  on(canvas, "pointerleave", () => {
+    hoverAt = null;
+    if (!hover.visible) return;
+    hover.visible = false;
+    schedule();
+  });
 
   const readDialog = $("#hall-read-dialog");
   const mapDialog = $("#hall-map-dialog");
@@ -710,8 +809,7 @@ export function start({ THREE, data: { EXHIBITS, ROOM_NAMES }, lang, mode, signa
     if (key === "escape") return exit();
     if (key === "enter" && ev.target === document.body) return openRead();
     if (H.stepKey(key)) return step(H.stepKey(key));
-    const input = H.keyInput([key]);
-    if (!input.forward && !input.strafe) return;
+    if (H.isStill(H.keyInput([key]))) return;
     ev.preventDefault();
     pressed.add(key);
     schedule();
