@@ -171,6 +171,68 @@ describe("walls, floors and walking", () => {
     assert.deepEqual(H.pathBetween(layout, [a[0], a[2]], [a[0] - 1, a[2]]), [[a[0] - 1, a[2]]], "same room: straight");
     assert.deepEqual(H.pathBetween(layout, [0, 3], [0, -10]), [[0, -10]], "along the spine");
     assert.deepEqual(H.pathBetween(layout, [-5, r0.z], [0, 3]), [[0, r0.z], [0, 3]], "from a corridor, no detour into the room");
+    assert.deepEqual(H.pathBetween(layout, [0, 3], [-5, r0.z]), [[0, r0.z], [-5, r0.z]], "into a corridor, no detour into the room");
+  });
+  const walkable = (path) => {
+    for (let i = 1; i < path.length; i++) {
+      for (let k = 0; k <= 40; k++) {
+        const p = [path[i - 1][0] + ((path[i][0] - path[i - 1][0]) * k) / 40, path[i - 1][1] + ((path[i][1] - path[i - 1][1]) * k) / 40];
+        assert.ok(H.inside(rects, p), `segment ${i} leaves the walkable area at ${p}`);
+      }
+    }
+  };
+  test("pathBetween inside one room goes through the doorway between its corridor and the room", () => {
+    const from = [-(H.PLAN.spine / 2 + 0.5), r0.z + H.PLAN.lane];
+    const to = [-(r0.u0 + 1), r0.z + H.PLAN.walk];
+    const path = H.pathBetween(layout, from, to);
+    assert.deepEqual(path, [[-r0.u0, r0.z], to]);
+    walkable([from, ...path]);
+    walkable([to, ...H.pathBetween(layout, to, from)]);
+  });
+  test("nearestWalkable keeps walkable points and pulls others to the closest walkable point", () => {
+    assert.deepEqual(H.nearestWalkable(rects, [0, 0]), [0, 0]);
+    const h = H.PLAN.spine / 2 - H.PLAN.margin;
+    assert.deepEqual(H.nearestWalkable(rects, [10, 0]), [h, 0], "past the spine wall, no room there");
+    assert.deepEqual(H.nearestWalkable(rects, [-(r0.u0 + 3), r0.z + 3.9]), [-(r0.u0 + 3), r0.z + H.PLAN.walk], "at a room wall");
+    for (let x = -30; x <= 30; x += 2.5) for (let z = layout.end - 3; z <= layout.back + 3; z += 2.5) assert.ok(H.inside(rects, H.nearestWalkable(rects, [x, z])));
+    assert.deepEqual(H.nearestWalkable([], [1, 2]), [1, 2]);
+  });
+  test("floorTarget walks to the nearest walkable point, facing the way of the walk, eyes level", () => {
+    const h = H.PLAN.spine / 2 - H.PLAN.margin;
+    const t = H.floorTarget(layout, rects, [h, layout.back - 1], [5, -6]);
+    assert.deepEqual([t.x, t.z, t.pitch], [h, -6, 0], "past the spine wall: pulled onto the walkway");
+    near(t.yaw, 0);
+    near(H.floorTarget(layout, rects, [0, 0], [0, -5]).yaw, 0, 1e-9);
+    assert.equal(H.floorTarget(layout, rects, [0, 0], [0.1, -0.2]), null, "too close to walk");
+  });
+  test("floorTarget stops STAND_OFF short of a wall straight ahead, not one met at a glance", () => {
+    const t = H.floorTarget(layout, rects, [0, 0], [0, layout.end + 0.2]);
+    near(t.z, layout.end + H.STAND_OFF, 0.06);
+    near(t.yaw, 0);
+    const room = H.roomView(r0).pos;
+    const deep = H.floorTarget(layout, rects, [room[0], room[2]], [-(r0.u1 - 0.1), r0.z]);
+    near(deep.x, -(r0.u1 - H.STAND_OFF), 0.06);
+    near(deep.z, r0.z);
+    assert.equal(H.floorTarget(layout, rects, [0, layout.end + 2], [0, layout.end + 0.2]), null, "already close: stays");
+    // A diagonal walk that meets a side wall at a glance goes all the way.
+    const from = [0, layout.back - 1];
+    const side = H.floorTarget(layout, rects, from, [-(r0.u0 + 3), r0.z + 3.5]);
+    near(side.x, -(r0.u0 + 3));
+    near(side.z, r0.z + H.PLAN.walk, 1e-9);
+    const floors = H.floorRects(layout);
+    assert.deepEqual(H.clearance(floors, [0, 0], 0, 3), { dist: 3, headOn: false }, "open floor");
+    const end = H.clearance(floors, [0, layout.end + 1], 0);
+    near(end.dist, 1, 0.051);
+    assert.equal(end.headOn, true, "end wall, straight on");
+    assert.equal(H.clearance(floors, [0, layout.end + 0.3], -1.2).headOn, false, "end wall, at a glance");
+    assert.equal(H.clearance(floors, [0, 0], -Math.PI / 2 - 0.2).headOn, true, "side wall, nearly straight on");
+    assert.equal(H.clearance(floors, [0, 0], -0.3, 30).headOn, false, "side wall, at a glance");
+  });
+  test("hitIntent: objects are picked, the floor is walked on, walls do nothing", () => {
+    assert.equal(H.hitIntent({ action: { index: 0 } }), "pick");
+    assert.equal(H.hitIntent({ floor: true }), "walk");
+    assert.equal(H.hitIntent({}), "none");
+    assert.equal(H.hitIntent(undefined), "none");
   });
   test("polylineLength, pointAlong and tweenPose", () => {
     const pts = [[0, 0], [0, -4], [3, -4]];
@@ -224,10 +286,44 @@ describe("camera and movement", () => {
     near(Math.hypot(dx, dz), 2);
     assert.deepEqual(H.moveStep([1, 2], 0, { forward: 0, strafe: 0 }, 1), [1, 2]);
   });
-  test("lookDelta turns with the drag and limits pitch", () => {
-    assert.deepEqual(H.lookDelta({ yaw: 0, pitch: 0 }, 100, 0), { yaw: -0.5, pitch: 0 });
-    assert.equal(H.lookDelta({ yaw: 0, pitch: 0 }, 0, -1000).pitch, 0.9);
-    assert.equal(H.lookDelta({ yaw: 0, pitch: 0 }, 0, 1000).pitch, -0.9);
+  test("lookDelta grabs the view: drag right turns left, drag down looks up; pitch is limited", () => {
+    assert.deepEqual(H.lookDelta({ yaw: 0, pitch: 0 }, 100, 0), { yaw: 0.5, pitch: 0 });
+    assert.equal(H.lookDelta({ yaw: 0, pitch: 0 }, 0, 1000).pitch, 0.9);
+    assert.equal(H.lookDelta({ yaw: 0, pitch: 0 }, 0, -1000).pitch, -0.9);
+    near(H.grabSensitivity(60, 600), Math.PI / 3 / 600);
+    assert.equal(H.grabSensitivity(60, 0), Math.PI / 3, "no division by zero");
+  });
+  test("turnStep turns right on a positive input, at TURN_SPEED", () => {
+    near(H.turnStep(0, 1, 0.5), -H.TURN_SPEED / 2);
+    near(H.turnStep(1, -1, 1, 2), 3);
+  });
+  test("smoothInput eases towards the keys, snaps small leftovers to 0, and follows at once with tau 0", () => {
+    const zero = { forward: 0, strafe: 0, turn: 0 };
+    const keys = { forward: 1, strafe: 0, turn: -1 };
+    assert.deepEqual(H.smoothInput(zero, keys, 0.016, 0), keys);
+    const a = H.smoothInput(zero, keys, 0.016);
+    assert.ok(a.forward > 0 && a.forward < 1 && a.turn < 0 && a.turn > -1, JSON.stringify(a));
+    let v = a;
+    for (let i = 0; i < 60; i++) v = H.smoothInput(v, keys, 0.016);
+    near(v.forward, 1, 1e-3);
+    for (let i = 0; i < 60; i++) v = H.smoothInput(v, zero, 0.016);
+    assert.deepEqual(v, zero);
+    assert.equal(H.isStill(v), true);
+    assert.equal(H.isStill(a), false);
+    assert.equal(H.isStill({ forward: 0, strafe: 0, turn: 0.2 }), false);
+  });
+  test("releaseVelocity measures the end of a drag; glide slows it down and stops", () => {
+    const s = [{ t: 0, yaw: 0, pitch: 0 }, { t: 100, yaw: 0.1, pitch: 0 }, { t: 140, yaw: 0.2, pitch: -0.04 }];
+    const v = H.releaseVelocity(s, 150);
+    near(v.yaw, 0.1 / 0.04 * 1, 1e-9);
+    near(v.pitch, -1);
+    assert.deepEqual(H.releaseVelocity(s, 400), { yaw: 0, pitch: 0 }, "rested before letting go");
+    assert.deepEqual(H.releaseVelocity([], 0), { yaw: 0, pitch: 0 });
+    assert.deepEqual(H.releaseVelocity([s[2]], 150), { yaw: 0, pitch: 0 }, "one sample");
+    assert.equal(H.releaseVelocity([{ t: 0, yaw: 0, pitch: 0 }, { t: 10, yaw: 5, pitch: 0 }], 10).yaw, 8, "capped");
+    const g = H.glide({ yaw: 2, pitch: 0 }, H.GLIDE_TAU);
+    near(g.yaw, 2 / Math.E);
+    assert.equal(H.glide({ yaw: 0.04, pitch: 0 }, 0.016), null);
   });
   test("lerpAngle takes the short way round; ease is 0 → 1, symmetric; stepIndex clamps", () => {
     near(H.lerpAngle(3, -3, 0.5), Math.PI, 1e-3);
@@ -238,9 +334,10 @@ describe("camera and movement", () => {
     assert.equal(H.stepIndex(-1, 1, 5), 0);
   });
   test("keyInput, stepKey and isTap", () => {
-    assert.deepEqual(H.keyInput(new Set(["w", "d"])), { forward: 1, strafe: 1 });
-    assert.deepEqual(H.keyInput(["arrowup", "w", "arrowleft"]), { forward: 1, strafe: -1 });
-    assert.deepEqual(H.keyInput(["s", "a", "x"]), { forward: -1, strafe: -1 });
+    assert.deepEqual(H.keyInput(new Set(["w", "d"])), { forward: 1, strafe: 1, turn: 0 });
+    assert.deepEqual(H.keyInput(["arrowup", "w", "arrowleft"]), { forward: 1, strafe: 0, turn: -1 });
+    assert.deepEqual(H.keyInput(["s", "a", "x", "arrowright"]), { forward: -1, strafe: -1, turn: 1 });
+    assert.deepEqual(H.keyInput(["arrowdown"]), { forward: -1, strafe: 0, turn: 0 });
     assert.deepEqual([H.stepKey("j"), H.stepKey("k"), H.stepKey("x")], [1, -1, 0]);
     assert.equal(H.isTap(3, 4), true);
     assert.equal(H.isTap(10, 0), false);
