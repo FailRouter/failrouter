@@ -57,6 +57,27 @@ Keep to what the public report says. Describe systems and decisions, not individ
 
 Merging to `main` runs the workflow in `.github/workflows/ci.yml`: tests and the coverage gate plus the phone-width check, then `wrangler deploy` and a smoke test against the deployed Worker. Pull requests run the same checks with a deploy dry run. Cloudflare credentials live in repository secrets only.
 
+## Project activity
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/FailRouter/failrouter/output/snake-dark.svg">
+  <img alt="Snake eating the daily commit grid of Failrouter" src="https://raw.githubusercontent.com/FailRouter/failrouter/output/snake.svg">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/FailRouter/failrouter/output/heatmap-dark.svg">
+  <img alt="Heatmap of commits to Failrouter over the last 53 weeks" src="https://raw.githubusercontent.com/FailRouter/failrouter/output/heatmap.svg">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/FailRouter/failrouter/output/skyline-dark.svg">
+  <img alt="Isometric 3D skyline of daily commits to Failrouter" src="https://raw.githubusercontent.com/FailRouter/failrouter/output/skyline.svg">
+</picture>
+
+[![Visitors](https://visitor-badge.laobi.icu/badge?page_id=FailRouter.failrouter&left_text=visitors)](https://github.com/FailRouter/failrouter) Rebuilt every night from this repo's `git log` by [github-action-shares](https://github.com/HowardZlh/github-action-shares).
+
+If Failrouter is useful to you, a ⭐ helps other people find it.
+
 ## License
 
 [MIT](LICENSE)
