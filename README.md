@@ -8,6 +8,8 @@ A small museum of famous outages, each told as the route it took: one small chan
 
 Every exhibit is condensed from a public postmortem or investigation report, and each card names its source. The [3D hall](https://failrouter.com/hall/) hangs the same exhibits in a gallery you can walk through: a main corridor with a map, a short passage into each room, and next to every plaque a sculpture of its impact score. Each one also has its own page, for example [the CrowdStrike outage](https://failrouter.com/exhibits/crowdstrike-2024/), with an impact score on five dimensions. [How impact is scored](https://failrouter.com/impact/) lists what every score means.
 
+[![CI / Deploy](https://github.com/FailRouter/failrouter/actions/workflows/ci.yml/badge.svg)](https://github.com/FailRouter/failrouter/actions/workflows/ci.yml) [![Last commit](https://img.shields.io/github/last-commit/FailRouter/failrouter)](https://github.com/FailRouter/failrouter/commits/main)
+
 ## How the site works
 
 It's a static site served by a Cloudflare Worker with only static assets, so no Worker code runs per request. There's no framework. The one library is [three.js](https://threejs.org/) for the 3D hall: a pinned subset is committed under `public/vendor/` and only downloaded when a visitor presses Enter. A small Node script renders every page to plain HTML ahead of time, and the output is committed, so the site reads fine with JavaScript off and deploys without a build step.
@@ -60,21 +62,9 @@ Merging to `main` runs the workflow in `.github/workflows/ci.yml`: tests and the
 ## Project activity
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/FailRouter/failrouter/output/snake-dark.svg">
-  <img alt="Snake eating the daily commit grid of Failrouter" src="https://raw.githubusercontent.com/FailRouter/failrouter/output/snake.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/FailRouter/failrouter/output/activity-dark.svg">
+  <img alt="Commits to Failrouter since the first one: a snake eating the daily grid, or a one-line summary while there are fewer than 10 active days" src="https://raw.githubusercontent.com/FailRouter/failrouter/output/activity.svg">
 </picture>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/FailRouter/failrouter/output/heatmap-dark.svg">
-  <img alt="Heatmap of commits to Failrouter over the last 53 weeks" src="https://raw.githubusercontent.com/FailRouter/failrouter/output/heatmap.svg">
-</picture>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/FailRouter/failrouter/output/skyline-dark.svg">
-  <img alt="Isometric 3D skyline of daily commits to Failrouter" src="https://raw.githubusercontent.com/FailRouter/failrouter/output/skyline.svg">
-</picture>
-
-[![Visitors](https://visitor-badge.laobi.icu/badge?page_id=FailRouter.failrouter&left_text=visitors)](https://github.com/FailRouter/failrouter) Rebuilt every night from this repo's `git log` by [github-action-shares](https://github.com/HowardZlh/github-action-shares).
 
 If Failrouter is useful to you, a ⭐ helps other people find it.
 
